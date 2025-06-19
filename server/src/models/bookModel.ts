@@ -8,7 +8,10 @@ const bookSchema = new Schema(
     price: Number,
     description: String,
     stock: Number,
-    reviews: [Schema.Types.ObjectId],
+    rating: {
+      type: Number,
+      default: 0,
+    },
     image: String,
   },
   {
