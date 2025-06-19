@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
 @import "tailwindcss";
 
@@ -58,4 +58,8 @@ a {
 input::placeholder {
   color: var(--color-text-muted);
   opacity: 1;
+}
+
+.font-brand {
+  font-family: var(--font-primary);
 }

@@ -1,9 +1,10 @@
 import { Component } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
+import { ModeSwitcherComponent } from "./components/mode-switcher/mode-switcher.component";
 
 @Component({
   selector: "app-root",
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, ModeSwitcherComponent],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
 })
