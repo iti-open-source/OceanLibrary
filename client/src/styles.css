@@ -1,1 +1,61 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
 @import "tailwindcss";
+
+@theme {
+  /* -- Fonts -- */
+  --font-primary: "DM Serif Display", serif;
+  --font-secondary: "Roboto", sans-serif;
+
+  /* -- Colors -- */
+  --color-background-light: #f9f6ea;
+  --color-background-medium: #eee9ce;
+  --color-brand-primary: #5a471d;
+  --color-text-default: #5a471d;
+  --color-text-heading: #5a471d;
+  --color-link: #5a471d;
+  --color-text-muted: #827350;
+  --color-on-dark: #ffffff;
+  --color-border: #d2c8b4;
+}
+
+.dark-mode {
+  --color-background-light: #382c20;
+  --color-background-medium: #503c28;
+  --color-brand-primary: #d2b48c;
+  --color-text-default: #d2b48c;
+  --color-text-heading: #f0dcb4;
+  --color-link: #c8aa78;
+  --color-text-muted: #a0825a;
+  --color-on-dark: #382c20;
+  --color-border: #6e553c;
+}
+
+body {
+  font-family: var(--font-secondary);
+  background-color: var(--color-background-light);
+  color: var(--color-text-default);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-primary);
+  color: var(--color-text-heading);
+}
+
+a {
+  color: var(--color-link);
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}

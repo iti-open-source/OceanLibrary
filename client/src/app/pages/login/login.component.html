@@ -1,0 +1,115 @@
+<div
+  class="min-h-screen flex flex-col justify-center items-center bg-background-light dark:bg-dark-background-light font-secondary"
+>
+  <div class="w-full max-w-md p-8 rounded-xl flex flex-col items-center">
+    <div class="flex justify-end w-full mb-6">
+      <label
+        class="theme-toggle relative inline-flex items-center cursor-pointer select-none group"
+        title="Switch between light and dark mode"
+      >
+        <input
+          type="checkbox"
+          class="sr-only peer"
+          (change)="toggleDarkMode($event)"
+          [checked]="isDarkMode"
+          aria-label="Toggle dark mode"
+        />
+        <span
+          class="toggle-bg w-14 h-8 flex items-center rounded-full transition-colors duration-300 shadow-inner relative bg-[var(--color-background-medium)] dark:bg-[var(--color-background-light)] border border-[var(--color-border)]"
+        >
+          <span
+            class="absolute left-2 top-1/2 -translate-y-1/2 flex items-center justify-center transition-colors duration-300"
+          >
+            <svg
+              class="w-5 h-5 sun-icon text-yellow-400 group-hover:scale-110 transition-transform duration-200"
+              [class.opacity-100]="!isDarkMode"
+              [class.opacity-40]="isDarkMode"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M10 15a5 5 0 100-10 5 5 0 000 10z" />
+              <path
+                fill-rule="evenodd"
+                d="M10 1a1 1 0 011 1v1a1 1 0 11-2 0V2a1 1 0 011-1zm0 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm9-7a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM4 10a1 1 0 01-1 1H2a1 1 0 110-2h1a1 1 0 011 1zm12.07 5.07a1 1 0 010 1.42l-.7.7a1 1 0 11-1.42-1.42l.7-.7a1 1 0 011.42 0zM5.64 5.64a1 1 0 010 1.42l-.7.7A1 1 0 113.52 6.34l.7-.7a1 1 0 011.42 0zm10.6-1.42a1 1 0 00-1.42 0l-.7.7a1 1 0 101.42 1.42l.7-.7a1 1 0 000-1.42zM5.64 14.36a1 1 0 00-1.42 0l-.7.7a1 1 0 101.42 1.42l.7-.7a1 1 0 000-1.42z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </span>
+          <span
+            class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center transition-colors duration-300"
+          >
+            <svg
+              class="w-5 h-5 moon-icon text-gray-500 group-hover:scale-110 transition-transform duration-200"
+              [class.opacity-100]="isDarkMode"
+              [class.opacity-40]="!isDarkMode"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
+              />
+            </svg>
+          </span>
+        </span>
+        <span
+          class="toggle-dot absolute left-1 top-1 w-6 h-6 rounded-full bg-white shadow-md flex items-center justify-center transition-transform duration-300 peer-checked:translate-x-6 border border-[var(--color-border)]"
+        ></span>
+      </label>
+    </div>
+    <h2 class="text-lg font-normal text-brand-primary mb-2">Welcome back,</h2>
+    <h1 class="text-4xl font-primary mb-6">
+      <span class="text-text-muted font-normal">ocean</span
+      ><span class="text-brand-primary font-bold">library</span>
+    </h1>
+    <h3 class="text-xl font-normal text-brand-primary mb-6">Sign In</h3>
+    <form class="w-full flex flex-col gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="email" class="text-brand-primary text-base">Email</label>
+        <input
+          id="email"
+          type="email"
+          class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+          placeholder="Enter your email"
+        />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label for="password" class="text-brand-primary text-base"
+          >Password</label
+        >
+        <input
+          id="password"
+          type="password"
+          class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+          placeholder="Enter your password"
+        />
+      </div>
+      <div class="flex justify-between items-center mt-1 mb-2">
+        <a href="#" class="text-sm text-text-muted hover:underline"
+          >Forgot your password?</a
+        >
+      </div>
+      <button
+        type="submit"
+        class="cursor-pointer w-full rounded-full bg-[var(--color-brand-primary)] text-[var(--color-background-light)] font-normal border border-[var(--color-border)] py-3 text-lg mt-2 shadow-sm transition-colors hover:bg-[var(--color-background-light)] hover:text-[var(--color-brand-primary)] dark:bg-[var(--color-background-light)] dark:text-[var(--color-brand-primary)] dark:hover:bg-[var(--color-brand-primary)] dark:hover:text-[var(--color-background-light)]"
+      >
+        Sign In
+      </button>
+    </form>
+    <div class="flex items-center w-full my-8">
+      <div
+        class="flex-grow border-t border-border dark:border-dark-border"
+      ></div>
+      <span class="mx-4 text-brand-primary dark:text-dark-brand-primary"
+        >New to oceanlibrary?</span
+      >
+      <div
+        class="flex-grow border-t border-border dark:border-dark-border"
+      ></div>
+    </div>
+    <button
+      class="cursor-pointer w-full rounded-full border border-border dark:border-dark-border text-brand-primary dark:text-dark-brand-primary py-3 text-lg font-medium hover:bg-background-medium dark:hover:bg-dark-background-medium transition-colors"
+    >
+      Sign Up
+    </button>
+  </div>
+</div>
