@@ -9,5 +9,5 @@ import { ModeSwitcherComponent } from "./components/mode-switcher/mode-switcher.
   styleUrl: "./app.component.css",
 })
 export class AppComponent {
-  title = "client";
+  title = "ocean library";
 }
