@@ -1,0 +1,81 @@
+<div
+  class="min-h-screen flex flex-col justify-center items-center bg-background-light dark:bg-dark-background-light font-secondary relative"
+>
+  <div class="flex justify-end w-full absolute top-8 right-8 z-10">
+    <app-mode-switcher></app-mode-switcher>
+  </div>
+  <div class="w-full max-w-md p-8 rounded-xl flex flex-col items-center">
+    <h2 class="text-lg font-normal text-brand-primary mb-2">
+      Create your account
+    </h2>
+    <h1 class="text-4xl font-primary mb-6">
+      <span class="text-text-muted font-normal">ocean</span
+      ><span class="text-brand-primary font-bold">library</span>
+    </h1>
+    <h3 class="text-xl font-normal text-brand-primary mb-6">Sign Up</h3>
+    <form class="w-full flex flex-col gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="name" class="text-brand-primary text-base">Name</label>
+        <input
+          id="name"
+          type="text"
+          class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+          placeholder="Enter your name"
+        />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label for="email" class="text-brand-primary text-base">Email</label>
+        <input
+          id="email"
+          type="email"
+          class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+          placeholder="Enter your email"
+        />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label for="password" class="text-brand-primary text-base"
+          >Password</label
+        >
+        <input
+          id="password"
+          type="password"
+          class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+          placeholder="Enter your password"
+        />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label for="confirmPassword" class="text-brand-primary text-base"
+          >Confirm Password</label
+        >
+        <input
+          id="confirmPassword"
+          type="password"
+          class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+          placeholder="Confirm your password"
+        />
+      </div>
+      <button
+        type="submit"
+        class="cursor-pointer w-full rounded-full bg-[var(--color-brand-primary)] text-[var(--color-background-light)] font-normal border border-[var(--color-border)] py-3 text-lg mt-2 shadow-sm transition-colors hover:bg-[var(--color-background-light)] hover:text-[var(--color-brand-primary)] dark:bg-[var(--color-background-light)] dark:text-[var(--color-brand-primary)] dark:hover:bg-[var(--color-brand-primary)] dark:hover:text-[var(--color-background-light)]"
+      >
+        Sign Up
+      </button>
+    </form>
+    <div class="flex items-center w-full my-8">
+      <div
+        class="flex-grow border-t border-border dark:border-dark-border"
+      ></div>
+      <span class="mx-4 text-brand-primary dark:text-dark-brand-primary"
+        >Already have an account?</span
+      >
+      <div
+        class="flex-grow border-t border-border dark:border-dark-border"
+      ></div>
+    </div>
+    <a
+      routerLink="/login"
+      class="cursor-pointer w-full rounded-full border border-border dark:border-dark-border text-brand-primary dark:text-dark-brand-primary py-3 text-lg font-medium hover:bg-background-medium dark:hover:bg-dark-background-medium transition-colors text-center block"
+      >Sign In</a
+    >
+  </div>
+</div>
