@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
 import { Request, Response } from "express";
+import orderModel from "../models/orderModel.js";
 
 // Place a new order
 async function placeOrder(req: Request, res: Response): Promise<void> {}

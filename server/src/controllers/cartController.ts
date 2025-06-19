@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
 import { Request, Response } from "express";
+import cartModel from "../models/cartModel.js";
 
 // Add item to cart
 async function addToCart(req: Request, res: Response): Promise<void> {}

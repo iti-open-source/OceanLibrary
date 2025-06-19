@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
 import { Request, Response } from "express";
+import reviewModel from "../models/reviewModel.js";
 
 // Submit a new review
 async function submitReview(req: Request, res: Response): Promise<void> {}
