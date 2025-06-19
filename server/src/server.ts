@@ -2,18 +2,17 @@ import mongoose from "mongoose";
 import "dotenv/config";
 import app from "./app.js";
 
-const port = process.env.PORT || 3000;
-const db = process.env.DB_URI;
+const { PORT, DB_URI } = process.env;
 
-if (!db) {
+if (!DB_URI) {
   throw new Error("Missing DB_URI");
 }
 
 mongoose
-  .connect(db)
+  .connect(DB_URI)
   .then(() => {
-    app.listen(port, () => {
-      console.log(`Server running on http://localhost/${port}`);
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost/${PORT}`);
     });
     console.log("Connected to database");
   })
