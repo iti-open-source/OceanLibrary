@@ -4,8 +4,8 @@ import cartModel from "../models/cartModel.js";
 
 /**
  * Place a new order
- * @param req
- * @param res
+ * @param req - paymentMethod - paymob HMAC (if not COD)
+ * @param res - Order details or Error
  */
 async function placeOrder(req: Request, res: Response): Promise<void> {
   try {
@@ -95,12 +95,79 @@ async function placeOrder(req: Request, res: Response): Promise<void> {
   }
 }
 
-// View order history
-async function viewOrder(req: Request, res: Response): Promise<void> {}
+/**
+ * Get all orders placed by a user
+ * @param req - pageNumber, limitPerPage
+ * @param res - Empty array or array of objects each has order
+ */
+async function viewOrder(req: Request, res: Response): Promise<void> {
+  try {
+    // Get userID
+    const userId = "123"; //req.user._id
+    let { page, limit }: any = req.query;
+
+    // Get number of page to display
+    page = parseInt(page) || 1;
+
+    // Limit of orders per page
+    limit = parseInt(limit) || 10;
+
+    // Offset skipper
+    const skip = (page - 1) * limit;
+
+    // Get orders list based on page limit
+    const [orders, totalOrders] = await Promise.all([
+      orderModel
+        .find({ userId })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .select("-__v"),
+      orderModel.countDocuments({ userId }),
+    ]);
+
+    // Return orders list to client
+    res.status(200).json({
+      orders,
+      currentPage: page,
+      totalPages: Math.ceil(totalOrders / limit),
+      totalOrders,
+    });
+  } catch (error) {
+    throw Error("Failed to retrieve orders");
+  }
+}
+
+/**
+ * Get details for spesfic order
+ * @param req -
+ * @param res
+ */
+async function viewOrderById(req: Request, res: Response): Promise<void> {
+  try {
+    // Get userID and orderID
+    const userId = "123"; //req.user._id
+    const orderId = req.params.id;
+
+    // Get order from DB
+    const order = await orderModel.findOne({ _id: orderId, userId });
+
+    // Order doesn't exist
+    if (!order) {
+      throw Error("Order not found");
+    }
+
+    // Return order details
+    res.status(200).json({ order });
+  } catch (error) {
+    throw Error("Failed to retrieve order");
+  }
+}
 
 // Export controllers
 const orderController = {
   placeOrder,
   viewOrder,
+  viewOrderById,
 };
 export default orderController;
