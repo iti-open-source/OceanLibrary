@@ -31,11 +31,19 @@
   --color-border: #6e553c;
 }
 
-body {
-  font-family: var(--font-secondary);
+body, .min-h-screen, .flex-1 {
+  will-change: background-color, color;
+}
+
+html, body {
   background-color: var(--color-background-light);
   color: var(--color-text-default);
   transition: background-color 0.3s, color 0.3s;
+  min-height: 100vh;
+}
+
+body {
+  font-family: var(--font-secondary);
 }
 
 h1,
