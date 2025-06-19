@@ -1,6 +1,9 @@
 import { Component, OnInit, Renderer2 } from "@angular/core";
+import { RouterLink } from "@angular/router";
+import { ModeSwitcherComponent } from "../../components/mode-switcher/mode-switcher.component";
 
 @Component({
+  imports: [RouterLink, ModeSwitcherComponent],
   selector: "app-login",
   templateUrl: "./login.component.html",
   styleUrl: "./login.component.css",
