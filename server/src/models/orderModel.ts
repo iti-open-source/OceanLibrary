@@ -64,6 +64,16 @@ const orderSchema = new mongoose.Schema(
       ],
       default: "pending",
     },
+    paymentMethod: {
+      type: String,
+      enum: ["cash", "paymob"],
+      required: true,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["paid", "pendingPayment"],
+      default: "pendingPayment",
+    },
   },
   // Store order update time
   { timestamps: true }
