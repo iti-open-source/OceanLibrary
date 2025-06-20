@@ -9,6 +9,6 @@ const router = Router();
 router.get("/", bookController.getAllBooks);
 
 // POST /api/books - Create new book
-router.post("/", bookController.createBook);
+router.post("/", JoiValidator(createBookSchema), bookController.createBook);
 
 export default router;
