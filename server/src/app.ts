@@ -11,9 +11,9 @@ const app = express();
 app.use(express.json());
 
 app.use("/api/books", bookRoutes);
-app.use("/cart", cartRouter);
-app.use("/reviews", reviewRouter);
-app.use("/orders", orderRouter);
+app.use("/api/cart", cartRouter);
+app.use("/api/reviews", reviewRouter);
+app.use("/api/orders", orderRouter);
 app.use("/api/users", userRouter);
 
 export default app;
