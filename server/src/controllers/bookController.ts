@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import Book from "../models/bookModel.js";
 import { create } from "domain";
 
-const getAllBooks = async (req: Request, res: Response, next: NextFunction) => {
+const getAllBooks = async (req: Request, res: Response): Promise<void> => {
   const defaultPageNumber = 1;
   const defautlLimitNumber = 10;
   const page = parseInt(req.query.page as string) || defaultPageNumber;
@@ -21,14 +21,14 @@ const getAllBooks = async (req: Request, res: Response, next: NextFunction) => {
       totalItems: total,
       data: books,
     });
-  } catch (err) {
+  } catch (error) {
     res
       .status(500)
-      .json({ status: "Failure", message: "Something went wrong", error: err });
+      .json({ status: "Failure", message: "Something went wrong", error });
   }
 };
 
-const createBook = async (req: Request, res: Response, next: NextFunction) => {
+const createBook = async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       title,
@@ -57,7 +57,11 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
       data: book,
     });
   } catch (error) {
-    console.error(error);
+    res.status(500).json({
+      status: "Failure",
+      message: "Something went wrong",
+      error,
+    });
   }
 };
 
