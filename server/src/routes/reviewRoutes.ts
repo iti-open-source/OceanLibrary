@@ -1,19 +1,16 @@
 import { Router } from "express";
-import reviewController from "../controllers/reviewController.js";
+import {
+  displayReview,
+  submitReview,
+  updateReview,
+  deleteReview,
+} from "../controllers/reviewController.js";
 
-const reviewRouter = Router();
+const router = Router();
 
-// View reviews
-reviewRouter.get("/", reviewController.displayReview);
+router.get("/", displayReview);
+router.post("/", submitReview);
+router.patch("/", updateReview);
+router.delete("/", deleteReview);
 
-// Create a new review
-reviewRouter.post("/", reviewController.submitReview);
-
-// Update current review
-reviewRouter.patch("/", reviewController.updateReview);
-
-// Delete current review
-reviewRouter.delete("/", reviewController.deleteReview);
-
-// Export router
-export default reviewRouter;
+export default router;

@@ -1,16 +1,14 @@
 import { Router } from "express";
-import orderController from "../controllers/orderController.js";
+import {
+  viewOrder,
+  viewOrderById,
+  placeOrder,
+} from "../controllers/orderController.js";
 
-const orderRouter = Router();
+const router = Router();
 
-// View current orders
-orderRouter.get("/", orderController.viewOrder);
+router.get("/", viewOrder);
+router.get("/:id", viewOrderById);
+router.post("/", placeOrder);
 
-// View spesfic order
-orderRouter.get("/:id", orderController.viewOrderById);
-
-// Place a new order
-orderRouter.post("/", orderController.placeOrder);
-
-// Export router
-export default orderRouter;
+export default router;

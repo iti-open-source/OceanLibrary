@@ -1,13 +1,18 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import cartModel from "../models/cartModel.js";
-import bookModel from "../models/bookModel.js";
+import Book from "../models/bookModel.js";
+import AppError from "../utils/appError.js";
 
 /**
  * View cart - Displays cart items and total amount
  * @param req
  * @param res - items[], total<number>
  */
-async function viewCart(req: Request, res: Response): Promise<void> {
+export const viewCart = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const userId = "123"; //req.user._id;
 
@@ -16,7 +21,8 @@ async function viewCart(req: Request, res: Response): Promise<void> {
 
     // User's cart is empty
     if (!cart) {
-      throw res.status(200).json({ items: [] });
+      res.status(200).json({ items: [] });
+      return;
     }
 
     // Cart is not empty, Load books into cart
@@ -37,30 +43,34 @@ async function viewCart(req: Request, res: Response): Promise<void> {
 
     res.status(200).json({ items: itemsList, total: totalAmount });
   } catch (error) {
-    throw Error("Couldn't load your cart.");
+    next(error);
   }
-}
+};
 
 /**
  * Add item to cart - Used in Book page (Add to cart)
  * @param req - BookID, Quantity
  * @param res - Error or Success message
  */
-async function addToCart(req: Request, res: Response): Promise<void> {
+export const addToCart = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const userId = "123"; //req.user._id
     const { bookId, quantity } = req.body;
 
     // Fetch Book info
-    const book = await bookModel.findById(bookId);
+    const book = await Book.findById(bookId);
     // Book doesn't exists
     if (!book) {
-      throw Error("The requested book doesn't exist");
+      return next(new AppError("The requested book doesn't exist", 404));
     }
 
     // Verify the book Stock
     if (!book.stock || book.stock < quantity) {
-      throw Error("There is no enough stock available");
+      return next(new AppError("There is no enough stock available", 400));
     }
 
     // Get user cart
@@ -88,35 +98,36 @@ async function addToCart(req: Request, res: Response): Promise<void> {
         cart.items.push({ bookId, quantity });
       }
     }
-
-    // save our cart
     await cart.save();
     res.status(200).json({ message: "Book added to cart", cart });
   } catch (error) {
-    // Unexpected error occured
-    throw Error("Couldn't add item to the cart.");
+    next(error);
   }
-}
+};
 
 /**
- * Modfiy an item in cart
+ * Modify an item in cart
  * @param req - bookID, New Quantity (0 for deletion)
  * @param res - Error or Success message
  */
-async function updateCart(req: Request, res: Response): Promise<void> {
+export const updateCart = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const userId = "123"; //req.user._id
     const { bookId, quantity } = req.body;
 
-    // Validate bookID and quanitiy
+    // Validate bookID and quantity
     if (!bookId || typeof quantity !== "number") {
-      throw Error("bookId and quantity are required");
+      return next(new AppError("Book id and quantity required", 400));
     }
 
     // Get user Cart
     const cart = await cartModel.findById(userId);
     if (!cart) {
-      throw Error("Your cart is empty");
+      return next(new AppError("Cart is empty", 400));
     }
 
     // Find which book we need to edit
@@ -126,7 +137,12 @@ async function updateCart(req: Request, res: Response): Promise<void> {
 
     // The book doesn't exist in user cart
     if (itemIndex === -1) {
-      throw Error("This item you are trying to modifying is not in your cart");
+      return next(
+        new AppError(
+          "This item you are trying to modifying is not in your cart",
+          400
+        )
+      );
     }
 
     if (quantity <= 0) {
@@ -134,14 +150,16 @@ async function updateCart(req: Request, res: Response): Promise<void> {
       cart.items.splice(itemIndex, 1);
     } else {
       // Check if book exists in our DB
-      const book = await bookModel.findById(bookId);
+      const book = await Book.findById(bookId);
       if (!book) {
-        throw Error("This book is not available in stock anymore");
+        return next(
+          new AppError("This book is not available in stock anymore", 400)
+        );
       }
 
       // Check if there is stock available
       if (!book.stock || quantity > book.stock) {
-        throw Error("Quantity exceeds available stock");
+        return next(new AppError("Quantity exceeds available stock", 400));
       }
 
       // Update quantity
@@ -152,14 +170,6 @@ async function updateCart(req: Request, res: Response): Promise<void> {
     await cart.save();
     res.status(200).json({ message: "Cart updated", cart });
   } catch (error) {
-    throw Error("Couldn't update your cart");
+    next(error);
   }
-}
-
-// Export cartController
-const cartController = {
-  addToCart,
-  updateCart,
-  viewCart,
 };
-export default cartController;

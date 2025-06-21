@@ -1,23 +1,30 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import reviewModel from "../models/reviewModel.js";
 
 // Submit a new review
-async function submitReview(req: Request, res: Response): Promise<void> {}
+export const submitReview = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {};
 
 // View current submitted review
-async function displayReview(req: Request, res: Response): Promise<void> {}
+export const displayReview = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {};
 
 // Update current submitted review
-async function updateReview(req: Request, res: Response): Promise<void> {}
+export const updateReview = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {};
 
 // Delete current submitted review
-async function deleteReview(req: Request, res: Response): Promise<void> {}
-
-// Export controllers
-const reviewController = {
-  submitReview,
-  displayReview,
-  updateReview,
-  deleteReview,
-};
-export default reviewController;
+export const deleteReview = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {};

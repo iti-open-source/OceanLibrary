@@ -2,23 +2,35 @@ import mongoose, { Schema } from "mongoose";
 
 const bookSchema = new Schema(
   {
-    title: String,
-    author: String,
-    genres: [String],
-    price: Number,
-    description: String,
-    stock: Number,
+    title: {
+      type: String,
+    },
+    author: {
+      type: String,
+    },
+    genres: {
+      type: [String],
+    },
+    price: {
+      type: Number,
+    },
+    description: {
+      type: String,
+    },
+    stock: {
+      type: Number,
+    },
     rating: {
       type: Number,
       default: 0,
     },
-    image: String,
+    image: {
+      type: String,
+    },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-const bookModel = mongoose.model("book", bookSchema);
+const bookModel = mongoose.model("books", bookSchema);
 
 export default bookModel;

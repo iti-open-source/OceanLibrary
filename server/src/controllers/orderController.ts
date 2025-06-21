@@ -1,13 +1,18 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import orderModel from "../models/orderModel.js";
 import cartModel from "../models/cartModel.js";
+import AppError from "../utils/appError.js";
 
 /**
  * Place a new order
  * @param req - paymentMethod - paymob HMAC (if not COD)
  * @param res - Order details or Error
  */
-async function placeOrder(req: Request, res: Response): Promise<void> {
+export const placeOrder = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const { paymentMethod } = req.body;
     let paymentStatus = "pendingPayment"; // Current payment status (pending for cod)
@@ -47,7 +52,7 @@ async function placeOrder(req: Request, res: Response): Promise<void> {
         );
       }
 
-      // Calucate book cost
+      // Calculate book cost
       const subtotal = book.price * item.quantity;
       // Add it to total cost
       total += subtotal;
@@ -91,16 +96,20 @@ async function placeOrder(req: Request, res: Response): Promise<void> {
       status: order.status,
     });
   } catch (error) {
-    throw Error("Failed to place order");
+    next(error);
   }
-}
+};
 
 /**
  * Get all orders placed by a user
  * @param req - pageNumber, limitPerPage
  * @param res - Empty array or array of objects each has order
  */
-async function viewOrder(req: Request, res: Response): Promise<void> {
+export const viewOrder = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     // Get userID
     const userId = "123"; //req.user._id
@@ -134,40 +143,32 @@ async function viewOrder(req: Request, res: Response): Promise<void> {
       totalOrders,
     });
   } catch (error) {
-    throw Error("Failed to retrieve orders");
+    next(error);
   }
-}
+};
 
 /**
- * Get details for spesfic order
+ * Get details for specific order
  * @param req -
  * @param res
  */
-async function viewOrderById(req: Request, res: Response): Promise<void> {
+export const viewOrderById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    // Get userID and orderID
     const userId = "123"; //req.user._id
     const orderId = req.params.id;
 
     // Get order from DB
     const order = await orderModel.findOne({ _id: orderId, userId });
 
-    // Order doesn't exist
     if (!order) {
-      throw Error("Order not found");
+      return next(new AppError("order not found", 404));
     }
-
-    // Return order details
     res.status(200).json({ order });
   } catch (error) {
-    throw Error("Failed to retrieve order");
+    next(error);
   }
-}
-
-// Export controllers
-const orderController = {
-  placeOrder,
-  viewOrder,
-  viewOrderById,
 };
-export default orderController;

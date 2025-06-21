@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import userModel from "../models/userModel.js";
-import { UpdateData } from "../types/user.js";
-import AppError from "../utils/apiError.js";
+import { UpdateData } from "../types/types.js";
+import AppError from "../utils/appError.js";
 
 export const getUsers = async (
   req: Request,

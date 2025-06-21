@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import Book from "../models/bookModel.js";
 
 /**
@@ -23,7 +23,11 @@ import Book from "../models/bookModel.js";
  *
  * @throws {500} When database operation fails
  */
-const getAllBooks = async (req: Request, res: Response): Promise<void> => {
+export const getAllBooks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   const defaultPageNumber = 1;
   const defautlLimitNumber = 10;
   const page = parseInt(req.query.page as string) || defaultPageNumber;
@@ -43,9 +47,7 @@ const getAllBooks = async (req: Request, res: Response): Promise<void> => {
       data: books,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ status: "Failure", message: "Something went wrong", error });
+    next(error);
   }
 };
 
@@ -57,7 +59,11 @@ const getAllBooks = async (req: Request, res: Response): Promise<void> => {
  *
  * @throws Will return a 500 status code with error details if book creation fails
  */
-const createBook = async (req: Request, res: Response): Promise<void> => {
+export const createBook = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const {
       title,
@@ -86,17 +92,6 @@ const createBook = async (req: Request, res: Response): Promise<void> => {
       data: book,
     });
   } catch (error) {
-    res.status(500).json({
-      status: "Failure",
-      message: "Something went wrong",
-      error,
-    });
-    res.status(500).json({
-      status: "Failure",
-      message: "Something went wrong",
-      error,
-    });
+    next(error);
   }
 };
-
-export default { createBook, getAllBooks };

@@ -30,12 +30,12 @@ if (!DB_URI) {
 mongoose
   .connect(DB_URI)
   .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
     console.log("Connected to database");
   })
   .catch((error) => {
     console.error("Connection to database failed", error);
-    process.exit(1);
   });
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

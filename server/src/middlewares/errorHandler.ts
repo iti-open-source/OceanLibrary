@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
-import AppError from "../utils/apiError.js";
+import AppError from "../utils/appError.js";
 
 const errorHandler = (
   error: Error,
   req: Request,
   res: Response,
-  _next: NextFunction
+  next: NextFunction
 ) => {
   if (error instanceof AppError) {
     res
