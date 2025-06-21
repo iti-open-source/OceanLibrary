@@ -5,6 +5,8 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
+      minlength: 3,
+      maxlength: 30,
     },
     email: {
       type: String,
@@ -16,6 +18,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       minlength: 8,
+      maxlength: 50,
     },
   },
   { timestamps: true }
