@@ -1,0 +1,13 @@
+.search-container {
+    transition: all 0.3s ease-in-out;
+}
+
+.search-input {
+    background-color: var(--color-background-medium);
+    transition: width 0.3s ease-in-out;
+}
+
+.search-container:focus-within {
+    width: 75%;
+    max-width: 42rem;
+}
