@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import "dotenv/config";
 import bookRouter from "./routes/bookRoutes.js";
@@ -7,6 +7,7 @@ import reviewRouter from "./routes/reviewRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import errorHandler from "./middlewares/errorHandler.js";
+import AppError from "./utils/appError.js";
 
 const app = express();
 
@@ -18,6 +19,10 @@ app.use("/api/v1/cart", cartRouter);
 app.use("/api/v1/reviews", reviewRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/users", userRouter);
+// fallback route after express update
+app.use("/{*splat}", (req: Request, res: Response, next: NextFunction) => {
+  next(new AppError(`Route ${req.originalUrl} not found`, 404));
+});
 
 app.use(errorHandler);
 
@@ -39,3 +44,16 @@ mongoose
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+process.on("uncaughtException", (error: Error) => {
+  console.error("Uncaught exception occurred", error.message);
+  process.exit(1);
+});
+
+process.on(
+  "unhandledRejection",
+  (reason: unknown, promise: Promise<unknown>) => {
+    console.error("Unhandled rejection at: ", promise, reason);
+    process.exit(1);
+  }
+);
