@@ -12,9 +12,10 @@ const errorHandler = (
       .status(error.statusCode)
       .json({ status: error.status, message: error.message });
   } else {
-    res
-      .status(500)
-      .json({ status: "server error", message: "Something went wrong" });
+    res.status(500).json({
+      status: "server error",
+      message: error ? error.message : "unexpected error",
+    });
   }
 };
 

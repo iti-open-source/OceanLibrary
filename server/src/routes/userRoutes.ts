@@ -1,8 +1,8 @@
 import { Router } from "express";
 import {
   getUsers,
-  getUserById,
-  createUser,
+  loginUser,
+  registerUser,
   updateUser,
   deleteUser,
 } from "../controllers/userController.js";
@@ -10,8 +10,8 @@ import {
 const router = Router();
 
 router.get("/", getUsers);
-router.get("/:id", getUserById);
-router.post("/", createUser);
+router.get("/login", loginUser);
+router.post("/register", registerUser);
 router.patch("/:id", updateUser);
 router.delete("/:id", deleteUser);
 
