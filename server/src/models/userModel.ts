@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       minlength: 3,
-      maxlength: 30,
+      maxlength: 32,
     },
     email: {
       type: String,
@@ -19,6 +19,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 8,
       maxlength: 128,
+    },
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      default: "user",
     },
   },
   { timestamps: true }

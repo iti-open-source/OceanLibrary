@@ -8,7 +8,7 @@ class AppError extends Error {
     this.statusCode = statusCode;
     // client errors are fail and server errors are error
     this.status = statusCode >= 400 && statusCode < 500 ? "fail" : "error";
-    // handled errors are considered operational
+    // handled errors are operational
     this.isOperational = true;
     Error.captureStackTrace(this, this.constructor);
   }

@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import "dotenv/config";
 import userModel from "../models/userModel.js";
 import {
   loginUserSchema,
@@ -9,6 +11,9 @@ import {
 import AppError from "../utils/appError.js";
 import { UpdatedUserData } from "../types/types.js";
 
+
+const { SECRET_KEY } = process.env;
+
 export const getUsers = async (
   req: Request,
   res: Response,
@@ -16,7 +21,11 @@ export const getUsers = async (
 ): Promise<void> => {
   try {
     const users = await userModel.find();
-    res.status(200).json({ data: users });
+    if (users.length === 0) {
+      res.status(204).json({ status: "success", data: "no data" });
+    } else {
+      res.status(200).json({ status: "success", data: users });
+    }
   } catch (error) {
     next(error);
   }
@@ -39,10 +48,14 @@ export const loginUser = async (
     if (!user) {
       return next(new AppError("invalid credentials", 400));
     }
-    // check for login password
+    // check for login password and secret key before token generation
     const isValidPassword = await bcrypt.compare(password, user.password);
-    if (isValidPassword) {
-      res.status(200).json({ status: "success", data: user });
+    if (isValidPassword && SECRET_KEY) {
+      // generate token and return in response
+      const token = jwt.sign({ userId: user._id }, SECRET_KEY, {
+        expiresIn: "1h",
+      });
+      res.status(200).json({ status: "success", data: user, token: token });
     } else {
       return next(new AppError("invalid credentials", 400));
     }
@@ -93,7 +106,7 @@ export const updateUser = async (
   try {
     const user = await userModel.findById(req.params.id);
     if (!user) {
-      return next(new AppError("User not found", 404));
+      return next(new AppError("user not found", 404));
     }
     if (username) {
       updateData.username = username;
@@ -122,7 +135,7 @@ export const deleteUser = async (
 ): Promise<void> => {
   try {
     const user = await userModel.findById(req.params.id);
-    if (!user) return next(new AppError("User not found", 404));
+    if (!user) return next(new AppError("user not found", 404));
     await userModel.findByIdAndDelete(req.params.id);
     res
       .status(200)
