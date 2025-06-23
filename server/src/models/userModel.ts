@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
@@ -13,12 +14,24 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       lowercase: true,
+      trim: true,
     },
     password: {
       type: String,
       required: true,
       minlength: 8,
       maxlength: 128,
+    },
+    phone: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    address: {
+      street: String,
+      city: String,
+      country: String,
+      zip: Number,
     },
     role: {
       type: String,
@@ -27,6 +40,19 @@ const userSchema = new mongoose.Schema(
     },
   },
   { timestamps: true }
+);
+
+userSchema.pre(
+  "save",
+  async function (this: mongoose.Document & { password?: string }, next) {
+    if (!this.isModified("password")) {
+      return next();
+    }
+    if (this.password) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
+    next();
+  }
 );
 
 const userModel = mongoose.model("users", userSchema);

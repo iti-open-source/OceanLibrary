@@ -11,8 +11,9 @@ const JoiValidator = (schema: Schema) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     const { error } = schema.validate(req.body, { abortEarly: true });
     if (error) {
-      next(new AppError("invalid Input", 400));
+      next(new AppError(error.message, 400));
     }
+    next();
   };
 };
 

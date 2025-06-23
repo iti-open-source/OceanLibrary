@@ -11,7 +11,15 @@ export const registerUserSchema = Joi.object({
   username: Joi.string().alphanum().min(3).max(32).required(),
   email: Joi.string().email().required(),
   password: Joi.string().pattern(new RegExp(passwordRegex)).required(),
-  confirm_password: Joi.any().valid(Joi.ref("password")).required(),
+  confirm_password: Joi.string().valid(Joi.ref("password")).required(),
+  phone: Joi.string().required(),
+  address: {
+    street: Joi.string().required(),
+    city: Joi.string().required(),
+    country: Joi.string().required(),
+    zip: Joi.number().required(),
+  },
+  role: Joi.string().valid("admin", "user"),
 });
 
 export const updateUserSchema = Joi.object({

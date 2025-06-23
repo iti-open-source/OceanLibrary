@@ -3,14 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 import userModel from "../models/userModel.js";
-import {
-  loginUserSchema,
-  registerUserSchema,
-  updateUserSchema,
-} from "../utils/validation/userValidation.js";
 import AppError from "../utils/appError.js";
-import { UpdatedUserData } from "../types/types.js";
-
 
 const { SECRET_KEY } = process.env;
 
@@ -36,10 +29,6 @@ export const loginUser = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const { error } = loginUserSchema.validate(req.body);
-  if (error) {
-    return next(new AppError(error.message, 400));
-  }
   const { email, password } = req.body;
 
   try {
@@ -69,11 +58,7 @@ export const registerUser = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const { error } = registerUserSchema.validate(req.body);
-  if (error) {
-    return next(new AppError(error.message, 400));
-  }
-  const { username, email, password } = req.body;
+  const { username, email, password, phone, address, role } = req.body;
 
   try {
     const salt = await bcrypt.genSalt(10);
@@ -83,6 +68,9 @@ export const registerUser = async (
       username: username,
       email: email,
       password: hash,
+      phone: phone,
+      address: address,
+      role: role,
     });
     await newUser.save();
     res.status(201).json({ status: "success", data: newUser });
@@ -96,30 +84,25 @@ export const updateUser = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const { error } = updateUserSchema.validate(req.body);
-  if (error) {
-    return next(new AppError(error.message, 400));
+  const allowed = ["username", "email", "password", "phone", "address"];
+  const updates: Record<string, number> = {};
+  // Filter out only the allowed fields
+  for (const field of allowed) {
+    if (req.body[field]) {
+      updates[field] = req.body[field];
+    }
   }
-  const { username, email, password } = req.body;
-  const updateData: UpdatedUserData = {};
+  if (Object.keys(updates).length === 0) {
+    return next(new AppError("invalid field updates", 400));
+  }
 
   try {
-    const user = await userModel.findById(req.params.id);
+    const user = await userModel.findOne({ _id: req.params.id });
     if (!user) {
       return next(new AppError("user not found", 404));
     }
-    if (username) {
-      updateData.username = username;
-    }
-    if (email) {
-      updateData.email = email;
-    }
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-      updateData.password = hashedPassword;
-    }
-    await userModel.findByIdAndUpdate(req.params.id, updateData);
+    Object.assign(user, updates);
+    await user.save();
     res
       .status(200)
       .json({ status: "success", message: "user updated successfully" });
