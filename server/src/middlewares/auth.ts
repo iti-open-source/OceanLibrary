@@ -1,28 +1,30 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import "dotenv/config";
 import AppError from "../utils/appError.js";
-
-const { SECRET_KEY } = process.env;
 
 // Extend Express Request interface to include userId
 export interface CustomRequest extends Request {
-  token: string | jwt.JwtPayload;
+  userId?: string;
 }
 
 export const verifyToken = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
     // authorization header: Bearer <token>
     const token = req.headers["authorization"]?.replace("Bearer ", "");
-    if (!token || !SECRET_KEY) {
+    if (!token || !process.env.SECRET_KEY) {
       return next(new AppError("authentication failed", 401));
     }
     // assign decoded data to request
-    (req as CustomRequest).token = jwt.verify(token, SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    if (typeof decoded === "string" || !decoded.userId) {
+      return next(new AppError("invalid token", 401));
+    }
+    console.log(decoded.userId);
+    req.userId = decoded.userId;
     next();
   } catch (error) {
     next(error);

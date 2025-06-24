@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
       street: String,
       city: String,
       country: String,
-      zip: Number,
+      zip: String,
     },
     role: {
       type: String,

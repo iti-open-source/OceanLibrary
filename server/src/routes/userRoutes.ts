@@ -19,7 +19,12 @@ const router = Router();
 router.get("/", getUsers);
 router.post("/login", JoiValidator(loginUserSchema), loginUser);
 router.post("/register", JoiValidator(registerUserSchema), registerUser);
-router.patch("/:id", JoiValidator(updateUserSchema), updateUser);
-router.delete("/:id", verifyToken, deleteUser);
+router.patch(
+  "/profile",
+  JoiValidator(updateUserSchema),
+  verifyToken,
+  updateUser
+);
+router.delete("/profile", verifyToken, deleteUser);
 
 export default router;

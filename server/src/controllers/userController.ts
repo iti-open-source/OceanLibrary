@@ -1,11 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import "dotenv/config";
 import userModel from "../models/userModel.js";
 import AppError from "../utils/appError.js";
-
-const { SECRET_KEY } = process.env;
+import { CustomRequest } from "../middlewares/auth.js";
 
 export const getUsers = async (
   req: Request,
@@ -15,7 +13,7 @@ export const getUsers = async (
   try {
     const users = await userModel.find();
     if (users.length === 0) {
-      res.status(204).json({ status: "success", data: "no data" });
+      res.status(200).json({ status: "success", data: "no data" });
     } else {
       res.status(200).json({ status: "success", data: users });
     }
@@ -39,9 +37,10 @@ export const loginUser = async (
     }
     // check for login password and secret key before token generation
     const isValidPassword = await bcrypt.compare(password, user.password);
-    if (isValidPassword && SECRET_KEY) {
+    console.log(user);
+    if (isValidPassword && process.env.SECRET_KEY) {
       // generate token and return in response
-      const token = jwt.sign({ userId: user._id }, SECRET_KEY, {
+      const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
         expiresIn: "1h",
       });
       res.status(200).json({ status: "success", data: user, token: token });
@@ -61,16 +60,13 @@ export const registerUser = async (
   const { username, email, password, phone, address, role } = req.body;
 
   try {
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
-    // create user with hashed password
     const newUser = await userModel.create({
-      username: username,
-      email: email,
-      password: hash,
-      phone: phone,
-      address: address,
-      role: role,
+      username,
+      email,
+      password,
+      phone,
+      address,
+      role,
     });
     await newUser.save();
     res.status(201).json({ status: "success", data: newUser });
@@ -80,7 +76,7 @@ export const registerUser = async (
 };
 
 export const updateUser = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -97,7 +93,7 @@ export const updateUser = async (
   }
 
   try {
-    const user = await userModel.findOne({ _id: req.params.id });
+    const user = await userModel.findOne({ _id: req.userId });
     if (!user) {
       return next(new AppError("user not found", 404));
     }
@@ -112,14 +108,14 @@ export const updateUser = async (
 };
 
 export const deleteUser = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const user = await userModel.findById(req.params.id);
+    const user = await userModel.findById(req.userId);
     if (!user) return next(new AppError("user not found", 404));
-    await userModel.findByIdAndDelete(req.params.id);
+    await userModel.findByIdAndDelete(req.userId);
     res
       .status(200)
       .json({ status: "success", message: "user deleted successfully" });
