@@ -11,17 +11,17 @@ import {
   registerUserSchema,
   updateUserSchema,
 } from "../utils/validation/userValidation.js";
-import JoiValidator from "../middlewares/joiValidator.js";
+import zodValidator from "../middlewares/zodValidator.js";
 import { verifyToken } from "../middlewares/auth.js";
 
 const router = Router();
 
 router.get("/", getUsers);
-router.post("/login", JoiValidator(loginUserSchema), loginUser);
-router.post("/register", JoiValidator(registerUserSchema), registerUser);
+router.post("/login", zodValidator(loginUserSchema), loginUser);
+router.post("/register", zodValidator(registerUserSchema), registerUser);
 router.patch(
   "/profile",
-  JoiValidator(updateUserSchema),
+  zodValidator(updateUserSchema),
   verifyToken,
   updateUser
 );
