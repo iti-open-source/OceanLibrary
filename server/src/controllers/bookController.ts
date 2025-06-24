@@ -65,16 +65,16 @@ export const getAllBooks = async (
  * @returns Promise<void> - Resolves when the operation completes
  *
  * @throws {AppError} When book with the specified ID is not found (404)
- * @throws {Error} When database operation fails or other unexpected errors occur
+ * @throws {Error} When database operation fails or other unexpected errors occur by passing that error to the global error handler
  *
  * @example
  * ```
- *  GET /books/507f1f77bcf86cd799439011
+ *  GET /books/685aa1b8da2b1ae66352b270
  *  Response on success:
  * {
  *   "status": "Success",
  *   "data": {
- *     "_id": "507f1f77bcf86cd799439011",
+ *     "_id": "685aa1b8da2b1ae66352b270",
  *     "title": "Book Title",
  *      ... other book properties
  *   }
