@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import Book from "../models/bookModel.js";
+import AppError from "../utils/appError.js";
 
 /**
  * Retrieves all books with pagination support.
@@ -8,6 +9,7 @@ import Book from "../models/bookModel.js";
  *   - `page` (optional): Page number for pagination (default: 1)
  *   - `limit` (optional): Number of items per page (default: 10)
  * @param res - Express response object
+ * @param next - Express next function for error handling
  * @returns Promise<void> - Responds with paginated book data or error message
  *
  * @remarks
@@ -40,12 +42,63 @@ export const getAllBooks = async (
     const books = await Book.find().skip(skip).limit(limit);
     const total = await Book.countDocuments();
 
-    res.json({
-      currentPage: page,
-      totalPages: Math.ceil(total / limit),
-      totalItems: total,
-      data: books,
+    res.status(200).json({
+      status: "Success",
+      data: {
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalItems: total,
+        books,
+      },
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Retrieves a book by its ID from the database.
+ *
+ * @param req - Express request object containing the book ID in params
+ * @param res - Express response object used to send the book data
+ * @param next - Express next function for error handling
+ * @returns Promise<void> - Resolves when the operation completes
+ *
+ * @throws {AppError} When book with the specified ID is not found (404)
+ * @throws {Error} When database operation fails or other unexpected errors occur
+ *
+ * @example
+ * ```
+ *  GET /books/507f1f77bcf86cd799439011
+ *  Response on success:
+ * {
+ *   "status": "Success",
+ *   "data": {
+ *     "_id": "507f1f77bcf86cd799439011",
+ *     "title": "Book Title",
+ *      ... other book properties
+ *   }
+ * }
+ * ```
+ */
+export const getBookById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const id = req.params.id;
+    // returns null if the book is not found
+    const book = await Book.findById(id);
+    // check for null
+    if (!book) {
+      next(new AppError("Book Not Found", 404));
+    } else {
+      res.json({
+        status: "Success",
+        data: book,
+      });
+    }
   } catch (error) {
     next(error);
   }

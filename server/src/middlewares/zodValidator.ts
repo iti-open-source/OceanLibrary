@@ -16,6 +16,7 @@ const ZodValidator = (schema: ZodType) => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
+        // TODO: implement error handling for Zod errors
         res.status(400).json({
           status: "Failure",
           message: "Validation failed",
