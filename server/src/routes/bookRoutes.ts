@@ -6,13 +6,16 @@ import {
   getBookById,
   updateBookById,
 } from "../controllers/bookController.js";
-import { createBookSchema } from "../utils/validation/bookValidation.js";
+import {
+  createBookSchema,
+  updateBookSchema,
+} from "../utils/validation/bookValidation.js";
 
 const router = Router();
 
 router.get("/", getAllBooks);
 router.get("/:id", getBookById);
 router.post("/", zodValidator(createBookSchema), createBook);
-router.patch("/:id", updateBookById);
+router.patch("/:id", zodValidator(updateBookSchema), updateBookById);
 
 export default router;
