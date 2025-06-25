@@ -24,7 +24,11 @@ export const registerUserSchema = z
       .min(8)
       .max(128),
     confirm_password: z.string(),
-    phone: z.string().refine(validator.isMobilePhone),
+    phone: z
+      .string()
+      .refine((phone) => validator.isMobilePhone(phone, "ar-EG"), {
+        message: "invalid Egyptian phone number",
+      }),
     address: z.object({
       street: z.string().max(128),
       city: z.string().max(32),
