@@ -148,3 +148,47 @@ export const createBook = async (
     next(error);
   }
 };
+
+/**
+ * Updates a book by its ID with the provided data in the request body.
+ *
+ * @param req - Express request object containing the book ID in params and update data in body
+ * @param res - Express response object used to send the updated book data
+ * @param next - Express next function for error handling middleware
+ * @returns Promise<void> - Resolves when the book is successfully updated and response is sent
+ *
+ * @throws {AppError} Throws an AppError with status 404 if no book is found with the given ID
+ *
+ * @example
+ *  PATCH /api/books/123
+ *  Request body: { title: "New Title", author: "New Author" }
+ *  Response: { status: "Success", message: "Book updated successfully", data: { book: {...} } }
+ */
+export const updateBookById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const id = req.params.id;
+    const updatedBook = await Book.findByIdAndUpdate(
+      id,
+      { $set: req.body },
+      { new: true }
+    );
+    // if the updatedBook is null, that means there are no books with that id
+    if (!updatedBook) {
+      throw new AppError("Book not found", 404);
+    }
+    // otherwise, the book was updated successfully
+    res.status(200).json({
+      status: "Success",
+      message: "Book updated successfully",
+      data: {
+        book: updatedBook,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
