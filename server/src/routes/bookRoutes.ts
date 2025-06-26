@@ -5,6 +5,7 @@ import {
   createBook,
   getBookById,
   updateBookById,
+  deleteBookById,
 } from "../controllers/bookController.js";
 import {
   createBookSchema,
@@ -17,5 +18,6 @@ router.get("/", getAllBooks);
 router.get("/:id", getBookById);
 router.post("/", zodValidator(createBookSchema), createBook);
 router.patch("/:id", zodValidator(updateBookSchema), updateBookById);
+router.delete("/:id", deleteBookById);
 
 export default router;

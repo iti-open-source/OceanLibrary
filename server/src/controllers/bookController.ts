@@ -223,3 +223,24 @@ export const updateBookById = async (
     next(error);
   }
 };
+
+export const deleteBookById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const id = req.params.id;
+    const deletedBook = await Book.findByIdAndDelete(id);
+
+    // if the deletedBook is null, that means there are no books with that id
+    if (!deletedBook) {
+      throw new AppError("Book not found", 404);
+    }
+
+    // otherwise, the book was deleted successfully
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+};
