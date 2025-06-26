@@ -224,6 +224,23 @@ export const updateBookById = async (
   }
 };
 
+/**
+ * Deletes a book by its ID from the database.
+ *
+ * @param req - Express request object containing the book ID in params
+ * @param res - Express response object used to send the HTTP response
+ * @param next - Express next function for error handling middleware
+ *
+ * @throws {AppError} Throws an AppError with status 404 if no book is found with the given ID
+ *
+ * @returns Promise<void> - Returns a promise that resolves when the operation completes
+ *
+ * @remarks
+ * - Expects the book ID to be provided in the request parameters as 'id'
+ * - Returns HTTP 204 (No Content) status on successful deletion
+ * - Uses Mongoose's findByIdAndDelete method to remove the book from the database
+ * - Passes any caught errors to the error handling middleware via next()
+ */
 export const deleteBookById = async (
   req: Request,
   res: Response,
