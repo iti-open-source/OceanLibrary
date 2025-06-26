@@ -5,10 +5,13 @@ import {
   registerUser,
   updateUser,
   deleteUser,
+  forgotPassword,
+  resetPassword,
 } from "../controllers/userController.js";
 import {
   loginUserSchema,
   registerUserSchema,
+  resetPasswordSchema,
   updateUserSchema,
 } from "../utils/validation/userValidation.js";
 import zodValidator from "../middlewares/zodValidator.js";
@@ -26,5 +29,11 @@ router.patch(
   updateUser
 );
 router.delete("/profile", verifyToken, deleteUser);
+router.post("/forgotPassword", forgotPassword);
+router.patch(
+  "/resetPassword/:token",
+  zodValidator(resetPasswordSchema),
+  resetPassword
+);
 
 export default router;

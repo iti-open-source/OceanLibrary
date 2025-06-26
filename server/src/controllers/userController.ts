@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from "express";
+import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 import AppError from "../utils/appError.js";
 import { CustomRequest } from "../middlewares/auth.js";
+import { passwordResetEmail } from "../utils/email.js";
 
 export const getUsers = async (
   req: Request,
@@ -119,6 +121,71 @@ export const deleteUser = async (
     res
       .status(200)
       .json({ status: "success", message: "user deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// reset password feature
+export const forgotPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const { email } = req.body;
+  const user = await userModel.findOne({ email: email });
+
+  try {
+    if (!user) {
+      return next(new AppError("user not found", 404));
+    }
+    const token = await user.createPasswordResetToken();
+    await passwordResetEmail({
+      from: "info@mailtrap.club",
+      to: email,
+      subject: "Password Reset",
+      text: `${user.username}, reset your password from the link: http://localhost:3000/resetPassword/${token}`,
+    });
+    res.status(200).json({ status: "success", message: token });
+  } catch (error) {
+    // reset user data if any failure occurs in the request
+    if (user) {
+      user.passwordResetToken = undefined;
+      user.passwordResetExpiry = undefined;
+      await user.save();
+    }
+    next(error);
+  }
+};
+
+export const resetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    // get the token from the patch request made by client
+    if (!token) {
+      return next(new AppError("invalid/expired token", 401));
+    }
+    // to find the token in the database the parameter token needs to be hashed first
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    const user = await userModel.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpiry: { $gt: Date.now() },
+    });
+    if (!user) {
+      return next(new AppError("invalid/expired token", 401));
+    }
+    user.password = password;
+    user.passwordChangeAt = new Date();
+    user.passwordResetToken = undefined;
+    user.passwordResetExpiry = undefined;
+    await user.save();
+    res.status(200).json({ status: "success", data: user });
   } catch (error) {
     next(error);
   }

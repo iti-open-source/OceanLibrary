@@ -51,13 +51,12 @@ export const updateUserSchema = z.object({
     .regex(/^[a-zA-Z0-9]*$/, "only alphanumeric characters allowed")
     .optional(),
   email: z.email().trim().optional(),
-  password: z
+  phone: z
     .string()
-    .regex(passwordRegex, "password must be alphanumeric")
-    .min(8)
-    .max(128)
+    .refine((phone) => validator.isMobilePhone(phone, "ar-EG"), {
+      message: "invalid Egyptian phone number",
+    })
     .optional(),
-  phone: z.string().refine(validator.isMobilePhone).optional(),
   address: z
     .object({
       street: z.string().max(128).optional(),
@@ -67,3 +66,18 @@ export const updateUserSchema = z.object({
     })
     .optional(),
 });
+
+export const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .regex(passwordRegex, "password must be alphanumeric")
+      .min(8)
+      .max(128)
+      .optional(),
+    confirm_password: z.string(),
+  })
+  .refine((data) => data.password === data.confirm_password, {
+    message: "passwords do not match",
+    path: ["confirm_password"],
+  });
