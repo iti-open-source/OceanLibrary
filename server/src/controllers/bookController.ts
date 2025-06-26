@@ -1,52 +1,79 @@
 import { Request, Response, NextFunction } from "express";
 import Book from "../models/bookModel.js";
 import AppError from "../utils/appError.js";
+import { BookFilter } from "../types/bookFilter.js";
 
 /**
- * Retrieves all books with pagination support.
+ * Retrieves all books with pagination and filtering support.
  *
  * @param req - Express request object containing query parameters:
  *   - `page` (optional): Page number for pagination (default: 1)
  *   - `limit` (optional): Number of items per page (default: 10)
+ *   - `title` (optional): Title filter for case-insensitive partial match
+ *   - `author` (optional): Author filter for case-insensitive partial match
+ *   - `priceMin` (optional): Minimum price filter
+ *   - `priceMax` (optional): Maximum price filter
  * @param res - Express response object
  * @param next - Express next function for error handling
- * @returns Promise<void> - Responds with paginated book data or error message
+ * @returns Promise<void> - Responds with paginated and filtered book data or error message
  *
  * @remarks
  * The response includes:
  * - `currentPage`: Current page number
  * - `totalPages`: Total number of pages
- * - `totalItems`: Total number of books in the database
+ * - `totalItems`: Total number of books matching the filter criteria
  * - `data`: Array of books for the current page
  *
  * @example
- * GET /books?page=2&limit=5
- * Returns books 6-10 with pagination metadata
+ * GET /books?page=1&limit=10&title=javascript&author=smith&priceMin=10&priceMax=50
+ * Returns filtered books with pagination metadata
  *
  * @throws {500} When database operation fails
  */
+
 export const getAllBooks = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const defaultPageNumber = 1;
-  const defautlLimitNumber = 10;
-  const page = parseInt(req.query.page as string) || defaultPageNumber;
-  const limit = parseInt(req.query.limit as string) || defautlLimitNumber;
+  const { page = 1, limit = 10, title, author, priceMin, priceMax } = req.query;
 
   // ex: If we're on page 1 and the limit is 10 -> (1 - 1) * 10 = 0, which is correct we don't wanna skip anything in this case
-  const skip = (page - 1) * limit;
+  const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
+
+  // Build filter object
+  const filter: BookFilter = {};
+
+  // Check for each filter item, if it exists, apply it to the filter object
+  if (title) {
+    filter.title = { $regex: title as string, $options: "i" }; // case-insensitive partial match
+  }
+
+  if (author) {
+    filter.author = { $regex: author as string, $options: "i" }; // case-insensitive partial match
+  }
+
+  if (priceMin || priceMax) {
+    filter.price = {};
+    if (priceMin) {
+      filter.price.$gte = parseFloat(priceMin as string);
+    }
+    if (priceMax) {
+      filter.price.$lte = parseFloat(priceMax as string);
+    }
+  }
 
   try {
-    const books = await Book.find().skip(skip).limit(limit);
-    const total = await Book.countDocuments();
+    const books = await Book.find(filter)
+      .skip(skip)
+      .limit(parseInt(limit as string));
+    const total = await Book.countDocuments(filter);
 
     res.status(200).json({
       status: "Success",
       data: {
         currentPage: page,
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(total / parseInt(limit as string)),
         totalItems: total,
         books,
       },
