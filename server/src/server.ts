@@ -8,10 +8,13 @@ import orderRouter from "./routes/orderRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import AppError from "./utils/appError.js";
+import logger from "./middlewares/logger.js";
 
 const app = express();
 
 app.use(express.json());
+
+app.use(logger);
 
 // Routes
 app.use("/api/v1/books", bookRouter);

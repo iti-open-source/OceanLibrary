@@ -96,7 +96,9 @@ export const getBookById = async (
     } else {
       res.json({
         status: "Success",
-        data: book,
+        data: {
+          book,
+        },
       });
     }
   } catch (error) {
@@ -142,7 +144,9 @@ export const createBook = async (
     res.status(201).json({
       status: "Success",
       message: "Book created successfully",
-      data: book,
+      data: {
+        book,
+      },
     });
   } catch (error) {
     next(error);
