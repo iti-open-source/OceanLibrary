@@ -147,27 +147,7 @@ export const createBook = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const {
-      title,
-      author,
-      genres,
-      price,
-      rating = 0,
-      description,
-      stock,
-      image,
-    } = req.body;
-
-    const book = await Book.insertOne({
-      title,
-      author,
-      genres,
-      price,
-      rating,
-      description,
-      stock,
-      image,
-    });
+    const book = await Book.insertOne(req.body);
     res.status(201).json({
       status: "Success",
       message: "Book created successfully",
