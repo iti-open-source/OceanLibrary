@@ -1,5 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
+import helmet from "helmet";
+import hpp from "hpp";
 import "dotenv/config";
 import bookRouter from "./routes/bookRoutes.js";
 import cartRouter from "./routes/cartRoutes.js";
@@ -7,13 +9,15 @@ import reviewRouter from "./routes/reviewRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import errorHandler from "./middlewares/errorHandler.js";
-import AppError from "./utils/appError.js";
 import logger from "./middlewares/logger.js";
+import AppError from "./utils/appError.js";
 
 const app = express();
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
+app.use(helmet());
+app.use(hpp());
 app.use(logger);
 
 // Routes
