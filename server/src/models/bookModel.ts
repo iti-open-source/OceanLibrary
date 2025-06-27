@@ -20,7 +20,11 @@ const bookSchema = new Schema(
     stock: {
       type: Number,
     },
-    rating: {
+    ratingAverage: {
+      type: Number,
+      default: 0,
+    },
+    ratingQuantity: {
       type: Number,
       default: 0,
     },
