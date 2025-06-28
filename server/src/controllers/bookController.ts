@@ -13,6 +13,10 @@ import { BookFilter } from "../types/bookFilter.js";
  *   - `author` (optional): Author filter for case-insensitive partial match
  *   - `priceMin` (optional): Minimum price filter
  *   - `priceMax` (optional): Maximum price filter
+ *   - `sortBy` (optional): The field by which to sort the books (default by ratingAverage)
+ *   - `order` (asc/desc) (optional): The order of the sorting (Descending or ascending) (default descending)
+ *   - `genres` (optional): The genres by which to filter the books, returns all genres if not provided
+ *   - `match` (any/all) (optional): Specifies whether we want the book to have at least one of the genres to pass or all of them
  * @param res - Express response object
  * @param next - Express next function for error handling
  * @returns Promise<void> - Responds with paginated and filtered book data or error message
@@ -42,10 +46,16 @@ export const getAllBooks = async (
     title,
     author,
     priceMin,
-    sortBy = "price",
-    order = "asc",
+    match = "any",
+    sortBy = "ratingAverage",
+    order = "desc",
     priceMax,
   } = req.query;
+
+  // Genres are expected to be a comma-separated string, so we convert it to an array here and make sure that they're all lower case
+  const genres = (req.query.genres as string)
+    .split(",")
+    .map((g) => g.toLowerCase());
 
   // ex: If we're on page 1 and the limit is 10 -> (1 - 1) * 10 = 0, which is correct we don't wanna skip anything in this case
   const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
@@ -62,6 +72,18 @@ export const getAllBooks = async (
     filter.author = { $regex: author as string, $options: "i" }; // case-insensitive partial match
   }
 
+  if (genres) {
+    if (match == "any") {
+      // if the match is 'any' , then that means we want the 'UNION', which means we want the books having 'ANY' of these genres
+      // so a book having at least one of the genres will pass
+      filter.genres = { $in: genres };
+    } else if (match == "all") {
+      // but if the match is 'all', then that means we want the 'INTERSECTION', which means we want the books having 'ALL' of these genres
+      // so the book must have all of the provided genres to pass
+      filter.genres = { $all: genres };
+    }
+  }
+
   if (priceMin || priceMax) {
     filter.price = {};
     if (priceMin) {
@@ -74,6 +96,7 @@ export const getAllBooks = async (
 
   try {
     const books = await Book.find(filter)
+      // You can sort by price, title, ratingAverage, ratingQuantity, stock, ..etc
       .sort({ [sortBy as string]: order == "asc" ? 1 : -1 })
       .skip(skip)
       .limit(parseInt(limit as string));
