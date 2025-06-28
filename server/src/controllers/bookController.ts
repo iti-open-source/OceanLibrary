@@ -36,7 +36,16 @@ export const getAllBooks = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const { page = 1, limit = 10, title, author, priceMin, priceMax } = req.query;
+  const {
+    page = 1,
+    limit = 10,
+    title,
+    author,
+    priceMin,
+    sortBy = "price",
+    order = "asc",
+    priceMax,
+  } = req.query;
 
   // ex: If we're on page 1 and the limit is 10 -> (1 - 1) * 10 = 0, which is correct we don't wanna skip anything in this case
   const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
@@ -65,6 +74,7 @@ export const getAllBooks = async (
 
   try {
     const books = await Book.find(filter)
+      .sort({ [sortBy as string]: order == "asc" ? 1 : -1 })
       .skip(skip)
       .limit(parseInt(limit as string));
     const total = await Book.countDocuments(filter);

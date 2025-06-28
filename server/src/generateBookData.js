@@ -1,5 +1,6 @@
 import Book from "../dist/models/bookModel.js";
 import mongoose from "mongoose";
+import "dotenv/config";
 import { faker } from "@faker-js/faker";
 import "dotenv/config";
 
@@ -31,8 +32,6 @@ const genresPool = [
   "comics",
 ];
 
-// eslint-disable-next-line no-undef
-
 function getRandomGenres() {
   const shuffled = [...genresPool].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, Math.floor(Math.random() * 3) + 1); // 1 to 3 genres
@@ -57,7 +56,16 @@ function generateBook(id) {
 
 // Generate N books
 const length = 500;
-const books = Array.from({ length }, (_, index) => generateBook(index + 1));
+const uniqueTitles = [];
+const books = Array.from({ length }, (_, index) =>
+  generateBook(index + 1)
+).filter((book) => {
+  if (!uniqueTitles.includes(book.title)) {
+    uniqueTitles.push(book.title);
+    return true;
+  }
+  return false;
+});
 
 const populateDatabase = async () => {
   try {
