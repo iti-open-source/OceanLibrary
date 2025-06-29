@@ -27,7 +27,7 @@ app.use("/api/v1/reviews", reviewRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/users", userRouter);
 // fallback route after express update
-app.use("/{*splat}", (req: Request, res: Response, next: NextFunction) => {
+app.use("*", (req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`Route ${req.originalUrl} not found`, 404));
 });
 
@@ -53,14 +53,14 @@ app.listen(PORT, () => {
 });
 
 process.on("uncaughtException", (error: Error) => {
-  console.error("Uncaught exception occurred", error.message);
+  console.error("Uncaught Exception Occurred", error.message);
   process.exit(1);
 });
 
 process.on(
   "unhandledRejection",
   (reason: unknown, promise: Promise<unknown>) => {
-    console.error("Unhandled rejection at: ", promise, reason);
+    console.error("Unhandled Rejection", promise, reason);
     process.exit(1);
   }
 );

@@ -13,7 +13,7 @@ export const verifyToken = async (
   next: NextFunction
 ) => {
   try {
-    // authorization header: Bearer <token>
+    // extract token from authorization header: Bearer <token>
     const token = req.headers["authorization"]?.replace("Bearer ", "");
     if (!token || !process.env.SECRET_KEY) {
       return next(new AppError("authentication failed", 401));
@@ -23,7 +23,6 @@ export const verifyToken = async (
     if (typeof decoded === "string" || !decoded.userId) {
       return next(new AppError("invalid token", 401));
     }
-    console.log(decoded.userId);
     req.userId = decoded.userId;
     next();
   } catch (error) {

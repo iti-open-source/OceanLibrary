@@ -3,9 +3,9 @@ import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
-import AppError from "../utils/appError.js";
 import { CustomRequest } from "../middlewares/auth.js";
-import { passwordResetEmail } from "../utils/email.js";
+import { userServiceMail } from "../utils/email.js";
+import AppError from "../utils/appError.js";
 
 export const getUsers = async (
   req: Request,
@@ -117,10 +117,77 @@ export const deleteUser = async (
   try {
     const user = await userModel.findById(req.userId);
     if (!user) return next(new AppError("user not found", 404));
-    await userModel.findByIdAndDelete(req.userId);
+    await userModel.findByIdAndUpdate(req.userId, { active: false });
     res
       .status(200)
       .json({ status: "success", message: "user deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// verify user feature
+export const reqVerifyUser = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = await userModel.findById(req.userId);
+
+  try {
+    if (!user || user.verified === true) {
+      return next(new AppError("verification request failed", 401));
+    }
+    // send email with generated token
+    const token = await user.createVerificationToken();
+    const URL = `${req.protocol}://${req.get(
+      "host"
+    )}/api/v1/users/verify/${token}`;
+
+    await userServiceMail({
+      from: "info@mailtrap.club",
+      to: user.email,
+      subject: "Verify Email",
+      text: `${user.username}, verify your account here:\n${URL}`,
+    });
+    res.status(200).json({ status: "success", data: token });
+  } catch (error) {
+    if (user) {
+      // reset user data if any failure occurs in the request
+      user.verificationToken = undefined;
+      user.verificationExpiry = undefined;
+      await user.save();
+    }
+    next(error);
+  }
+};
+
+export const verifyUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { token } = req.params;
+
+  try {
+    if (!token) {
+      return next(new AppError("invalid/expired token", 401));
+    }
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    const user = await userModel.findOne({
+      verificationToken: hashedToken,
+      verificationExpiry: { $gt: Date.now() },
+    });
+    if (!user) {
+      return next(new AppError("invalid/expired token", 401));
+    }
+    user.verified = true;
+    user.verificationToken = undefined;
+    user.verificationExpiry = undefined;
+    res
+      .status(200)
+      .json({ status: "success", message: "user verified successfully" });
+    await user.save();
   } catch (error) {
     next(error);
   }
@@ -139,14 +206,19 @@ export const forgotPassword = async (
     if (!user) {
       return next(new AppError("user not found", 404));
     }
+    // send email with generated token
     const token = await user.createPasswordResetToken();
-    await passwordResetEmail({
+    const URL = `${req.protocol}://${req.get(
+      "host"
+    )}/api/v1/users/resetPassword/${token}`;
+
+    await userServiceMail({
       from: "info@mailtrap.club",
       to: email,
       subject: "Password Reset",
-      text: `${user.username}, reset your password from the link: http://localhost:3000/resetPassword/${token}`,
+      text: `${user.username}, reset your password here:\n${URL}`,
     });
-    res.status(200).json({ status: "success", message: token });
+    res.status(200).json({ status: "success", data: token });
   } catch (error) {
     // reset user data if any failure occurs in the request
     if (user) {

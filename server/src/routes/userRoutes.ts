@@ -7,6 +7,8 @@ import {
   deleteUser,
   forgotPassword,
   resetPassword,
+  reqVerifyUser,
+  verifyUser,
 } from "../controllers/userController.js";
 import {
   loginUserSchema,
@@ -29,7 +31,9 @@ router.patch(
   updateUser
 );
 router.delete("/profile", verifyToken, deleteUser);
-router.post("/forgotPassword", forgotPassword);
+router.post("/requestVerification", verifyToken, reqVerifyUser);
+router.patch("/verify/:token", verifyUser);
+router.post("/forgotPassword", verifyToken, forgotPassword);
 router.patch(
   "/resetPassword/:token",
   zodValidator(resetPasswordSchema),

@@ -1,31 +1,7 @@
-import mongoose, { Document, Schema, Model, HydratedDocument } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
-
-export interface IUser extends Document {
-  username: string;
-  email: string;
-  password: string;
-  phone: string;
-  address: {
-    street: string;
-    city: string;
-    country: string;
-    zip: string;
-  };
-  role: string;
-  verified?: boolean;
-  active?: boolean;
-  passwordChangeAt?: Date;
-  passwordResetToken?: string;
-  passwordResetExpiry?: Date;
-}
-
-export interface IUserMethods {
-  createPasswordResetToken(): Promise<string>;
-}
-
-export type UserDocument = HydratedDocument<IUser, IUserMethods>;
+import { IUser, IUserMethods, UserDocument } from "../types/user.js";
 
 const userSchema = new Schema<
   IUser,
@@ -51,8 +27,10 @@ const userSchema = new Schema<
     phone: { type: String, required: true, trim: true },
     address: { street: String, city: String, country: String, zip: String },
     role: { type: String, enum: ["admin", "user"], default: "user" },
-    verified: { type: Boolean, default: false },
     active: { type: Boolean, default: true },
+    verified: { type: Boolean, default: false },
+    verificationToken: { type: String },
+    verificationExpiry: { type: Date },
     passwordChangeAt: { type: Date },
     passwordResetToken: { type: String },
     passwordResetExpiry: { type: Date },
@@ -70,14 +48,25 @@ userSchema.pre("save", async function (this: UserDocument, next) {
   next();
 });
 
+userSchema.methods.createVerificationToken = async function (
+  this: UserDocument
+) {
+  const token = crypto.randomBytes(32).toString("hex");
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+  // store hashed token in database
+  this.verificationToken = hashedToken;
+  // token expires in 10 minutes
+  this.verificationExpiry = new Date(Date.now() + 1000 * 60 * 10);
+  await this.save();
+  return token;
+};
+
 userSchema.methods.createPasswordResetToken = async function (
   this: UserDocument
 ) {
   const token = crypto.randomBytes(32).toString("hex");
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
-  // store hashed password in database
   this.passwordResetToken = hashedToken;
-  // password expires in 10 minutes
   this.passwordResetExpiry = new Date(Date.now() + 1000 * 60 * 10);
   await this.save();
   return token;

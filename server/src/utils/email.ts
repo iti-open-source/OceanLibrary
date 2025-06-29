@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-export async function passwordResetEmail(info: object) {
+export async function userServiceMail(info: object) {
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_SERVICE_HOST,
     port: 587,
