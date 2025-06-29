@@ -1,7 +1,8 @@
+import Book from "../models/bookModel.js";
 import mongoose from "mongoose";
 import { faker } from "@faker-js/faker";
 import "dotenv/config";
-import bookModel from "../models/bookModel.js";
+import { IBook } from "../types/book.js";
 
 const { DB_URI } = process.env;
 
@@ -9,14 +10,7 @@ if (!DB_URI) {
   throw new Error("missing URI");
 }
 
-mongoose
-  .connect(DB_URI)
-  .then(() => {
-    console.log("Connected to database");
-  })
-  .catch((error) => {
-    console.error("Connection to database failed", error);
-  });
+mongoose.connect(DB_URI);
 
 const genresPool = [
   "fiction",
@@ -36,12 +30,12 @@ const genresPool = [
   "comics",
 ];
 
-function getRandomGenres() {
+function getRandomGenres(): string[] {
   const shuffled = [...genresPool].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, Math.floor(Math.random() * 3) + 1); // 1 to 3 genres
 }
 
-function generateBook() {
+function generateBook(): IBook {
   return {
     title: faker.book.title(),
     author: faker.book.author(),
@@ -58,7 +52,7 @@ function generateBook() {
 }
 
 // Generate N books
-const length = 500;
+const length = 10000;
 const uniqueTitles: string[] = [];
 const books = Array.from({ length }, () => generateBook()).filter((book) => {
   if (!uniqueTitles.includes(book.title)) {
@@ -68,9 +62,9 @@ const books = Array.from({ length }, () => generateBook()).filter((book) => {
   return false;
 });
 
-const populateDatabase = async () => {
+const populateDatabase = async (): Promise<void> => {
   try {
-    await bookModel.insertMany(books);
+    await Book.insertMany(books);
     console.log("Books collection has been populated!");
   } catch (error) {
     console.error("Error populating database:", error);
