@@ -6,7 +6,11 @@ const zipRegex = /^\d+$/;
 
 export const loginUserSchema = z.object({
   email: z.email().trim(),
-  password: z.string().regex(passwordRegex, "password must be alphanumeric"),
+  password: z
+    .string()
+    .regex(passwordRegex, "password must be alphanumeric")
+    .min(8)
+    .max(128),
 });
 
 export const registerUserSchema = z
@@ -23,11 +27,11 @@ export const registerUserSchema = z
       .regex(passwordRegex, "password must be alphanumeric")
       .min(8)
       .max(128),
-    confirm_password: z.string(),
+    confirmPassword: z.string(),
     phone: z
       .string()
       .refine((phone) => validator.isMobilePhone(phone, "ar-EG"), {
-        message: "invalid Egyptian phone number",
+        message: "invalid egyptian phone number",
       }),
     address: z.object({
       street: z.string().max(128),
@@ -35,11 +39,10 @@ export const registerUserSchema = z
       country: z.string().max(32),
       zip: z.string().regex(zipRegex, "invalid zip").min(5).max(10),
     }),
-    role: z.enum(["admin", "user"]).optional(),
   })
-  .refine((data) => data.password === data.confirm_password, {
+  .refine((data) => data.password === data.confirmPassword, {
     message: "passwords do not match",
-    path: ["confirm_password"],
+    path: ["confirmPassword"],
   });
 
 export const updateUserSchema = z.object({
@@ -67,17 +70,35 @@ export const updateUserSchema = z.object({
     .optional(),
 });
 
+export const changePasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .regex(passwordRegex, "password must be alphanumeric")
+      .min(8)
+      .max(128),
+    newPassword: z
+      .string()
+      .regex(passwordRegex, "password must be alphanumeric")
+      .min(8)
+      .max(128),
+    confirmNewPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: "passwords do not match",
+    path: ["confirmNewPassword"],
+  });
+
 export const resetPasswordSchema = z
   .object({
     password: z
       .string()
       .regex(passwordRegex, "password must be alphanumeric")
       .min(8)
-      .max(128)
-      .optional(),
-    confirm_password: z.string(),
+      .max(128),
+    confirmPassword: z.string(),
   })
-  .refine((data) => data.password === data.confirm_password, {
+  .refine((data) => data.password === data.confirmPassword, {
     message: "passwords do not match",
-    path: ["confirm_password"],
+    path: ["confirmPassword"],
   });

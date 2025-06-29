@@ -4,8 +4,9 @@ import {
   loginUser,
   registerUser,
   updateUser,
+  changePassword,
   deleteUser,
-  forgotPassword,
+  forgetPassword,
   resetPassword,
   reqVerifyUser,
   verifyUser,
@@ -15,8 +16,9 @@ import {
 import {
   loginUserSchema,
   registerUserSchema,
-  resetPasswordSchema,
   updateUserSchema,
+  changePasswordSchema,
+  resetPasswordSchema,
 } from "../utils/validation/userValidation.js";
 import zodValidator from "../middlewares/zodValidator.js";
 import { verifyToken } from "../middlewares/auth.js";
@@ -32,12 +34,18 @@ router.patch(
   verifyToken,
   updateUser
 );
+router.patch(
+  "/changePassword",
+  verifyToken,
+  zodValidator(changePasswordSchema),
+  changePassword
+);
 router.patch("/disable", verifyToken, deleteUser);
 // verify user feature
 router.post("/requestVerification", verifyToken, reqVerifyUser);
 router.patch("/verify/:token", verifyUser);
 // forgot password feature
-router.post("/forgotPassword", verifyToken, forgotPassword);
+router.post("/forgotPassword", verifyToken, forgetPassword);
 router.patch(
   "/resetPassword/:token",
   zodValidator(resetPasswordSchema),
@@ -46,4 +54,5 @@ router.patch(
 // admin api
 router.patch("/promote/:id", verifyToken, promoteUser);
 router.patch("/ban/:id", verifyToken, banUser);
+
 export default router;

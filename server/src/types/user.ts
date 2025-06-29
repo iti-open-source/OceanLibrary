@@ -22,6 +22,7 @@ export interface IUser extends Document {
 }
 
 export interface IUserMethods {
+  comparePassword(password: string): Promise<boolean>;
   createVerificationToken(): Promise<string>;
   createPasswordResetToken(): Promise<string>;
 }

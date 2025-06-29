@@ -1,12 +1,16 @@
-import Book from "../dist/models/bookModel.js";
 import mongoose from "mongoose";
-import "dotenv/config";
 import { faker } from "@faker-js/faker";
 import "dotenv/config";
+import bookModel from "../models/bookModel.js";
+
+const { DB_URI } = process.env;
+
+if (!DB_URI) {
+  throw new Error("missing URI");
+}
 
 mongoose
-  // eslint-disable-next-line no-undef
-  .connect(process.env.DB_URI)
+  .connect(DB_URI)
   .then(() => {
     console.log("Connected to database");
   })
@@ -37,9 +41,8 @@ function getRandomGenres() {
   return shuffled.slice(0, Math.floor(Math.random() * 3) + 1); // 1 to 3 genres
 }
 
-function generateBook(id) {
+function generateBook() {
   return {
-    id,
     title: faker.book.title(),
     author: faker.book.author(),
     genres: getRandomGenres(),
@@ -56,10 +59,8 @@ function generateBook(id) {
 
 // Generate N books
 const length = 500;
-const uniqueTitles = [];
-const books = Array.from({ length }, (_, index) =>
-  generateBook(index + 1)
-).filter((book) => {
+const uniqueTitles: string[] = [];
+const books = Array.from({ length }, () => generateBook()).filter((book) => {
   if (!uniqueTitles.includes(book.title)) {
     uniqueTitles.push(book.title);
     return true;
@@ -69,7 +70,7 @@ const books = Array.from({ length }, (_, index) =>
 
 const populateDatabase = async () => {
   try {
-    await Book.insertMany(books);
+    await bookModel.insertMany(books);
     console.log("Books collection has been populated!");
   } catch (error) {
     console.error("Error populating database:", error);

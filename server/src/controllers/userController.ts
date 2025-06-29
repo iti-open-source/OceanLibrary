@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import crypto from "crypto";
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 import { CustomRequest } from "../middlewares/auth.js";
@@ -31,14 +30,14 @@ export const loginUser = async (
     // check if user exits
     const user = await userModel.findOne({ email: email });
     if (!user) {
-      return next(new AppError("invalid credentials", 400));
+      return next(new AppError("invalid credentials", 401));
     }
     if (user.active === false) {
-      return next(new AppError("user account disabled", 400));
+      return next(new AppError("user account disabled", 403));
     }
     // check for login password and secret key before token generation
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (isValidPassword && process.env.SECRET_KEY) {
+    const comparePassword = await user.comparePassword(password);
+    if (comparePassword && process.env.SECRET_KEY) {
       // generate token and return in response
       const token = jwt.sign(
         { userId: user._id, userRole: user.role },
@@ -47,9 +46,9 @@ export const loginUser = async (
           expiresIn: "1h",
         }
       );
-      res.status(200).json({ status: "success", data: user, token: token });
+      res.status(200).json({ status: "success", data: token });
     } else {
-      return next(new AppError("invalid credentials", 400));
+      return next(new AppError("invalid credentials", 401));
     }
   } catch (error) {
     next(error);
@@ -76,7 +75,6 @@ export const registerUser = async (
       address,
       role,
     });
-    await user.save();
     res.status(201).json({ status: "success", data: user });
   } catch (error) {
     next(error);
@@ -97,7 +95,7 @@ export const updateUser = async (
     }
   }
   if (Object.keys(updates).length === 0) {
-    return next(new AppError("invalid field updates", 400));
+    return next(new AppError("invalid field updates", 401));
   }
 
   try {
@@ -132,12 +130,37 @@ export const deleteUser = async (
   }
 };
 
+export const changePassword = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const { password, newPassword } = req.body;
+  try {
+    const user = await userModel.findById(req.userId);
+    if (!user) {
+      return next(new AppError("user not found", 404));
+    }
+    const comparePassword = await user.comparePassword(password);
+    if (!comparePassword) {
+      return next(new AppError("incorrect password", 400));
+    }
+    user.password = newPassword;
+    await user.save();
+    res
+      .status(200)
+      .json({ status: "success", message: "password changed successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // verify user feature
 export const reqVerifyUser = async (
   req: CustomRequest,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   const user = await userModel.findById(req.userId);
 
   try {
@@ -172,7 +195,7 @@ export const verifyUser = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   const { token } = req.params;
 
   try {
@@ -191,16 +214,14 @@ export const verifyUser = async (
     user.verificationToken = undefined;
     user.verificationExpiry = undefined;
     await user.save();
-    res
-      .status(200)
-      .json({ status: "success", message: "user verified successfully" });
+    res.status(200).json({ status: "success", data: user });
   } catch (error) {
     next(error);
   }
 };
 
 // reset password feature
-export const forgotPassword = async (
+export const forgetPassword = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -274,7 +295,7 @@ export const promoteUser = async (
   req: CustomRequest,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   const role = req.userRole;
   const { id } = req.params;
   try {
@@ -298,7 +319,7 @@ export const banUser = async (
   req: CustomRequest,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   const role = req.userRole;
   const { id } = req.params;
   try {
