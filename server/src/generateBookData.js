@@ -37,9 +37,8 @@ function getRandomGenres() {
   return shuffled.slice(0, Math.floor(Math.random() * 3) + 1); // 1 to 3 genres
 }
 
-function generateBook(id) {
+function generateBook() {
   return {
-    id,
     title: faker.book.title(),
     author: faker.book.author(),
     genres: getRandomGenres(),
@@ -55,11 +54,9 @@ function generateBook(id) {
 }
 
 // Generate N books
-const length = 500;
+const length = 10000;
 const uniqueTitles = [];
-const books = Array.from({ length }, (_, index) =>
-  generateBook(index + 1)
-).filter((book) => {
+const books = Array.from({ length }, (_) => generateBook()).filter((book) => {
   if (!uniqueTitles.includes(book.title)) {
     uniqueTitles.push(book.title);
     return true;
