@@ -9,6 +9,8 @@ import {
   resetPassword,
   reqVerifyUser,
   verifyUser,
+  promoteUser,
+  banUser,
 } from "../controllers/userController.js";
 import {
   loginUserSchema,
@@ -30,14 +32,18 @@ router.patch(
   verifyToken,
   updateUser
 );
-router.delete("/profile", verifyToken, deleteUser);
+router.patch("/disable", verifyToken, deleteUser);
+// verify user feature
 router.post("/requestVerification", verifyToken, reqVerifyUser);
 router.patch("/verify/:token", verifyUser);
+// forgot password feature
 router.post("/forgotPassword", verifyToken, forgotPassword);
 router.patch(
   "/resetPassword/:token",
   zodValidator(resetPasswordSchema),
   resetPassword
 );
-
+// admin api
+router.patch("/promote/:id", verifyToken, promoteUser);
+router.patch("/ban/:id", verifyToken, banUser);
 export default router;

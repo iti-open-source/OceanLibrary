@@ -5,6 +5,7 @@ import AppError from "../utils/appError.js";
 // Extend Express Request interface to include userId
 export interface CustomRequest extends Request {
   userId?: string;
+  userRole?: string;
 }
 
 export const verifyToken = async (
@@ -20,10 +21,11 @@ export const verifyToken = async (
     }
     // assign decoded data to request
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    if (typeof decoded === "string" || !decoded.userId) {
+    if (typeof decoded === "string" || !decoded.userId || !decoded.userRole) {
       return next(new AppError("invalid token", 401));
     }
     req.userId = decoded.userId;
+    req.userRole = decoded.userRole;
     next();
   } catch (error) {
     next(error);

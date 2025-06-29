@@ -14,11 +14,7 @@ export const getUsers = async (
 ): Promise<void> => {
   try {
     const users = await userModel.find();
-    if (users.length === 0) {
-      res.status(200).json({ status: "success", data: "no data" });
-    } else {
-      res.status(200).json({ status: "success", data: users });
-    }
+    res.status(200).json({ status: "success", data: users });
   } catch (error) {
     next(error);
   }
@@ -37,14 +33,20 @@ export const loginUser = async (
     if (!user) {
       return next(new AppError("invalid credentials", 400));
     }
+    if (user.active === false) {
+      return next(new AppError("user account disabled", 400));
+    }
     // check for login password and secret key before token generation
     const isValidPassword = await bcrypt.compare(password, user.password);
-    console.log(user);
     if (isValidPassword && process.env.SECRET_KEY) {
       // generate token and return in response
-      const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
-        expiresIn: "1h",
-      });
+      const token = jwt.sign(
+        { userId: user._id, userRole: user.role },
+        process.env.SECRET_KEY,
+        {
+          expiresIn: "1h",
+        }
+      );
       res.status(200).json({ status: "success", data: user, token: token });
     } else {
       return next(new AppError("invalid credentials", 400));
@@ -59,10 +61,14 @@ export const registerUser = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const { username, email, password, phone, address, role } = req.body;
+  const { username, email, password, phone, address } = req.body;
 
   try {
-    const newUser = await userModel.create({
+    // set first user as admin by default
+    const count = await userModel.countDocuments();
+    const role = count === 0 ? "admin" : "user";
+
+    const user = await userModel.create({
       username,
       email,
       password,
@@ -70,8 +76,8 @@ export const registerUser = async (
       address,
       role,
     });
-    await newUser.save();
-    res.status(201).json({ status: "success", data: newUser });
+    await user.save();
+    res.status(201).json({ status: "success", data: user });
   } catch (error) {
     next(error);
   }
@@ -82,8 +88,8 @@ export const updateUser = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const allowed = ["username", "email", "password", "phone", "address"];
-  const updates: Record<string, number> = {};
+  const allowed = ["username", "email", "phone", "address"];
+  const updates: Record<string, string> = {};
   // Filter out only the allowed fields
   for (const field of allowed) {
     if (req.body[field]) {
@@ -117,7 +123,7 @@ export const deleteUser = async (
   try {
     const user = await userModel.findById(req.userId);
     if (!user) return next(new AppError("user not found", 404));
-    await userModel.findByIdAndUpdate(req.userId, { active: false });
+    await user.updateOne({ active: false });
     res
       .status(200)
       .json({ status: "success", message: "user deleted successfully" });
@@ -184,10 +190,10 @@ export const verifyUser = async (
     user.verified = true;
     user.verificationToken = undefined;
     user.verificationExpiry = undefined;
+    await user.save();
     res
       .status(200)
       .json({ status: "success", message: "user verified successfully" });
-    await user.save();
   } catch (error) {
     next(error);
   }
@@ -258,6 +264,55 @@ export const resetPassword = async (
     user.passwordResetExpiry = undefined;
     await user.save();
     res.status(200).json({ status: "success", data: user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// admin controller
+export const promoteUser = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const role = req.userRole;
+  const { id } = req.params;
+  try {
+    if (!role || role !== "admin") {
+      return next(new AppError("unauthorized request", 401));
+    }
+    const user = await userModel.findById(id);
+    if (!user || user.role === "admin") {
+      return next(new AppError("promotion failed", 400));
+    }
+    await user.updateOne({ role: "admin" });
+    res
+      .status(200)
+      .json({ status: "success", message: "user promoted to admin" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const banUser = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const role = req.userRole;
+  const { id } = req.params;
+  try {
+    if (!role || role !== "admin") {
+      return next(new AppError("unauthorized request", 401));
+    }
+    const user = await userModel.findById(id);
+    if (!user) {
+      return next(new AppError("user not found", 404));
+    }
+    await user.updateOne({ active: false });
+    res
+      .status(200)
+      .json({ status: "success", message: "user removed successfully" });
   } catch (error) {
     next(error);
   }
