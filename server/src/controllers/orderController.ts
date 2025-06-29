@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import orderModel from "../models/orderModel.js";
 import cartModel from "../models/cartModel.js";
 import AppError from "../utils/appError.js";
+import { CustomRequest } from "../middlewares/auth.js";
 
 /**
  * Place a new order
@@ -9,14 +10,14 @@ import AppError from "../utils/appError.js";
  * @param res - Order details or Error
  */
 export const placeOrder = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
     const { paymentMethod } = req.body;
     let paymentStatus = "pendingPayment"; // Current payment status (pending for cod)
-    const userId = "123"; //req.user._id
+    const userId = req.userId;
 
     // Validate payment method
     const validPayments = ["cash", "paymob"];
@@ -106,13 +107,13 @@ export const placeOrder = async (
  * @param res - Empty array or array of objects each has order
  */
 export const viewOrder = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
     // Get userID
-    const userId = "123"; //req.user._id
+    const userId = req.userId;
     let { page, limit }: any = req.query;
 
     // Get number of page to display
@@ -153,12 +154,12 @@ export const viewOrder = async (
  * @param res
  */
 export const viewOrderById = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const userId = "123"; //req.user._id
+    const userId = req.userId;
     const orderId = req.params.id;
 
     // Get order from DB

@@ -4,11 +4,12 @@ import {
   addToCart,
   updateCart,
 } from "../controllers/cartController.js";
+import { verifyToken } from "../middlewares/auth.js";
 
 const router = Router();
 
-router.get("/", viewCart);
-router.post("/", addToCart);
-router.patch("/", updateCart);
+router.get("/", verifyToken, viewCart);
+router.post("/", verifyToken, addToCart);
+router.patch("/", verifyToken, updateCart);
 
 export default router;

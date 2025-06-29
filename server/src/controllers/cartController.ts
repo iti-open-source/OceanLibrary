@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import cartModel from "../models/cartModel.js";
 import Book from "../models/bookModel.js";
 import AppError from "../utils/appError.js";
+import mongoose from "mongoose";
+import { CustomRequest } from "../middlewares/auth.js";
 
 /**
  * View cart - Displays cart items and total amount
@@ -9,12 +11,17 @@ import AppError from "../utils/appError.js";
  * @param res - items[], total<number>
  */
 export const viewCart = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const userId = "123"; //req.user._id;
+    const userId = req.userId;
+
+    // Validate userID
+    if (!mongoose.isValidObjectId(userId)) {
+      return next(new AppError("UserID is not valid please re-login.", 404));
+    }
 
     // Get user's cart and fetch every book info from it
     const cart = await cartModel.findById(userId).populate("items.bookId");
@@ -53,12 +60,12 @@ export const viewCart = async (
  * @param res - Error or Success message
  */
 export const addToCart = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const userId = "123"; //req.user._id
+    const userId = req.userId;
     const { bookId, quantity } = req.body;
 
     // Fetch Book info
@@ -111,12 +118,12 @@ export const addToCart = async (
  * @param res - Error or Success message
  */
 export const updateCart = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const userId = "123"; //req.user._id
+    const userId = req.userId;
     const { bookId, quantity } = req.body;
 
     // Validate bookID and quantity
