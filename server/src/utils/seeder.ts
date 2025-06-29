@@ -59,8 +59,10 @@ function generateBook() {
 
 // Generate N books
 const length = 500;
-const uniqueTitles: string[] = [];
-const books = Array.from({ length }, () => generateBook()).filter((book) => {
+const uniqueTitles = [];
+const books = Array.from({ length }, (_, index) =>
+  generateBook(index + 1)
+).filter((book) => {
   if (!uniqueTitles.includes(book.title)) {
     uniqueTitles.push(book.title);
     return true;
