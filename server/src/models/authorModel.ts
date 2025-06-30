@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IAuthor } from "../types/author.js";
+import { IAuthor } from "../types/entities/author.js";
 
 const authorSchema = new mongoose.Schema<IAuthor>(
   {

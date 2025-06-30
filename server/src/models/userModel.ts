@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
-import { UserDocument } from "../types/user.js";
+import { UserDocument } from "../types/entities/user.js";
 
 const userSchema = new mongoose.Schema(
   {

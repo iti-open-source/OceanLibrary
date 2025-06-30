@@ -1,7 +1,6 @@
-import { Schema } from "mongoose";
 export interface IBook {
   title: string;
-  author: Schema.Types.ObjectId;
+  author: string;
   genres: string[];
   price: number;
   description: string;

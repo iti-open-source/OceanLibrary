@@ -2,7 +2,7 @@ import Book from "../../models/bookModel.js";
 import mongoose from "mongoose";
 import { faker } from "@faker-js/faker";
 import "dotenv/config";
-import { IBook } from "../../types/book.js";
+import { IBook } from "../../types/entities/book.js";
 
 const { DB_URI } = process.env;
 

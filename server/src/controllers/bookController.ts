@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import Book from "../models/bookModel.js";
 import AppError from "../utils/appError.js";
-import { BookFilter } from "../types/bookFilter.js";
+import { BookFilter } from "../types/filters/bookFilter.js";
 
 /**
  * Retrieves all books with pagination and filtering support.
@@ -53,9 +53,9 @@ export const getAllBooks = async (
   } = req.query;
 
   // Genres are expected to be a comma-separated string, so we convert it to an array here and make sure that they're all lower case
-  const genres = (req.query.genres as string)
-    .split(",")
-    .map((g) => g.toLowerCase());
+  const genres = req.query.genres
+    ? (req.query.genres as string).split(",").map((g) => g.toLowerCase())
+    : undefined;
 
   // ex: If we're on page 1 and the limit is 10 -> (1 - 1) * 10 = 0, which is correct we don't wanna skip anything in this case
   const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
