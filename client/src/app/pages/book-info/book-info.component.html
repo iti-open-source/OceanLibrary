@@ -1,1 +1,38 @@
 <app-book-hero></app-book-hero>
+
+<nav class="tab-nav flex gap-5">
+  <a
+    routerLink="details"
+    routerLinkActive="active"
+    class="flex flex-col items-center"
+  >
+    <lucide-icon name="book" class="h-6 w-6 mb-1"></lucide-icon>
+    Details
+  </a>
+  <a
+    routerLink="schedule"
+    routerLinkActive="active"
+    class="flex flex-col items-center"
+  >
+    <lucide-icon name="CalendarCheck" class="h-6 w-6 mb-1"></lucide-icon>
+    Schedule
+  </a>
+  <a
+    routerLink="reviews"
+    routerLinkActive="active"
+    class="flex flex-col items-center"
+  >
+    <lucide-icon name="MessagesSquare" class="h-6 w-6 mb-1"></lucide-icon>
+    Reviews
+  </a>
+  <a
+    routerLink="preview"
+    routerLinkActive="active"
+    class="flex flex-col items-center"
+  >
+    <lucide-icon name="Eye" class="h-6 w-6 mb-1"></lucide-icon>
+    Preview
+  </a>
+</nav>
+
+<router-outlet></router-outlet>
