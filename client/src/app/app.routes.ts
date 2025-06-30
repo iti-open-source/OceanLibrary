@@ -7,6 +7,8 @@ import { DetailsComponent } from "./pages/book-info/details/details.component";
 import { ScheduleComponent } from "./pages/book-info/schedule/schedule.component";
 import { ReviewsComponent } from "./pages/book-info/reviews/reviews.component";
 import { PreviewComponent } from "./pages/book-info/preview/preview.component";
+import { adminRoutes } from "./pages/admin/admin.routes";
+import { AdminGuard } from "./guards/admin.guard";
 
 export const routes: Routes = [
   {
@@ -32,6 +34,12 @@ export const routes: Routes = [
         redirectTo: "details",
       },
     ],
+  },
+  {
+    path: "admin",
+    loadChildren: () =>
+      import("./pages/admin/admin.routes").then((m) => m.adminRoutes),
+    canActivate: [AdminGuard],
   },
   {
     path: "**",
