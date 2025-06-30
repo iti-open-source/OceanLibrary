@@ -1,43 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { Match, Order, SortBy } from "../types/queryEnums";
-
-interface GetBooksOptions {
-  page?: number;
-  limit?: number;
-  title?: string;
-  author?: string;
-  priceMin?: number;
-  priceMax?: number;
-  match?: Match;
-  order?: Order;
-  sortBy?: SortBy;
-}
-
-interface UpdateBookOptions {
-  title?: string;
-  authorName?: string;
-  authorID?: string;
-  genres?: string[];
-  price?: number;
-  description?: string;
-  stock?: number;
-  ratingAverage?: number;
-  ratingQuantity?: number;
-  image?: string;
-}
-
-interface CreateBookOptions {
-  title: string;
-  authorName: string;
-  genres: string[];
-  price: number;
-  description: string;
-  stock: number;
-  image?: string;
-}
-
+import {
+  CreateBookOptions,
+  GetBooksOptions,
+  UpdateBookOptions,
+} from "../types/bookInterfaces";
 @Injectable({
   providedIn: "root",
 })
