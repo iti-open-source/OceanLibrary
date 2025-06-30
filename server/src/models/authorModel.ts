@@ -18,6 +18,8 @@ const authorSchema = new mongoose.Schema<IAuthor>(
     },
     photo: {
       type: String,
+      default:
+        "https://images.assetsdelivery.com/compings_v2/apoev/apoev1811/apoev181100196.jpg",
     },
     genres: {
       type: [String],

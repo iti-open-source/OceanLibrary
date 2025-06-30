@@ -1,6 +1,42 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
+import { Match, Order, SortBy } from "../types/queryEnums";
+
+interface GetBooksOptions {
+  page?: number;
+  limit?: number;
+  title?: string;
+  author?: string;
+  priceMin?: number;
+  priceMax?: number;
+  match?: Match;
+  order?: Order;
+  sortBy?: SortBy;
+}
+
+interface UpdateBookOptions {
+  title?: string;
+  authorName?: string;
+  authorID?: string;
+  genres?: string[];
+  price?: number;
+  description?: string;
+  stock?: number;
+  ratingAverage?: number;
+  ratingQuantity?: number;
+  image?: string;
+}
+
+interface CreateBookOptions {
+  title: string;
+  authorName: string;
+  genres: string[];
+  price: number;
+  description: string;
+  stock: number;
+  image?: string;
+}
 
 @Injectable({
   providedIn: "root",
@@ -10,7 +46,60 @@ export class BooksService {
 
   constructor(private http: HttpClient) {}
 
-  getAllBooks() {
-    return this.http.get(this.API_URL);
+  createBook(bookData: CreateBookOptions): Observable<any> {
+    // TODO: Check for the user role before making the request, only admins allowed
+    return this.http.post(`${this.API_URL}`, bookData);
+  }
+
+  getAllBooks(options: GetBooksOptions = {}): Observable<any> {
+    const {
+      page,
+      limit,
+      title,
+      author,
+      priceMin,
+      priceMax,
+      match,
+      order,
+      sortBy,
+    } = options;
+
+    const params: { [key: string]: string } = {};
+
+    if (page !== undefined) params["page"] = page.toString();
+    if (limit !== undefined) params["limit"] = limit.toString();
+    if (title) params["title"] = title;
+    if (author) params["author"] = author;
+    if (priceMin !== undefined) params["priceMin"] = priceMin.toString();
+    if (priceMax !== undefined) params["priceMax"] = priceMax.toString();
+    if (match) params["match"] = match;
+    if (order) params["order"] = order;
+    if (sortBy) params["sortBy"] = sortBy;
+
+    const queryString =
+      Object.keys(params).length > 0
+        ? "?" +
+          Object.keys(params)
+            .map((key) => `${key}=${encodeURIComponent(params[key])}`)
+            .join("&")
+        : "";
+
+    return this.http.get(`${this.API_URL}${queryString}`);
+  }
+
+  getBookById(id: string): Observable<any> {
+    return this.http.get(`${this.API_URL}/${id}`);
+  }
+
+  updateBookById(
+    id: string,
+    updateOptions: UpdateBookOptions
+  ): Observable<any> {
+    // TODO: Check for the user role before making the request, only admins allowed
+    return this.http.patch(`${this.API_URL}/${id}`, updateOptions);
+  }
+
+  deleteBookById(id: string) {
+    return this.http.delete(`${this.API_URL}/${id}`);
   }
 }

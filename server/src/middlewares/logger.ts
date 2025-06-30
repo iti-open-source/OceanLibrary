@@ -26,7 +26,13 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 export default (req: Request, res: Response, next: NextFunction) => {
-  const message = `${req.method} ${req.originalUrl} ${res.statusCode}`;
-  logger.info(message);
+  const start = Date.now();
+
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    const message = `${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`;
+    logger.info(message);
+  });
+
   next();
 };

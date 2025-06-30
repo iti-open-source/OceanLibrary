@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import Book from "../models/bookModel.js";
 import AppError from "../utils/appError.js";
 import { BookFilter } from "../types/filters/bookFilter.js";
+import Author from "../models/authorModel.js";
 
 /**
  * Retrieves all books with pagination and filtering support.
@@ -180,6 +181,20 @@ export const createBook = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    // Search for the author and extract his ID
+    const regex = new RegExp(req.body.authorName, "i");
+    const author = await Author.findOne({ name: regex });
+    if (author) {
+      req.body.authorID = author?._id;
+    } else {
+      // if the author does not exist, create a new author with that name
+      // Note: in this case the author does not yet have genres, nationality, and has a default placeholder picture
+      const newAuthor = await Author.insertOne({
+        name: req.body.authorName,
+        bio: "This author does not have a biography yet.",
+      });
+      req.body.authorID = newAuthor._id;
+    }
     const book = await Book.insertOne(req.body);
     res.status(201).json({
       status: "Success",

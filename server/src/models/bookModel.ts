@@ -5,6 +5,7 @@ const bookSchema = new Schema<IBook>(
   {
     title: {
       type: String,
+      required: true,
     },
     authorName: {
       type: String,
@@ -17,15 +18,19 @@ const bookSchema = new Schema<IBook>(
     },
     genres: {
       type: [String],
+      required: true,
     },
     price: {
       type: Number,
+      required: true,
     },
     description: {
       type: String,
+      required: true,
     },
     stock: {
       type: Number,
+      required: true,
     },
     ratingAverage: {
       type: Number,
@@ -37,6 +42,7 @@ const bookSchema = new Schema<IBook>(
     },
     image: {
       type: String,
+      default: "https://nidcap.org/wp-content/uploads/2021/03/book.png",
     },
   },
   { timestamps: true }

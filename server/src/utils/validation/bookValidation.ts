@@ -2,7 +2,7 @@ import { z } from "zod/v4";
 
 export const createBookSchema = z.object({
   title: z.string().trim().min(1).max(200),
-  author: z.string().trim().min(1).max(100),
+  authorName: z.string().trim().min(1).max(100),
   genres: z.array(z.string().trim()).min(1),
   price: z.number().positive(),
   ratingAverage: z.number().min(0).max(5).optional(),
@@ -14,7 +14,7 @@ export const createBookSchema = z.object({
 
 export const updateBookSchema = z.object({
   title: z.string().trim().min(1).max(200).optional(),
-  author: z.string().trim().min(1).max(100).optional(),
+  authorName: z.string().trim().min(1).max(100).optional(),
   genres: z.array(z.string().trim()).min(1).optional(),
   price: z.number().positive().optional(),
   ratingAverage: z.number().min(0).max(5).optional(),
