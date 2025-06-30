@@ -50,9 +50,10 @@ function generateBook(
     ratingQuantity: faker.number.int({ min: 0, max: 5000 }),
     description: faker.lorem.paragraphs(1),
     stock: faker.number.int({ min: 0, max: 100 }),
-    image: faker.image
-      .urlPicsumPhotos({ width: 300, height: 400 })
-      .replace(/blur=[0-9]{1}/g, "blur=2"),
+    image:
+      faker.image
+        .urlPicsumPhotos({ width: 300, height: 400 })
+        .replace(/blur=[0-9]/g, "") + "blur=2",
   };
 }
 
@@ -93,3 +94,16 @@ const populateDatabase = async (): Promise<void> => {
 };
 
 populateDatabase();
+
+// async function deleteAuthors() {
+//   await Author.deleteMany();
+//   process.exit();
+// }
+
+// async function deleteBooks() {
+//   await Book.deleteMany();
+//   process.exit();
+// }
+
+// deleteAuthors();
+// deleteBooks();

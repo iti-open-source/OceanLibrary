@@ -5,7 +5,7 @@ import {
   CreateBookOptions,
   GetBooksOptions,
   UpdateBookOptions,
-} from "../types/bookInterfaces";
+} from "../types/bookOptions";
 @Injectable({
   providedIn: "root",
 })
@@ -27,6 +27,7 @@ export class BooksService {
       author,
       priceMin,
       priceMax,
+      genres,
       match,
       order,
       sortBy,
@@ -40,6 +41,7 @@ export class BooksService {
     if (author) params["author"] = author;
     if (priceMin !== undefined) params["priceMin"] = priceMin.toString();
     if (priceMax !== undefined) params["priceMax"] = priceMax.toString();
+    if (genres) params["genres"] = genres.join(",");
     if (match) params["match"] = match;
     if (order) params["order"] = order;
     if (sortBy) params["sortBy"] = sortBy;

@@ -1,1 +1,414 @@
-<p>books-list works!</p>
+<!-- Header Section -->
+<div class="bg-[var(--color-background-light)] min-h-screen font-secondary">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <div
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6"
+      >
+        <div>
+          <h1 class="text-4xl font-brand text-[var(--color-text-heading)] mb-2">
+            Books Management
+          </h1>
+          <p class="text-[var(--color-text-muted)] text-lg">
+            Manage your library's book collection
+          </p>
+        </div>
+        <button
+          (click)="navigateToAddBook()"
+          class="inline-flex items-center gap-2 bg-[var(--color-brand-primary)] text-[var(--color-on-dark)] font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-[var(--color-background-medium)] hover:text-[var(--color-brand-primary)] transition-all duration-200 hover:scale-105 border border-transparent hover:border-[var(--color-brand-primary)]"
+        >
+          <lucide-icon [img]="Plus" class="h-5 w-5"></lucide-icon>
+          Add New Book
+        </button>
+      </div>
+
+      <!-- Search and Stats Bar -->
+      <div
+        class="flex flex-col gap-4 bg-[var(--color-background-medium)] rounded-xl p-4 shadow-sm"
+      >
+        <!-- Search Section -->
+        <div class="w-full">
+          <div class="flex flex-col sm:flex-row gap-3">
+            <!-- Search Type Dropdown -->
+            <div class="relative search-dropdown w-full sm:w-auto">
+              <button
+                (click)="toggleSearchDropdown()"
+                class="flex items-center justify-between gap-2 w-full sm:w-auto px-4 py-2.5 border border-[var(--color-border)] rounded-lg bg-[var(--color-background-light)] text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] transition-colors min-w-[120px]"
+              >
+                <div class="flex items-center gap-2">
+                  <lucide-icon
+                    [img]="Filter"
+                    class="h-4 w-4 flex-shrink-0"
+                  ></lucide-icon>
+                  <span class="text-sm">{{ getSearchTypeLabel() }}</span>
+                </div>
+                <lucide-icon
+                  [img]="ChevronDown"
+                  class="h-4 w-4 flex-shrink-0"
+                ></lucide-icon>
+              </button>
+
+              <!-- Search Type Dropdown Menu -->
+              <div
+                *ngIf="showSearchDropdown"
+                class="absolute top-full left-0 mt-1 w-full sm:w-40 bg-[var(--color-background-light)] border border-[var(--color-border)] rounded-lg shadow-lg z-20"
+              >
+                <button
+                  (click)="onSearchTypeChange('title')"
+                  class="w-full px-4 py-2.5 text-left text-sm hover:bg-[var(--color-background-medium)] transition-colors rounded-t-lg"
+                  [class.bg-[var(--color-brand-primary)]]="
+                    searchType === 'title'
+                  "
+                  [class.text-[var(--color-on-dark)]]="searchType === 'title'"
+                >
+                  Title
+                </button>
+                <button
+                  (click)="onSearchTypeChange('author')"
+                  class="w-full px-4 py-2.5 text-left text-sm hover:bg-[var(--color-background-medium)] transition-colors"
+                  [class.bg-[var(--color-brand-primary)]]="
+                    searchType === 'author'
+                  "
+                  [class.text-[var(--color-on-dark)]]="searchType === 'author'"
+                >
+                  Author
+                </button>
+                <!-- <button
+                  (click)="onSearchTypeChange('genre')"
+                  class="w-full px-4 py-2.5 text-left text-sm hover:bg-[var(--color-background-medium)] transition-colors rounded-b-lg"
+                  [class.bg-[var(--color-brand-primary)]]="
+                    searchType === 'genre'
+                  "
+                  [class.text-[var(--color-on-dark)]]="searchType === 'genre'"
+                >
+                  Genre
+                </button> -->
+              </div>
+            </div>
+
+            <!-- Search Input -->
+            <div class="relative flex-1 min-w-0">
+              <lucide-icon
+                [img]="Search"
+                class="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--color-text-muted)] h-5 w-5"
+              ></lucide-icon>
+              <input
+                type="text"
+                [placeholder]="'Search books by ' + searchType + '...'"
+                (input)="onSearch($event)"
+                class="w-full pl-12 pr-4 py-2.5 border border-[var(--color-border)] rounded-lg bg-[var(--color-background-light)] text-[var(--color-text-default)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:border-transparent"
+              />
+            </div>
+
+            <!-- Sort Dropdown -->
+            <div class="relative sort-dropdown w-full sm:w-auto">
+              <button
+                (click)="toggleSortDropdown()"
+                class="flex items-center justify-between gap-2 w-full sm:w-auto px-4 py-2.5 border border-[var(--color-border)] rounded-lg bg-[var(--color-background-light)] text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] transition-colors min-w-[140px]"
+              >
+                <div class="flex items-center gap-2">
+                  <lucide-icon
+                    [img]="ArrowUpDown"
+                    class="h-4 w-4 flex-shrink-0"
+                  ></lucide-icon>
+                  <span class="text-sm whitespace-nowrap">{{
+                    getSortLabel()
+                  }}</span>
+                </div>
+                <lucide-icon
+                  [img]="ChevronDown"
+                  class="h-4 w-4 flex-shrink-0"
+                ></lucide-icon>
+              </button>
+
+              <!-- Sort Dropdown Menu -->
+              <div
+                *ngIf="showSortDropdown"
+                class="absolute top-full right-0 mt-1 w-full sm:w-56 bg-[var(--color-background-light)] border border-[var(--color-border)] rounded-lg shadow-lg z-20"
+              >
+                <div class="p-2">
+                  <div
+                    class="text-xs font-semibold text-[var(--color-text-muted)] mb-2 px-2"
+                  >
+                    Sort by Title
+                  </div>
+                  <button
+                    (click)="onSortChange(SortBy.TITLE, Order.ASC)"
+                    class="w-full px-3 py-2 text-left text-sm hover:bg-[var(--color-background-medium)] rounded transition-colors"
+                    [class.bg-[var(--color-brand-primary)]]="
+                      sortBy === SortBy.TITLE && sortOrder === Order.ASC
+                    "
+                    [class.text-[var(--color-on-dark)]]="
+                      sortBy === SortBy.TITLE && sortOrder === Order.ASC
+                    "
+                  >
+                    Title A-Z
+                  </button>
+                  <button
+                    (click)="onSortChange(SortBy.TITLE, Order.DESC)"
+                    class="w-full px-3 py-2 text-left text-sm hover:bg-[var(--color-background-medium)] rounded transition-colors"
+                    [class.bg-[var(--color-brand-primary)]]="
+                      sortBy === SortBy.TITLE && sortOrder === Order.DESC
+                    "
+                    [class.text-[var(--color-on-dark)]]="
+                      sortBy === SortBy.TITLE && sortOrder === Order.DESC
+                    "
+                  >
+                    Title Z-A
+                  </button>
+
+                  <div
+                    class="text-xs font-semibold text-[var(--color-text-muted)] mb-2 mt-3 px-2"
+                  >
+                    Sort by Price
+                  </div>
+                  <button
+                    (click)="onSortChange(SortBy.PRICE, Order.ASC)"
+                    class="w-full px-3 py-2 text-left text-sm hover:bg-[var(--color-background-medium)] rounded transition-colors"
+                    [class.bg-[var(--color-brand-primary)]]="
+                      sortBy === SortBy.PRICE && sortOrder === Order.ASC
+                    "
+                    [class.text-[var(--color-on-dark)]]="
+                      sortBy === SortBy.PRICE && sortOrder === Order.ASC
+                    "
+                  >
+                    Price Low-High
+                  </button>
+                  <button
+                    (click)="onSortChange(SortBy.PRICE, Order.DESC)"
+                    class="w-full px-3 py-2 text-left text-sm hover:bg-[var(--color-background-medium)] rounded transition-colors"
+                    [class.bg-[var(--color-brand-primary)]]="
+                      sortBy === SortBy.PRICE && sortOrder === Order.DESC
+                    "
+                    [class.text-[var(--color-on-dark)]]="
+                      sortBy === SortBy.PRICE && sortOrder === Order.DESC
+                    "
+                  >
+                    Price High-Low
+                  </button>
+
+                  <div
+                    class="text-xs font-semibold text-[var(--color-text-muted)] mb-2 mt-3 px-2"
+                  >
+                    Sort by Rating
+                  </div>
+                  <button
+                    (click)="onSortChange(SortBy.AVERAGE_RATING, Order.DESC)"
+                    class="w-full px-3 py-2 text-left text-sm hover:bg-[var(--color-background-medium)] rounded transition-colors"
+                    [class.bg-[var(--color-brand-primary)]]="
+                      sortBy === SortBy.AVERAGE_RATING &&
+                      sortOrder === Order.DESC
+                    "
+                    [class.text-[var(--color-on-dark)]]="
+                      sortBy === SortBy.AVERAGE_RATING &&
+                      sortOrder === Order.DESC
+                    "
+                  >
+                    Highest Rated
+                  </button>
+                  <button
+                    (click)="onSortChange(SortBy.RATING_QUANTITY, Order.DESC)"
+                    class="w-full px-3 py-2 text-left text-sm hover:bg-[var(--color-background-medium)] rounded transition-colors"
+                    [class.bg-[var(--color-brand-primary)]]="
+                      sortBy === SortBy.RATING_QUANTITY &&
+                      sortOrder === Order.DESC
+                    "
+                    [class.text-[var(--color-on-dark)]]="
+                      sortBy === SortBy.RATING_QUANTITY &&
+                      sortOrder === Order.DESC
+                    "
+                  >
+                    Most Reviewed
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div
+          class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between border-t border-[var(--color-border)] pt-4"
+        >
+          <div
+            class="flex flex-wrap items-center gap-4 text-sm text-[var(--color-text-muted)]"
+          >
+            <span class="flex items-center gap-1">
+              <lucide-icon [img]="Book" class="h-4 w-4"></lucide-icon>
+              {{ totalItems }} Books
+            </span>
+            <span class="flex items-center gap-1">
+              <lucide-icon [img]="File" class="h-4 w-4"></lucide-icon>
+              Page {{ currentPage }} of {{ totalPages }}
+            </span>
+          </div>
+
+          <!-- Active filters indicator -->
+          <div *ngIf="searchTerm" class="flex items-center gap-2 text-sm">
+            <span class="text-[var(--color-text-muted)]">Filtering by:</span>
+            <span
+              class="bg-[var(--color-brand-primary)] text-[var(--color-on-dark)] px-2 py-1 rounded-full text-xs"
+            >
+              {{ getSearchTypeLabel() }}: "{{ searchTerm }}"
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div
+      *ngIf="loading"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+    >
+      <div
+        *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8]"
+        class="bg-[var(--color-background-medium)] rounded-xl p-4 animate-pulse"
+      >
+        <div class="w-full h-48 bg-[var(--color-border)] rounded-lg mb-4"></div>
+        <div class="h-4 bg-[var(--color-border)] rounded mb-2"></div>
+        <div class="h-3 bg-[var(--color-border)] rounded w-3/4 mb-2"></div>
+        <div class="h-3 bg-[var(--color-border)] rounded w-1/2"></div>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <!-- Using error modal instead of inline error display -->
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && books.length === 0" class="text-center py-12">
+      <div
+        class="bg-[var(--color-background-medium)] rounded-xl p-8 max-w-md mx-auto"
+      >
+        <lucide-icon
+          [img]="BookOpen"
+          class="h-16 w-16 text-[var(--color-text-muted)] mx-auto mb-4"
+        ></lucide-icon>
+        <h3 class="text-xl font-brand text-[var(--color-text-heading)] mb-2">
+          No Books Found
+        </h3>
+        <p class="text-[var(--color-text-muted)] mb-6">
+          {{
+            searchTerm
+              ? "No books match your search criteria."
+              : "Get started by adding your first book to the library."
+          }}
+        </p>
+        <button
+          *ngIf="!searchTerm"
+          (click)="navigateToAddBook()"
+          class="inline-flex items-center gap-2 bg-[var(--color-brand-primary)] text-[var(--color-on-dark)] px-6 py-3 rounded-lg hover:bg-[var(--color-background-medium)] hover:text-[var(--color-brand-primary)] transition-colors border border-transparent hover:border-[var(--color-brand-primary)]"
+        >
+          <lucide-icon [img]="Plus" class="h-5 w-5"></lucide-icon>
+          Add Your First Book
+        </button>
+      </div>
+    </div>
+
+    <!-- Books Grid -->
+    <div *ngIf="!loading && books.length > 0" class="space-y-6">
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      >
+        <app-book-card
+          *ngFor="let book of books"
+          [book]="book"
+          (edit)="onBookEdit($event)"
+          (delete)="onBookDelete($event)"
+        ></app-book-card>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex justify-center items-center gap-2 mt-8">
+        <button
+          (click)="onPageChange(currentPage - 1)"
+          [disabled]="currentPage <= 1"
+          class="inline-flex items-center gap-1 px-3 py-2 border border-[var(--color-border)] rounded-lg text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <lucide-icon [img]="ChevronLeft" class="h-4 w-4"></lucide-icon>
+          Previous
+        </button>
+
+        <div class="flex gap-1">
+          <button
+            *ngFor="let page of [].constructor(totalPages); let i = index"
+            (click)="onPageChange(i + 1)"
+            [class]="
+              i + 1 === currentPage
+                ? 'bg-[var(--color-brand-primary)] text-[var(--color-on-dark)]'
+                : 'bg-[var(--color-background-medium)] text-[var(--color-text-default)] hover:bg-[var(--color-brand-primary)] hover:text-[var(--color-on-dark)]'
+            "
+            class="w-10 h-10 rounded-lg border border-[var(--color-border)] transition-colors font-semibold"
+          >
+            {{ i + 1 }}
+          </button>
+        </div>
+
+        <button
+          (click)="onPageChange(currentPage + 1)"
+          [disabled]="currentPage >= totalPages"
+          class="inline-flex items-center gap-1 px-3 py-2 border border-[var(--color-border)] rounded-lg text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Next
+          <lucide-icon [img]="ChevronRight" class="h-4 w-4"></lucide-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Error Modal -->
+<app-error-modal
+  [isVisible]="showErrorModal"
+  [title]="errorModalTitle"
+  [message]="errorModalMessage"
+  [showActionButton]="errorModalShowAction"
+  [actionButtonText]="errorModalActionText"
+  (close)="onErrorModalClose()"
+  (action)="onErrorModalAction()"
+></app-error-modal>
+
+<!-- Delete Confirmation Modal -->
+<div
+  *ngIf="showDeleteModal"
+  class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+  (click)="closeDeleteModal()"
+>
+  <div
+    class="bg-[var(--color-background-light)] rounded-xl shadow-2xl max-w-md w-full p-6 border border-[var(--color-border)]"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="flex items-center gap-3 mb-4">
+      <div class="bg-red-100 dark:bg-red-900 p-2 rounded-full">
+        <lucide-icon
+          [img]="AlertTriangle"
+          class="h-6 w-6 text-red-600 dark:text-red-400"
+        ></lucide-icon>
+      </div>
+      <h3 class="text-xl font-brand text-[var(--color-text-heading)]">
+        Delete Book
+      </h3>
+    </div>
+
+    <p class="text-[var(--color-text-default)] mb-6">
+      Are you sure you want to delete "<strong>{{ bookToDelete?.title }}</strong
+      >"? This action cannot be undone.
+    </p>
+
+    <div class="flex gap-3 justify-end">
+      <button
+        (click)="closeDeleteModal()"
+        class="px-4 py-2 border border-[var(--color-border)] rounded-lg text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] transition-colors"
+      >
+        Cancel
+      </button>
+      <button
+        (click)="confirmDelete()"
+        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+      >
+        Delete Book
+      </button>
+    </div>
+  </div>
+</div>

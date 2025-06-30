@@ -1,0 +1,124 @@
+<div
+  class="book-card bg-[var(--color-background-medium)] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-[var(--color-border)] overflow-hidden group"
+>
+  <!-- Book Cover -->
+  <div class="relative h-48 overflow-hidden">
+    <img
+      [src]="book.image"
+      [alt]="book.title"
+      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+      loading="lazy"
+    />
+    <div
+      class="absolute inset-0 bg-black/50 group-hover:bg-opacity-20 transition-all duration-300"
+    ></div>
+
+    <!-- Action Buttons Overlay -->
+    <div
+      class="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+    >
+      <button
+        (click)="onEdit()"
+        class="bg-[var(--color-brand-primary)] text-[var(--color-on-dark)] p-2 rounded-full hover:bg-[var(--color-background-light)] hover:text-[var(--color-brand-primary)] transition-colors shadow-lg"
+        title="Edit Book"
+      >
+        <lucide-icon [img]="Edit" class="h-4 w-4"></lucide-icon>
+      </button>
+      <button
+        (click)="onDelete()"
+        class="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors shadow-lg"
+        title="Delete Book"
+      >
+        <lucide-icon [img]="Trash2" class="h-4 w-4"></lucide-icon>
+      </button>
+    </div>
+
+    <!-- Stock Badge -->
+    <div class="absolute bottom-3 left-3">
+      <span
+        class="px-2 py-1 rounded-full text-xs font-semibold"
+        [ngClass]="{
+          'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200':
+            book.stock > 10,
+          'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200':
+            book.stock > 0 && book.stock <= 10,
+          'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200':
+            book.stock === 0
+        }"
+      >
+        {{ book.stock === 0 ? "Out of Stock" : book.stock + " in stock" }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Book Info -->
+  <div class="p-4 space-y-3">
+    <div>
+      <h3
+        class="text-lg font-brand text-[var(--color-text-heading)] line-clamp-2 mb-1 group-hover:text-[var(--color-brand-primary)] transition-colors"
+      >
+        {{ book.title }}
+      </h3>
+      <p class="text-sm text-[var(--color-text-muted)] mb-2">
+        by {{ book.authorName }}
+      </p>
+    </div>
+
+    <!-- Rating -->
+    <div class="flex items-center gap-1">
+      <div class="flex">
+        <span
+          *ngFor="let filled of getStarArray(book.ratingAverage); let i = index"
+          class="text-yellow-400"
+          [ngClass]="filled ? 'text-yellow-400' : 'text-[var(--color-border)]'"
+        >
+          ★
+        </span>
+      </div>
+      <span class="text-xs text-[var(--color-text-muted)] ml-1">
+        {{ book.ratingAverage.toFixed(1) }} ({{ book.ratingQuantity }})
+      </span>
+    </div>
+
+    <!-- Genres -->
+    <div class="flex flex-wrap gap-1">
+      <span
+        *ngFor="let genre of book.genres.slice(0, 2)"
+        class="bg-[var(--color-background-light)] text-[var(--color-brand-primary)] px-2 py-1 rounded-full text-xs font-medium border border-[var(--color-border)]"
+      >
+        {{ genre }}
+      </span>
+      <span
+        *ngIf="book.genres.length > 2"
+        class="text-xs text-[var(--color-text-muted)] px-2 py-1"
+      >
+        +{{ book.genres.length - 2 }} more
+      </span>
+    </div>
+
+    <!-- Price -->
+    <div
+      class="flex items-center justify-between pt-2 border-t border-[var(--color-border)]"
+    >
+      <span class="text-xl font-bold text-[var(--color-brand-primary)]">
+        ${{ book.price.toFixed(2) }}
+      </span>
+      <div class="flex gap-2">
+        <button
+          (click)="onEdit()"
+          class="text-[var(--color-brand-primary)] hover:text-[var(--color-text-heading)] transition-colors p-1"
+          title="Edit"
+        >
+          <lucide-icon [img]="Edit" class="h-4 w-4"></lucide-icon>
+        </button>
+        <button
+          (click)="onDelete()"
+          class="text-red-500 hover:text-red-700 transition-colors p-1"
+          title="Delete"
+        >
+          <lucide-icon [img]="Trash2" class="h-4 w-4"></lucide-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

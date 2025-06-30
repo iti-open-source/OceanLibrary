@@ -5,6 +5,7 @@ export interface GetBooksOptions {
   limit?: number;
   title?: string;
   author?: string;
+  genres?: string[];
   priceMin?: number;
   priceMax?: number;
   match?: Match;

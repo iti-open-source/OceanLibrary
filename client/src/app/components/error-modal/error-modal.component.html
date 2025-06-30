@@ -1,0 +1,57 @@
+<div
+  *ngIf="isVisible"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 modal-backdrop"
+  (click)="onBackdropClick()"
+>
+  <div
+    class="bg-[var(--color-background-light)] rounded-xl shadow-2xl max-w-md w-full p-6 border border-[var(--color-border)] transform transition-all duration-300 scale-100"
+    (click)="onModalClick($event)"
+  >
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-3">
+        <div
+          *ngIf="showIcon"
+          class="bg-red-100 dark:bg-red-900 p-2 rounded-full"
+        >
+          <lucide-icon
+            [img]="AlertCircle"
+            class="h-6 w-6 text-red-600 dark:text-red-400"
+          ></lucide-icon>
+        </div>
+        <h3 class="text-xl font-brand text-[var(--color-text-heading)]">
+          {{ title }}
+        </h3>
+      </div>
+      <button
+        (click)="onClose()"
+        class="text-[var(--color-text-muted)] hover:text-[var(--color-text-default)] transition-colors p-1 rounded-lg hover:bg-[var(--color-background-medium)]"
+        aria-label="Close"
+      >
+        <lucide-icon [img]="X" class="h-5 w-5"></lucide-icon>
+      </button>
+    </div>
+
+    <!-- Message -->
+    <p class="text-[var(--color-text-default)] mb-6 leading-relaxed">
+      {{ message }}
+    </p>
+
+    <!-- Actions -->
+    <div class="flex justify-end gap-3">
+      <button
+        *ngIf="showActionButton"
+        (click)="onAction()"
+        class="px-4 py-2 border border-[var(--color-border)] rounded-lg text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] transition-colors"
+      >
+        {{ actionButtonText }}
+      </button>
+      <button
+        (click)="onClose()"
+        class="px-6 py-2 bg-[var(--color-brand-primary)] text-[var(--color-on-dark)] rounded-lg hover:bg-[var(--color-background-medium)] hover:text-[var(--color-brand-primary)] transition-colors border border-transparent hover:border-[var(--color-brand-primary)]"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</div>
