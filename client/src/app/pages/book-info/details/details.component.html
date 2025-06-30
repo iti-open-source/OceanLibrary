@@ -1,1 +1,153 @@
-<p>details works!</p>
+<div class="max-w-6xl mx-auto px-4 py-8 space-y-12">
+  <!-- Book Details Header -->
+  <div>
+    <h1 class="text-3xl font-semibold text-center mb-2">Book Details</h1>
+    <hr class="border-t border-gray-300 w-24 mx-auto" />
+  </div>
+
+  <!-- About the Author -->
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+    <div class="md:col-span-1">
+      <img
+        src="https://variety.com/wp-content/uploads/2017/07/j-rr-tolkein.jpg?w=1000&h=562&crop=1"
+        alt="Author"
+        class="rounded shadow-lg object-cover w-full h-full"
+      />
+    </div>
+    <div class="md:col-span-2 space-y-4">
+      <h2 class="text-2xl font-semibold">About the Author</h2>
+      <p class="text-gray-700">
+        John Ronald Reuel Tolkien was an English writer, academic, and
+        philologist. He is best known as the author of the high fantasy works
+        The Hobbit and The Lord of the Rings. He was appointed a Commander of
+        the Order of the British Empire by Queen Elizabeth II on 28 March 1972.
+      </p>
+      <p class="text-gray-700">
+        Tolkien was fascinated with language and mythology, which influenced his
+        fictional Middle-earth. His work has inspired countless adaptations and
+        remains influential in the fantasy genre.
+      </p>
+    </div>
+  </section>
+
+  <!-- About the Book -->
+  <section>
+    <h2 class="text-2xl font-semibold mb-4">About the Book</h2>
+    <div class="grid grid-cols-1 gap-6">
+      <!-- First Edition -->
+      <div class="space-y-2">
+        <h3 class="text-lg font-medium">First Edition</h3>
+        <ul class="text-gray-700 space-y-1">
+          <li><strong>Pages:</strong> 432 pages, Kindle Edition</li>
+          <li><strong>Publication:</strong> July 29, 1954</li>
+          <li>
+            <strong>Literary Awards:</strong> Audie Award Nominee for Audiobook
+            Fiction (2022)
+          </li>
+          <li><strong>Original Title:</strong> The Lord of the Rings</li>
+          <li>
+            <strong>Tags:</strong>
+            <span class="flex flex-wrap gap-2 mt-1">
+              <span class="bg-gray-100 px-2 py-0.5 rounded text-sm"
+                >Fantasy</span
+              >
+              <span class="bg-gray-100 px-2 py-0.5 rounded text-sm"
+                >Adventure</span
+              >
+              <span class="bg-gray-100 px-2 py-0.5 rounded text-sm">Epic</span>
+            </span>
+          </li>
+        </ul>
+      </div>
+      <!-- This Edition -->
+      <div class="space-y-2 mt-4">
+        <h3 class="text-lg font-medium">This Edition</h3>
+        <ul class="text-gray-700 space-y-1">
+          <li><strong>Pages:</strong> 1184 pages, Paperback</li>
+          <li><strong>Published on:</strong> October 15, 2005</li>
+          <li><strong>Language:</strong> English</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- More Editions -->
+  <section>
+    <h2 class="text-2xl font-semibold mb-4">More Editions</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+      <ng-container *ngFor="let edition of moreEditions">
+        <div
+          class="flex flex-col items-center bg-[var(--color-background-light)] p-3 rounded shadow hover:shadow-lg transition"
+        >
+          <div class="relative">
+            <img
+              [src]="edition.cover"
+              [alt]="edition.title"
+              class="w-36 h-52 object-cover rounded"
+            />
+            <svg
+              class="w-5 h-5 text-gray-700 absolute bottom-1 right-1"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M5 3a2 2 0 00-2 2v12l7-4 7 4V5a2 2 0 00-2-2H5z" />
+            </svg>
+          </div>
+          <p class="mt-3 text-sm font-medium">{{ edition.title }}</p>
+          <p class="text-xs text-gray-500">Houghton Mifflin Harcourt</p>
+          <p class="text-xs text-gray-500">{{ edition.year }}</p>
+        </div>
+      </ng-container>
+    </div>
+  </section>
+
+  <!-- Similar Genre Books -->
+  <section class="mt-12">
+    <h2 class="text-2xl font-semibold mb-4">Similar Genre Books</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+      <ng-container *ngFor="let book of similarBooks">
+        <div
+          class="flex flex-col items-center bg-[var(--color-background-light)] p-3 rounded shadow hover:shadow-lg transition"
+        >
+          <div class="relative">
+            <img
+              [src]="book.cover"
+              [alt]="book.title"
+              class="w-36 h-52 object-cover rounded"
+            />
+            <svg
+              class="w-5 h-5 text-gray-700 absolute bottom-1 right-1"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M5 3a2 2 0 00-2 2v12l7-4 7 4V5a2 2 0 00-2-2H5z" />
+            </svg>
+          </div>
+          <p class="mt-3 text-center text-sm font-medium uppercase">
+            {{ book.title }}
+          </p>
+          <p class="text-xs text-yellow-700 font-semibold">
+            {{ book.author || "Unknown Author" }}
+          </p>
+          <div class="flex mt-1">
+            <ng-container *ngFor="let star of [1, 2, 3, 4, 5]; let i = index">
+              <svg
+                class="w-4 h-4"
+                [ngClass]="{
+                  'text-yellow-400': i < book.rating,
+                  'text-gray-300': i >= book.rating
+                }"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.174c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.286 3.966c.3.922-.755 1.688-1.538 1.118l-3.38-2.454a1 1 0 00-1.176 0l-3.38 2.454c-.783.57-1.838-.196-1.538-1.118l1.286-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"
+                />
+              </svg>
+            </ng-container>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </section>
+</div>
