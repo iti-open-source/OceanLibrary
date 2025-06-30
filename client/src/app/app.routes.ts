@@ -26,6 +26,11 @@ export const routes: Routes = [
       { path: "schedule", component: ScheduleComponent },
       { path: "reviews", component: ReviewsComponent },
       { path: "preview", component: PreviewComponent },
+      {
+        path: "",
+        pathMatch: "full",
+        redirectTo: "details",
+      },
     ],
   },
   {
