@@ -69,7 +69,7 @@ export const getAllBooks = async (
   }
 
   if (author) {
-    filter.author = { $regex: author as string, $options: "i" }; // case-insensitive partial match
+    filter.authorName = { $regex: author as string, $options: "i" }; // case-insensitive partial match
   }
 
   if (genres) {
