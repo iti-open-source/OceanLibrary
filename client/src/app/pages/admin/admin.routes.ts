@@ -1,7 +1,6 @@
 import { Routes } from "@angular/router";
 import { AdminPageComponent } from "./admin-page/admin-page.component";
 import { DashboardComponent } from "./dashboard/dashboard.component";
-import { BooksComponent } from "./books/books.component";
 import { UsersComponent } from "./users/users.component";
 
 export const adminRoutes: Routes = [
@@ -16,7 +15,11 @@ export const adminRoutes: Routes = [
         component: DashboardComponent,
       },
       { path: "users", title: "Admin | Users", component: UsersComponent },
-      { path: "books", title: "Admin | Books", component: BooksComponent },
+      {
+        path: "books",
+        loadChildren: () =>
+          import("./books/books.routes").then((m) => m.booksRoutes),
+      },
     ],
   },
 ];
