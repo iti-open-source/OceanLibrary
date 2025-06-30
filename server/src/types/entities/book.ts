@@ -1,6 +1,8 @@
+import mongoose from "mongoose";
 export interface IBook {
   title: string;
-  author: string;
+  authorName: string;
+  authorID: mongoose.Types.ObjectId;
   genres: string[];
   price: number;
   description: string;

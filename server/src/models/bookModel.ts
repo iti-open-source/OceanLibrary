@@ -6,8 +6,14 @@ const bookSchema = new Schema<IBook>(
     title: {
       type: String,
     },
-    author: {
+    authorName: {
       type: String,
+      required: true,
+    },
+    authorID: {
+      type: Schema.Types.ObjectId,
+      ref: "Author",
+      required: true,
     },
     genres: {
       type: [String],

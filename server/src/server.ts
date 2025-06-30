@@ -8,6 +8,7 @@ import cartRouter from "./routes/cartRoutes.js";
 import reviewRouter from "./routes/reviewRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
 import userRouter from "./routes/userRoutes.js";
+import authorRouter from "./routes/authorRoutes.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import logger from "./middlewares/logger.js";
 import AppError from "./utils/appError.js";
@@ -26,6 +27,7 @@ app.use("/api/v1/cart", cartRouter);
 app.use("/api/v1/reviews", reviewRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/authors", authorRouter);
 // fallback route after express update
 app.use("*", (req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`Route ${req.originalUrl} not found`, 404));
