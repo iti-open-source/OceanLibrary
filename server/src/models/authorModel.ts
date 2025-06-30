@@ -19,11 +19,9 @@ const authorSchema = new mongoose.Schema<IAuthor>(
     photo: {
       type: String,
     },
-    genres: [
-      {
-        type: [String],
-      },
-    ],
+    genres: {
+      type: [String],
+    },
   },
   { timestamps: true }
 );
