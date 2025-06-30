@@ -12,6 +12,7 @@ import authorRouter from "./routes/authorRoutes.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import logger from "./middlewares/logger.js";
 import AppError from "./utils/appError.js";
+import cors from "cors";
 
 const app = express();
 
@@ -19,6 +20,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(helmet());
 app.use(hpp());
+app.use(
+  cors({
+    origin: "http://localhost:4200", // The frontend
+    credentials: true, // Allow cookies
+  })
+);
 app.use(logger);
 
 // Routes

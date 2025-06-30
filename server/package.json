@@ -13,6 +13,7 @@
   "description": "bookstore application",
   "dependencies": {
     "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^4.21.2",
     "helmet": "^8.1.0",
@@ -28,6 +29,7 @@
     "@eslint/js": "^9.29.0",
     "@faker-js/faker": "^9.8.0",
     "@tsconfig/node22": "^22.0.2",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/hpp": "^0.2.6",
     "@types/joi-phone-number": "^5.0.8",

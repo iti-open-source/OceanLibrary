@@ -23,6 +23,7 @@ import {
   MessagesSquare,
   Eye,
 } from "lucide-angular";
+import { provideHttpClient } from "@angular/common/http";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -46,5 +47,6 @@ export const appConfig: ApplicationConfig = {
         Eye,
       })
     ),
+    provideHttpClient(),
   ],
 };
