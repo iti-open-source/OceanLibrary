@@ -8,9 +8,13 @@ export const booksRoutes: Routes = [
     path: "",
     component: BooksPageComponent,
     children: [
-      { path: "", component: BooksListComponent },
-      { path: "new", component: BooksFormComponent },
-      { path: ":id/edit", component: BooksFormComponent },
+      { path: "", title: "Admin | Books", component: BooksListComponent },
+      { path: "new", title: "Admin | New Book", component: BooksFormComponent },
+      {
+        path: ":id/edit",
+        title: "Admin | Edit Book",
+        component: BooksFormComponent,
+      },
     ],
   },
 ];
