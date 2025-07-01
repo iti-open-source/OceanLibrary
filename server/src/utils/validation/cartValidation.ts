@@ -1,6 +1,6 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
-const addToCartSchema = z.object({
+export const addToCartSchema = z.object({
   bookID: z.string().regex(/^[a-f\d]{24}$/i, {
     message: "Invalid BookID",
   }),
