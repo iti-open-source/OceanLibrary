@@ -15,35 +15,72 @@ export const viewCart = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  // Prepare transcation session
+  const session = await cartModel.startSession();
+
   try {
     const userId = req.userId;
 
+    // Start transcation
+    session.startTransaction();
+
     // Get user's cart and fetch every book info from it
-    const cart = await cartModel.findById(userId).populate("items.bookId");
+    const cart = await cartModel
+      .findById(userId)
+      .populate("items.bookId")
+      .session(session);
 
     // User's cart is hasn't been created yet, return empty cart.
     if (!cart) {
+      // Abort transcation
+      await session.abortTransaction();
+      session.endSession();
+
       const userCart: ICart = {
         items: [],
         total: 0,
       };
-
       res.status(200).json({ message: "Cart is empty", userCart });
       return;
     }
 
-    // Cart is not empty, Load books into cart
-    const itemsList: ICartItem[] = (cart.items as unknown as IRefBook[])
-      .filter((item) => item.bookId)
-      .map((item) => ({
-        bookId: item.bookId._id,
-        title: item.bookId.title,
-        price: item.bookId.price,
-        stock: item.bookId.stock,
-        image: item.bookId.image,
-        quantity: item.quantity,
-        subtotal: item.quantity * item.bookId.price,
-      }));
+    // Cart is not empty
+    // Remove unavailable books (out of stock)
+    const filteredBooks = (cart.items as unknown as IRefBook[]).filter(
+      (item) => item.bookId && item.bookId.stock > 0
+    );
+
+    // Check if requested quantites are available, if not shift it down to max available
+    let updated = false;
+    filteredBooks.forEach((item) => {
+      if (item.quantity > item.bookId.stock) {
+        item.quantity = item.bookId.stock;
+        updated = true;
+      }
+    });
+
+    // Save changes made to the cart
+    if (updated) {
+      cart.items.splice(0, cart.items.length);
+      filteredBooks.forEach((item) => {
+        cart.items.push({
+          bookId: item.bookId._id,
+          quantity: item.quantity,
+        });
+      });
+      await cart.save({ session });
+    }
+
+    // Prepare our final cart
+    const itemsList: ICartItem[] = filteredBooks.map((item) => ({
+      bookId: item.bookId._id,
+      title: item.bookId.title,
+      price: item.bookId.price,
+      stock: item.bookId.stock,
+      image: item.bookId.image,
+      quantity: item.quantity,
+      subtotal: item.quantity * item.bookId.price,
+    }));
 
     // Get total amount to be paid
     const totalAmount = itemsList.reduce((sum, item) => sum + item.subtotal, 0);
@@ -54,12 +91,18 @@ export const viewCart = async (
       total: totalAmount,
     };
 
+    // Commit
+    await session.commitTransaction();
+    session.endSession();
+
     // Return user's cart
     res.status(200).json({
       message: "Cart retrieved successfully.",
       userCart,
     });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     next(error);
   }
 };
