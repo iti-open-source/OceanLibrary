@@ -146,7 +146,7 @@ export const updateCart = async (
     if (itemIndex === -1) {
       return next(
         new AppError(
-          "This item you are trying to modifying is not in your cart",
+          "This item you are trying to modify is not in your cart",
           400
         )
       );
