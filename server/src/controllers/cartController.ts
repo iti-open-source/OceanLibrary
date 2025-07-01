@@ -74,14 +74,15 @@ export const addToCart = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  // Start transcation to prevent race over add to cart to overflow in stock
-  // Preventing timing attacks on cart
+  // Prepare transcation session
   const session = await cartModel.startSession();
-  session.startTransaction();
 
   try {
     const userId = req.userId;
     const { bookId, quantity } = req.body;
+
+    // Start transcation
+    session.startTransaction();
 
     // Fetch Book info
     const book = await Book.findById(bookId).session(session);
@@ -116,7 +117,8 @@ export const addToCart = async (
 
     // Get user cart
     let cart = await cartModel.findById(userId).session(session);
-    // User doesn't have a cart
+
+    // User doesn't have a cart yet
     if (!cart) {
       // Create a new cart with the requested book
       cart = new cartModel({
@@ -124,7 +126,7 @@ export const addToCart = async (
         items: [{ bookId, quantity }],
       });
     } else {
-      // User has a cart created
+      // User has a cart created already
       // Checking if book already in cart
       const itemIndex = cart.items.findIndex((item) =>
         item.bookId.equals(bookId)
@@ -135,9 +137,13 @@ export const addToCart = async (
         // Check if its possible to increase quantity
         const currentQuantity = cart.items[itemIndex].quantity;
         const futureQuantity = currentQuantity + quantity;
+
+        // There is no enough stock available to add up
         if (futureQuantity > book.stock) {
           // Abort transcation
           await session.abortTransaction();
+          session.endSession();
+
           // Return stock limit error
           return next(
             new AppError(
@@ -146,6 +152,7 @@ export const addToCart = async (
             )
           );
         }
+
         // Increase quantity
         cart.items[itemIndex].quantity += quantity;
       } else {
@@ -163,7 +170,6 @@ export const addToCart = async (
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-
     next(error);
   }
 };
@@ -178,13 +184,23 @@ export const updateCart = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  // Prepare transcation session
+  const session = await cartModel.startSession();
+
   try {
     const userId = req.userId;
     const { bookId, quantity } = req.body;
 
+    // Start transcation
+    session.startTransaction();
+
     // Get user Cart
-    const cart = await cartModel.findById(userId);
+    const cart = await cartModel.findById(userId).session(session);
     if (!cart) {
+      // Abort transcation
+      await session.abortTransaction();
+      session.endSession();
+
       return next(
         new AppError("You haven’t added anything to your cart yet.", 400)
       );
@@ -197,6 +213,10 @@ export const updateCart = async (
 
     // The book doesn't exist in user cart
     if (itemIndex === -1) {
+      // Abort transcation
+      await session.abortTransaction();
+      session.endSession();
+
       return next(
         new AppError(
           "Oops! That item isn’t available in your cart anymore.",
@@ -210,8 +230,12 @@ export const updateCart = async (
       cart.items.splice(itemIndex, 1);
     } else {
       // Check if book exists in our DB
-      const book = await Book.findById(bookId);
+      const book = await Book.findById(bookId).session(session);
       if (!book) {
+        // Abort transcation
+        await session.abortTransaction();
+        session.endSession();
+
         return next(
           new AppError("This book is not available in stock anymore", 400)
         );
@@ -219,6 +243,10 @@ export const updateCart = async (
 
       // Check if there is stock available
       if (!book.stock || quantity > book.stock) {
+        // Abort transcation
+        await session.abortTransaction();
+        session.endSession();
+
         return next(
           new AppError(
             `Only ${book.stock} items left in stock - please adjust your quantity.`,
@@ -231,10 +259,15 @@ export const updateCart = async (
       cart.items[itemIndex].quantity = quantity;
     }
 
-    // Save updated cart
-    await cart.save();
+    // Save updated cart and commit
+    await cart.save({ session });
+    await session.commitTransaction();
+    session.endSession();
+
     res.status(200).json({ message: "Your cart has been updated" });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     next(error);
   }
 };
