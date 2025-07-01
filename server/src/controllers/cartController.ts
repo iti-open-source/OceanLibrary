@@ -78,7 +78,7 @@ export const addToCart = async (
     if (!book.stock || book.stock < quantity) {
       return next(
         new AppError(
-          `Only ${book.stock} items left in stock — please adjust your quantity.`,
+          `Only ${book.stock} items left in stock - please adjust your quantity.`,
           400
         )
       );
@@ -102,6 +102,17 @@ export const addToCart = async (
 
       // Book exists in cart
       if (itemIndex > -1) {
+        // Check if its possible to increase quantity
+        const currentQuantity = cart.items[itemIndex].quantity;
+        const futureQuantity = currentQuantity + quantity;
+        if (futureQuantity > book.stock) {
+          return next(
+            new AppError(
+              `You can’t add more of this item - stock limit reached.`,
+              400
+            )
+          );
+        }
         // Increase quantity
         cart.items[itemIndex].quantity += quantity;
       } else {
