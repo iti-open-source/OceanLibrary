@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import cartModel from "../models/cartModel.js";
 import Book from "../models/bookModel.js";
 import AppError from "../utils/appError.js";
-import mongoose from "mongoose";
 import { CustomRequest } from "../middlewares/auth.js";
 
 /**
@@ -43,7 +42,7 @@ export const viewCart = async (
     // Get total amount to be paid
     const totalAmount = itemsList.reduce((sum, item) => sum + item.subtotal, 0);
 
-    res.status(200).json({ items: itemsList, total: totalAmount });
+    res.status(200).json({ items: itemsList, totalAmount: totalAmount });
   } catch (error) {
     next(error);
   }
@@ -67,12 +66,22 @@ export const addToCart = async (
     const book = await Book.findById(bookId);
     // Book doesn't exists
     if (!book) {
-      return next(new AppError("The requested book doesn't exist", 404));
+      return next(
+        new AppError(
+          "Sorry, we couldn’t find the book you’re looking for.",
+          400
+        )
+      );
     }
 
     // Verify the book Stock
     if (!book.stock || book.stock < quantity) {
-      return next(new AppError("There is no enough stock available", 400));
+      return next(
+        new AppError(
+          `Only ${book.stock} items left in stock — please adjust your quantity.`,
+          400
+        )
+      );
     }
 
     // Get user cart
@@ -101,7 +110,9 @@ export const addToCart = async (
       }
     }
     await cart.save();
-    res.status(200).json({ message: "Book added to cart", cart });
+    res
+      .status(200)
+      .json({ message: "Book added! View cart to proceed.", cart });
   } catch (error) {
     next(error);
   }
@@ -120,11 +131,6 @@ export const updateCart = async (
   try {
     const userId = req.userId;
     const { bookId, quantity } = req.body;
-
-    // Validate bookID and quantity
-    if (!bookId || typeof quantity !== "number") {
-      return next(new AppError("Book id and quantity required", 400));
-    }
 
     // Get user Cart
     const cart = await cartModel.findById(userId);
