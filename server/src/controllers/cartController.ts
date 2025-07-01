@@ -42,7 +42,11 @@ export const viewCart = async (
     // Get total amount to be paid
     const totalAmount = itemsList.reduce((sum, item) => sum + item.subtotal, 0);
 
-    res.status(200).json({ items: itemsList, totalAmount: totalAmount });
+    res.status(200).json({
+      message: "Cart retrieved successfully.",
+      cart: itemsList,
+      totalAmount: totalAmount,
+    });
   } catch (error) {
     next(error);
   }
@@ -121,9 +125,7 @@ export const addToCart = async (
       }
     }
     await cart.save();
-    res
-      .status(200)
-      .json({ message: "Book added! View cart to proceed.", cart });
+    res.status(200).json({ message: "Book added! View cart to proceed." });
   } catch (error) {
     next(error);
   }
@@ -146,7 +148,9 @@ export const updateCart = async (
     // Get user Cart
     const cart = await cartModel.findById(userId);
     if (!cart) {
-      return next(new AppError("Cart is empty", 400));
+      return next(
+        new AppError("You haven’t added anything to your cart yet.", 400)
+      );
     }
 
     // Find which book we need to edit
@@ -158,7 +162,7 @@ export const updateCart = async (
     if (itemIndex === -1) {
       return next(
         new AppError(
-          "This item you are trying to modify is not in your cart",
+          "Oops! That item isn’t available in your cart anymore.",
           400
         )
       );
@@ -178,7 +182,12 @@ export const updateCart = async (
 
       // Check if there is stock available
       if (!book.stock || quantity > book.stock) {
-        return next(new AppError("Quantity exceeds available stock", 400));
+        return next(
+          new AppError(
+            `Only ${book.stock} items left in stock - please adjust your quantity.`,
+            400
+          )
+        );
       }
 
       // Update quantity
@@ -187,7 +196,7 @@ export const updateCart = async (
 
     // Save updated cart
     await cart.save();
-    res.status(200).json({ message: "Cart updated", cart });
+    res.status(200).json({ message: "Your cart has been updated" });
   } catch (error) {
     next(error);
   }
