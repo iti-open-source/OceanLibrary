@@ -3,6 +3,7 @@ import cartModel from "../models/cartModel.js";
 import Book from "../models/bookModel.js";
 import AppError from "../utils/appError.js";
 import { CustomRequest } from "../middlewares/auth.js";
+import { cartItem, userCart } from "../types/entities/cart.js";
 
 /**
  * View cart - Displays cart items and total amount
@@ -27,7 +28,7 @@ export const viewCart = async (
     }
 
     // Cart is not empty, Load books into cart
-    const itemsList = cart.items
+    const itemsList: cartItem[] = cart.items
       .filter((item) => item.bookId)
       .map((item: any) => ({
         bookId: item.bookId._id,
@@ -42,10 +43,15 @@ export const viewCart = async (
     // Get total amount to be paid
     const totalAmount = itemsList.reduce((sum, item) => sum + item.subtotal, 0);
 
+    // User cart
+    const userCart: userCart = {
+      items: itemsList,
+      total: totalAmount,
+    };
+
     res.status(200).json({
       message: "Cart retrieved successfully.",
-      cart: itemsList,
-      totalAmount: totalAmount,
+      userCart,
     });
   } catch (error) {
     next(error);
@@ -203,7 +209,7 @@ export const updateCart = async (
 };
 
 /**
- * Remove spesfic book from cart
+ * Remove specific book from cart
  * @param req - bookId to be removed
  * @param res - success or error message
  */
