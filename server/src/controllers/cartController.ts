@@ -201,3 +201,32 @@ export const updateCart = async (
     next(error);
   }
 };
+
+/**
+ * Clear all items in cart
+ * @param req - userID
+ * @param res - Error or success message
+ */
+export const deleteCart = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId = req.userId;
+
+    // Get user's Cart
+    const cart = await cartModel.findById(userId);
+
+    // If the user doesn't have cart then there is nothing to delete
+    if (!cart) {
+      return next(new AppError("Your cart is already empty!.", 400));
+    }
+
+    // clear the cart
+    await cart.deleteOne();
+    res.status(200).json({ message: "Your cart has been deleted!" });
+  } catch (error) {
+    next(error);
+  }
+};
