@@ -1,7 +1,7 @@
 import { NextFunction, Response } from "express";
 import { CustomRequest } from "./auth.js";
 
-export const setGuestId = (
+export const checkGuestId = (
   req: CustomRequest,
   res: Response,
   next: NextFunction
@@ -22,6 +22,7 @@ export const setGuestId = (
       ) {
         req.userId = guestId;
         req.userRole = "guest";
+        req.isGuest = true;
       }
     }
 

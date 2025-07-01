@@ -12,13 +12,26 @@ import {
   addToCartSchema,
   ModfiyCartSchema,
 } from "../utils/validation/cartValidation.js";
+import { checkGuestId } from "../middlewares/guest.js";
 
 const router = Router();
 
-router.get("/", verifyToken, viewCart);
-router.post("/", ZodValidator(addToCartSchema), verifyToken, addToCart);
-router.patch("/", ZodValidator(ModfiyCartSchema), verifyToken, updateCart);
-router.delete("/", verifyToken, deleteCart);
-router.delete("/item", verifyToken, removeFromCart);
+router.get("/", checkGuestId, verifyToken, viewCart);
+router.post(
+  "/",
+  ZodValidator(addToCartSchema),
+  checkGuestId,
+  verifyToken,
+  addToCart
+);
+router.patch(
+  "/",
+  ZodValidator(ModfiyCartSchema),
+  checkGuestId,
+  verifyToken,
+  updateCart
+);
+router.delete("/", verifyToken, checkGuestId, deleteCart);
+router.delete("/item", verifyToken, checkGuestId, removeFromCart);
 
 export default router;

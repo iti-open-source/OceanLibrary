@@ -6,6 +6,7 @@ import AppError from "../utils/appError.js";
 export interface CustomRequest extends Request {
   userId?: string;
   userRole?: string;
+  isGuest?: boolean;
 }
 
 export const verifyToken = async (
@@ -14,6 +15,10 @@ export const verifyToken = async (
   next: NextFunction
 ) => {
   try {
+    // Check if the request is made by a guest user and has been verifyed by guest middleware
+    if (req.isGuest && req.userId) {
+      return next();
+    }
     // extract token from authorization header: Bearer <token>
     const token = req.headers["authorization"]?.replace("Bearer ", "");
     if (!token || !process.env.SECRET_KEY) {
