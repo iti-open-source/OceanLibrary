@@ -7,11 +7,17 @@ import { userServiceMail } from "../utils/email.js";
 import AppError from "../utils/appError.js";
 
 export const getUsers = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  const role = req.userRole;
   try {
+    if (role !== "admin") {
+      return next(
+        new AppError("not enough privileges to handle this request", 401)
+      );
+    }
     const users = await userModel.find();
     res.status(200).json({ status: "success", data: users });
   } catch (error) {
@@ -29,6 +35,7 @@ export const loginUser = async (
   try {
     // check if user exits
     const user = await userModel.findOne({ email: email });
+    console.log(user);
     if (!user) {
       return next(new AppError("invalid credentials", 401));
     }

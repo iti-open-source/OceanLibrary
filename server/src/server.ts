@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import helmet from "helmet";
 import hpp from "hpp";
+import cors from "cors";
 import "dotenv/config";
 import bookRouter from "./routes/bookRoutes.js";
 import cartRouter from "./routes/cartRoutes.js";
@@ -11,8 +12,8 @@ import userRouter from "./routes/userRoutes.js";
 import authorRouter from "./routes/authorRoutes.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import logger from "./middlewares/logger.js";
+import { limiter } from "./middlewares/limiter.js";
 import AppError from "./utils/appError.js";
-import cors from "cors";
 
 const app = express();
 
@@ -20,13 +21,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(helmet());
 app.use(hpp());
+app.use(logger);
+app.use(limiter);
 app.use(
   cors({
     origin: "http://localhost:4200", // The frontend
     credentials: true, // Allow cookies
   })
 );
-app.use(logger);
 
 // Routes
 app.use("/api/v1/books", bookRouter);

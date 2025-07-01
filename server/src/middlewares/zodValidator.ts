@@ -18,7 +18,9 @@ const ZodValidator = (schema: ZodType) => {
         // TODO: implement error handling for zod errors
         res.status(400).json({
           status: "fail",
-          message: error.issues,
+          message: `invalid ${String(error.issues[0].path.at(-1))}, ${
+            error.issues[0].message
+          }`,
         });
         return;
       }

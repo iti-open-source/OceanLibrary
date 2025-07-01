@@ -22,11 +22,11 @@ import {
 } from "../utils/validation/userValidation.js";
 import zodValidator from "../middlewares/zodValidator.js";
 import { verifyToken } from "../middlewares/auth.js";
+import { loginLimiter } from "../middlewares/limiter.js";
 
 const router = Router();
 
-router.get("/", getUsers);
-router.post("/login", zodValidator(loginUserSchema), loginUser);
+router.post("/login", zodValidator(loginUserSchema), loginLimiter, loginUser);
 router.post("/register", zodValidator(registerUserSchema), registerUser);
 router.patch(
   "/profile",
@@ -41,9 +41,11 @@ router.patch(
   changePassword
 );
 router.patch("/disable", verifyToken, deleteUser);
+
 // verify user feature
 router.post("/requestVerification", verifyToken, reqVerifyUser);
 router.patch("/verify/:token", verifyUser);
+
 // forgot password feature
 router.post("/forgotPassword", verifyToken, forgetPassword);
 router.patch(
@@ -51,7 +53,9 @@ router.patch(
   zodValidator(resetPasswordSchema),
   resetPassword
 );
+
 // admin api
+router.get("/", verifyToken, getUsers);
 router.patch("/promote/:id", verifyToken, promoteUser);
 router.patch("/ban/:id", verifyToken, banUser);
 
