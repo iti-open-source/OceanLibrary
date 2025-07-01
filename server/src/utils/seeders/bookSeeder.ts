@@ -46,6 +46,7 @@ function generateBook(
     authorID: authorId,
     genres: getRandomGenres(),
     price: parseFloat(faker.commerce.price({ min: 5, max: 100 })),
+    pages: faker.number.int({ min: 1, max: 5000 }),
     ratingAverage: Math.round(Math.random() * 5 * 10) / 10, // 0.0 to 5.0
     ratingQuantity: faker.number.int({ min: 0, max: 5000 }),
     description: faker.lorem.paragraphs(1),

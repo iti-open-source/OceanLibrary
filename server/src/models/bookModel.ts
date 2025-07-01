@@ -24,6 +24,10 @@ const bookSchema = new Schema<IBook>(
       type: Number,
       required: true,
     },
+    pages: {
+      type: Number,
+      required: true,
+    },
     description: {
       type: String,
       required: true,

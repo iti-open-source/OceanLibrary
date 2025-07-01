@@ -5,6 +5,7 @@ export interface IBook {
   authorID: mongoose.Types.ObjectId;
   genres: string[];
   price: number;
+  pages: number;
   description: string;
   stock: number;
   ratingAverage?: number;
