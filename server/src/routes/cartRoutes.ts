@@ -5,12 +5,14 @@ import {
   updateCart,
   deleteCart,
   removeFromCart,
+  mergeCart,
 } from "../controllers/cartController.js";
 import { verifyToken } from "../middlewares/auth.js";
 import ZodValidator from "../middlewares/zodValidator.js";
 import {
   addToCartSchema,
-  ModfiyCartSchema,
+  mergeCartSchema,
+  modfiyCartSchema,
 } from "../utils/validation/cartValidation.js";
 import { checkGuestId } from "../middlewares/guest.js";
 
@@ -31,7 +33,7 @@ router.post(
 // Modify quantity for spesfic item in cart
 router.patch(
   "/",
-  ZodValidator(ModfiyCartSchema),
+  ZodValidator(modfiyCartSchema),
   checkGuestId,
   verifyToken,
   updateCart
@@ -42,5 +44,8 @@ router.delete("/item", checkGuestId, verifyToken, removeFromCart);
 
 // Delete the entire cart (clear)
 router.delete("/", checkGuestId, verifyToken, deleteCart);
+
+// Merge guest's cart with user's cart
+router.post("/merge", ZodValidator(mergeCartSchema), verifyToken, mergeCart);
 
 export default router;
