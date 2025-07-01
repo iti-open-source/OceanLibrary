@@ -134,25 +134,25 @@
                     Sort by Title
                   </div>
                   <button
-                    (click)="onSortChange(SortBy.TITLE, Order.ASC)"
+                    (click)="onSortChange(SortBy.TITLE, 'asc')"
                     class="w-full px-3 py-2 text-left text-sm hover:bg-[var(--color-background-medium)] rounded transition-colors"
                     [class.bg-[var(--color-brand-primary)]]="
-                      sortBy === SortBy.TITLE && sortOrder === Order.ASC
+                      sortBy === SortBy.TITLE && sortOrder === 'asc'
                     "
                     [class.text-[var(--color-on-dark)]]="
-                      sortBy === SortBy.TITLE && sortOrder === Order.ASC
+                      sortBy === SortBy.TITLE && sortOrder === 'asc'
                     "
                   >
                     Title A-Z
                   </button>
                   <button
-                    (click)="onSortChange(SortBy.TITLE, Order.DESC)"
+                    (click)="onSortChange(SortBy.TITLE, 'desc')"
                     class="w-full px-3 py-2 text-left text-sm hover:bg-[var(--color-background-medium)] rounded transition-colors"
                     [class.bg-[var(--color-brand-primary)]]="
-                      sortBy === SortBy.TITLE && sortOrder === Order.DESC
+                      sortBy === SortBy.TITLE && sortOrder === 'desc'
                     "
                     [class.text-[var(--color-on-dark)]]="
-                      sortBy === SortBy.TITLE && sortOrder === Order.DESC
+                      sortBy === SortBy.TITLE && sortOrder === 'desc'
                     "
                   >
                     Title Z-A
@@ -164,25 +164,25 @@
                     Sort by Price
                   </div>
                   <button
-                    (click)="onSortChange(SortBy.PRICE, Order.ASC)"
+                    (click)="onSortChange(SortBy.PRICE, 'asc')"
                     class="w-full px-3 py-2 text-left text-sm hover:bg-[var(--color-background-medium)] rounded transition-colors"
                     [class.bg-[var(--color-brand-primary)]]="
-                      sortBy === SortBy.PRICE && sortOrder === Order.ASC
+                      sortBy === SortBy.PRICE && sortOrder === 'asc'
                     "
                     [class.text-[var(--color-on-dark)]]="
-                      sortBy === SortBy.PRICE && sortOrder === Order.ASC
+                      sortBy === SortBy.PRICE && sortOrder === 'asc'
                     "
                   >
                     Price Low-High
                   </button>
                   <button
-                    (click)="onSortChange(SortBy.PRICE, Order.DESC)"
+                    (click)="onSortChange(SortBy.PRICE, 'desc')"
                     class="w-full px-3 py-2 text-left text-sm hover:bg-[var(--color-background-medium)] rounded transition-colors"
                     [class.bg-[var(--color-brand-primary)]]="
-                      sortBy === SortBy.PRICE && sortOrder === Order.DESC
+                      sortBy === SortBy.PRICE && sortOrder === 'desc'
                     "
                     [class.text-[var(--color-on-dark)]]="
-                      sortBy === SortBy.PRICE && sortOrder === Order.DESC
+                      sortBy === SortBy.PRICE && sortOrder === 'desc'
                     "
                   >
                     Price High-Low
@@ -194,29 +194,25 @@
                     Sort by Rating
                   </div>
                   <button
-                    (click)="onSortChange(SortBy.AVERAGE_RATING, Order.DESC)"
+                    (click)="onSortChange(SortBy.AVERAGE_RATING, 'desc')"
                     class="w-full px-3 py-2 text-left text-sm hover:bg-[var(--color-background-medium)] rounded transition-colors"
                     [class.bg-[var(--color-brand-primary)]]="
-                      sortBy === SortBy.AVERAGE_RATING &&
-                      sortOrder === Order.DESC
+                      sortBy === SortBy.AVERAGE_RATING && sortOrder === 'desc'
                     "
                     [class.text-[var(--color-on-dark)]]="
-                      sortBy === SortBy.AVERAGE_RATING &&
-                      sortOrder === Order.DESC
+                      sortBy === SortBy.AVERAGE_RATING && sortOrder === 'desc'
                     "
                   >
                     Highest Rated
                   </button>
                   <button
-                    (click)="onSortChange(SortBy.RATING_QUANTITY, Order.DESC)"
+                    (click)="onSortChange(SortBy.RATING_QUANTITY, 'desc')"
                     class="w-full px-3 py-2 text-left text-sm hover:bg-[var(--color-background-medium)] rounded transition-colors"
                     [class.bg-[var(--color-brand-primary)]]="
-                      sortBy === SortBy.RATING_QUANTITY &&
-                      sortOrder === Order.DESC
+                      sortBy === SortBy.RATING_QUANTITY && sortOrder === 'desc'
                     "
                     [class.text-[var(--color-on-dark)]]="
-                      sortBy === SortBy.RATING_QUANTITY &&
-                      sortOrder === Order.DESC
+                      sortBy === SortBy.RATING_QUANTITY && sortOrder === 'desc'
                     "
                   >
                     Most Reviewed

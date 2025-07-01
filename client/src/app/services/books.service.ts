@@ -29,7 +29,6 @@ export class BooksService {
       priceMax,
       genres,
       match,
-      order,
       sortBy,
     } = options;
 
@@ -43,7 +42,6 @@ export class BooksService {
     if (priceMax !== undefined) params["priceMax"] = priceMax.toString();
     if (genres) params["genres"] = genres.join(",");
     if (match) params["match"] = match;
-    if (order) params["order"] = order;
     if (sortBy) params["sortBy"] = sortBy;
 
     const queryString =

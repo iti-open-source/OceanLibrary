@@ -26,7 +26,7 @@ import {
 } from "../../../../types/book.interface";
 import { ErrorModalComponent } from "../../../../components/error-modal/error-modal.component";
 import { BookCardComponent } from "../../../../components/book-card/book-card.component";
-import { Order, SortBy } from "../../../../types/queryEnums";
+import { SortBy } from "../../../../types/queryEnums";
 
 @Component({
   selector: "app-books-list",
@@ -49,7 +49,7 @@ export class BooksListComponent implements OnInit, OnDestroy {
   searchTerm = "";
   searchType: "title" | "author" | "genre" = "title";
   sortBy: SortBy = SortBy.TITLE;
-  sortOrder: Order = Order.ASC;
+  sortOrder: "asc" | "desc" = "asc";
   showDeleteModal = false;
   bookToDelete: BookInterface | null = null;
   showSearchDropdown = false;
@@ -84,7 +84,6 @@ export class BooksListComponent implements OnInit, OnDestroy {
 
   // Enums for template
   readonly SortBy = SortBy;
-  readonly Order = Order;
 
   constructor(private booksService: BooksService, private router: Router) {}
 
@@ -115,11 +114,14 @@ export class BooksListComponent implements OnInit, OnDestroy {
     this.error = "";
     this.showErrorModal = false;
 
+    // Construct sortBy string with '-' prefix for descending order
+    const sortByString =
+      this.sortOrder === "desc" ? `-${this.sortBy}` : this.sortBy;
+
     const options: any = {
       page,
       limit: 12,
-      sortBy: this.sortBy,
-      order: this.sortOrder,
+      sortBy: sortByString,
     };
 
     // Add search parameter based on search type
@@ -170,7 +172,7 @@ export class BooksListComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSortChange(sortBy: SortBy, order: Order) {
+  onSortChange(sortBy: SortBy, order: "asc" | "desc" = "asc") {
     this.sortBy = sortBy;
     this.sortOrder = order;
     this.showSortDropdown = false;
@@ -213,7 +215,7 @@ export class BooksListComponent implements OnInit, OnDestroy {
         ? "Reviews"
         : "Title";
 
-    const orderLabel = this.sortOrder === Order.ASC ? "↑" : "↓";
+    const orderLabel = this.sortOrder === "desc" ? "↓" : "↑";
     return `${sortLabel} ${orderLabel}`;
   }
 
@@ -298,13 +300,11 @@ export class BooksListComponent implements OnInit, OnDestroy {
   }
 
   navigateToAddBook() {
-    this.router.navigate(["/admin/books/form"]);
+    this.router.navigate(["/admin/books/new"]);
   }
 
   navigateToEditBook(bookId: string) {
-    this.router.navigate(["/admin/books/form"], {
-      queryParams: { id: bookId },
-    });
+    this.router.navigate([`/admin/books/${bookId}/edit`]);
   }
 
   private setupClickOutsideHandler() {

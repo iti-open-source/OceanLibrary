@@ -1,4 +1,4 @@
-import { Match, Order, SortBy } from "./queryEnums";
+import { Match, SortBy } from "./queryEnums";
 
 export interface GetBooksOptions {
   page?: number;
@@ -9,7 +9,6 @@ export interface GetBooksOptions {
   priceMin?: number;
   priceMax?: number;
   match?: Match;
-  order?: Order;
   sortBy?: SortBy;
 }
 

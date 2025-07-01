@@ -49,7 +49,6 @@ export const getAllBooks = async (
     priceMin,
     match = "any",
     sortBy = "ratingAverage",
-    order = "desc",
     priceMax,
   } = req.query;
 
@@ -98,7 +97,7 @@ export const getAllBooks = async (
   try {
     const books = await Book.find(filter)
       // You can sort by price, title, ratingAverage, ratingQuantity, stock, ..etc
-      .sort({ [sortBy as string]: order == "asc" ? 1 : -1 })
+      .sort((sortBy as string).split(",").join(" "))
       .skip(skip)
       .limit(parseInt(limit as string));
     const total = await Book.countDocuments(filter);
