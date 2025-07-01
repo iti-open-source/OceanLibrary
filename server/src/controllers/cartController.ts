@@ -204,7 +204,7 @@ export const updateCart = async (
 
 /**
  * Clear all items in cart
- * @param req - userID
+ * @param req - Valid userID
  * @param res - Error or success message
  */
 export const deleteCart = async (
