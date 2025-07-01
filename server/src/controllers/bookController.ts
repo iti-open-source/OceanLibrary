@@ -61,6 +61,11 @@ export const getAllBooks = async (
   // ex: If we're on page 1 and the limit is 10 -> (1 - 1) * 10 = 0, which is correct we don't wanna skip anything in this case
   const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
 
+  if (page) {
+    const numOfBooks = await Book.countDocuments();
+    if (skip > numOfBooks) next(new AppError("This page does not exist", 404));
+  }
+
   // Build filter object
   const filter: BookFilter = {};
 
