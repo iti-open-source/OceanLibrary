@@ -384,3 +384,79 @@ export const deleteCart = async (
     next(error);
   }
 };
+
+/**
+ * Merge guest's cart with logged in client
+ * @param req - guestId
+ * @param res - success or error
+ * @returns
+ */
+export const mergeCart = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  // Prepare transcation session
+  const session = await cartModel.startSession();
+
+  try {
+    const userId = req.userId;
+    const { guestId } = req.body;
+
+    // start transcation
+    session.startTransaction();
+
+    // Get user's Cart
+    const cart = await cartModel.findById(userId).session(session);
+
+    // Get guest's cart
+    const guestCart = await cartModel.findById(guestId).session(session);
+
+    // Guest has no cart, nothing to merge
+    if (!guestCart) {
+      // Abort transcation
+      await session.abortTransaction();
+      session.endSession();
+
+      return next(new AppError("Guest had nothing in his cart to merge!", 304));
+    }
+
+    // User doesn't have cart, nothing to merge, lets create a new cart with the guest's cart
+    if (!cart) {
+      const newCart = new cartModel({
+        _id: userId,
+        items: guestCart.items,
+      });
+
+      await newCart.save({ session });
+    } else {
+      // Merge the existing user's cart with the guest cart
+      // If client had already some of that items lets increase quantitiy
+      for (const guestItem of guestCart.items) {
+        const index = cart.items.findIndex((item) =>
+          item.bookId.equals(guestItem.bookId)
+        );
+        if (index > -1) {
+          cart.items[index].quantity += guestItem.quantity;
+        } else {
+          cart.items.push(guestItem);
+        }
+      }
+
+      await cart.save({ session });
+    }
+
+    // Delete guest's cart
+    await guestCart.deleteOne({ session });
+
+    // Commit
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({ message: "Your cart has merged!" });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    next(error);
+  }
+};
