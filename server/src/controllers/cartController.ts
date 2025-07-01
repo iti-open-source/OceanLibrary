@@ -282,13 +282,23 @@ export const removeFromCart = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  // Prepare transcation session
+  const session = await cartModel.startSession();
+
   try {
     const userId = req.userId;
     const { bookId } = req.body;
 
+    // Start transcation
+    session.startTransaction();
+
     // Get user Cart
-    const cart = await cartModel.findById(userId);
+    const cart = await cartModel.findById(userId).session(session);
     if (!cart) {
+      // Abort transcation
+      await session.abortTransaction();
+      session.endSession();
+
       return next(
         new AppError("You haven’t added anything to your cart yet.", 400)
       );
@@ -301,6 +311,10 @@ export const removeFromCart = async (
 
     // The book doesn't exist in user cart
     if (itemIndex === -1) {
+      // Abort transcation
+      await session.abortTransaction();
+      session.endSession();
+
       return next(
         new AppError(
           "Oops! That item isn’t available in your cart anymore.",
@@ -312,12 +326,17 @@ export const removeFromCart = async (
     // Remove the book from the cart
     cart.items.splice(itemIndex, 1);
 
-    // Save our cart
-    await cart.save();
+    // Save our cart and commit
+    await cart.save({ session });
+    await session.commitTransaction();
+    session.endSession();
+
     res
       .status(200)
       .json({ message: "Item successfully deleted from your cart." });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     next(error);
   }
 };
