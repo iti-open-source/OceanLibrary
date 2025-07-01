@@ -11,7 +11,14 @@ export const getAllAuthors = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const { page = 1, limit = 10, name, nationality, match = "any" } = req.query;
+  const {
+    page = 1,
+    limit = 10,
+    name,
+    nationality,
+    match = "any",
+    fields,
+  } = req.query;
 
   const genres = req.query.genres
     ? (req.query.genres as string).split(",").map((g) => g.toLowerCase())
@@ -39,6 +46,7 @@ export const getAllAuthors = async (
 
   try {
     const authors = await Author.find(filter)
+      .select(fields ? (fields as string).replaceAll(",", " ") : "-__v")
       .sort({ name: 1 })
       .skip(skip)
       .limit(parseInt(limit as string));
@@ -68,7 +76,10 @@ export const getAuthorById = async (
 ): Promise<void> => {
   try {
     const id = req.params.id;
-    const author = await Author.findById(id);
+    const { fields } = req.query;
+    const author = await Author.findById(id).select(
+      fields ? (fields as string).replaceAll(",", " ") : "-__v"
+    );
     if (!author) {
       next(new AppError("Author Not Found", 404));
     } else {

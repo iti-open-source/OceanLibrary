@@ -14,9 +14,9 @@ import Author from "../models/authorModel.js";
  *   - `author` (optional): Author filter for case-insensitive partial match
  *   - `priceMin` (optional): Minimum price filter
  *   - `priceMax` (optional): Maximum price filter
- *   - `sortBy` (optional): The field by which to sort the books (default by ratingAverage)
- *   - `order` (asc/desc) (optional): The order of the sorting (Descending or ascending) (default descending)
+ *   - `sortBy` (optional): The comma-separated field(s) by which to sort the books and the order to sort by (each prefexed '-' for desc) (default by ratingAverage)
  *   - `genres` (optional): The genres by which to filter the books, returns all genres if not provided
+ *   - `fields` (optional): Specifies the data fields to be sent in the response (title, authorName for example)
  *   - `match` (any/all) (optional): Specifies whether we want the book to have at least one of the genres to pass or all of them
  * @param res - Express response object
  * @param next - Express next function for error handling
@@ -50,6 +50,7 @@ export const getAllBooks = async (
     match = "any",
     sortBy = "ratingAverage",
     priceMax,
+    fields,
   } = req.query;
 
   // Genres are expected to be a comma-separated string, so we convert it to an array here and make sure that they're all lower case
@@ -96,6 +97,7 @@ export const getAllBooks = async (
 
   try {
     const books = await Book.find(filter)
+      .select(fields ? (fields as string).split(",").join(" ") : "-__v")
       // You can sort by price, title, ratingAverage, ratingQuantity, stock, ..etc
       .sort((sortBy as string).split(",").join(" "))
       .skip(skip)
@@ -147,9 +149,12 @@ export const getBookById = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    const { fields } = req.query;
     const id = req.params.id;
     // returns null if the book is not found
-    const book = await Book.findById(id);
+    const book = await Book.findById(id).select(
+      fields ? (fields as string).split(",").join(" ") : "-__v"
+    );
     // check for null
     if (!book) {
       next(new AppError("Book Not Found", 404));

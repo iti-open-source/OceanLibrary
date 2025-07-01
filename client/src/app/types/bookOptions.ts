@@ -1,4 +1,4 @@
-import { Match, SortBy } from "./queryEnums";
+import { Fields, Match, SortBy } from "./queryEnums";
 
 export interface GetBooksOptions {
   page?: number;
@@ -10,8 +10,8 @@ export interface GetBooksOptions {
   priceMax?: number;
   match?: Match;
   sortBy?: SortBy;
+  fields?: Fields[];
 }
-
 export interface UpdateBookOptions {
   title?: string;
   authorName?: string;

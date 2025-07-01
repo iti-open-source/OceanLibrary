@@ -30,6 +30,7 @@ export class BooksService {
       genres,
       match,
       sortBy,
+      fields,
     } = options;
 
     const params: { [key: string]: string } = {};
@@ -43,6 +44,7 @@ export class BooksService {
     if (genres) params["genres"] = genres.join(",");
     if (match) params["match"] = match;
     if (sortBy) params["sortBy"] = sortBy;
+    if (fields) params["fields"] = fields.join(",");
 
     const queryString =
       Object.keys(params).length > 0
