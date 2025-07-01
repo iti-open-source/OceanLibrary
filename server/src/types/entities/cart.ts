@@ -1,7 +1,11 @@
-import mongoose from "mongoose";
+import { IBook } from "./book.js";
 
-export interface cartItem {
-  bookId: mongoose.Types.ObjectId;
+interface cIBook extends IBook {
+  _id: string;
+}
+
+export interface ICartItem {
+  bookId: string;
   title: string;
   price: number;
   stock: number;
@@ -10,7 +14,12 @@ export interface cartItem {
   subtotal: number;
 }
 
-export interface userCart {
-  items: cartItem[];
+export interface ICart {
+  items: ICartItem[];
   total: number;
+}
+
+export interface IRefBook {
+  bookId: cIBook;
+  quantity: number;
 }

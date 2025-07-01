@@ -3,7 +3,7 @@ import cartModel from "../models/cartModel.js";
 import Book from "../models/bookModel.js";
 import AppError from "../utils/appError.js";
 import { CustomRequest } from "../middlewares/auth.js";
-import { cartItem, userCart } from "../types/entities/cart.js";
+import { ICart, ICartItem, IRefBook } from "../types/entities/cart.js";
 
 /**
  * View cart - Displays cart items and total amount
@@ -21,16 +21,21 @@ export const viewCart = async (
     // Get user's cart and fetch every book info from it
     const cart = await cartModel.findById(userId).populate("items.bookId");
 
-    // User's cart is empty
+    // User's cart is hasn't been created yet, return empty cart.
     if (!cart) {
-      res.status(200).json({ items: [] });
+      const userCart: ICart = {
+        items: [],
+        total: 0,
+      };
+
+      res.status(200).json({ message: "Cart is empty", userCart });
       return;
     }
 
     // Cart is not empty, Load books into cart
-    const itemsList: cartItem[] = cart.items
+    const itemsList: ICartItem[] = (cart.items as unknown as IRefBook[])
       .filter((item) => item.bookId)
-      .map((item: any) => ({
+      .map((item) => ({
         bookId: item.bookId._id,
         title: item.bookId.title,
         price: item.bookId.price,
@@ -44,11 +49,12 @@ export const viewCart = async (
     const totalAmount = itemsList.reduce((sum, item) => sum + item.subtotal, 0);
 
     // User cart
-    const userCart: userCart = {
+    const userCart: ICart = {
       items: itemsList,
       total: totalAmount,
     };
 
+    // Return user's cart
     res.status(200).json({
       message: "Cart retrieved successfully.",
       userCart,
