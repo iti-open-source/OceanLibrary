@@ -351,21 +351,36 @@ export const deleteCart = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  // Prepare transcation session
+  const session = await cartModel.startSession();
+
   try {
     const userId = req.userId;
 
+    // Start transcation
+    session.startTransaction();
+
     // Get user's Cart
-    const cart = await cartModel.findById(userId);
+    const cart = await cartModel.findById(userId).session(session);
 
     // If the user doesn't have cart then there is nothing to delete
     if (!cart) {
-      return next(new AppError("Your cart is already empty!.", 400));
+      // Abort transcation
+      await session.abortTransaction();
+      session.endSession();
+
+      return next(new AppError("Your cart is already empty!", 400));
     }
 
     // clear the cart
-    await cart.deleteOne();
+    await cart.deleteOne({ session });
+    await session.commitTransaction();
+    session.endSession();
+
     res.status(200).json({ message: "Your cart has been deleted!" });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     next(error);
   }
 };
