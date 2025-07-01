@@ -74,14 +74,23 @@ export const addToCart = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  // Start transcation to prevent race over add to cart to overflow in stock
+  // Preventing timing attacks on cart
+  const session = await cartModel.startSession();
+  session.startTransaction();
+
   try {
     const userId = req.userId;
     const { bookId, quantity } = req.body;
 
     // Fetch Book info
-    const book = await Book.findById(bookId);
+    const book = await Book.findById(bookId).session(session);
     // Book doesn't exists
     if (!book) {
+      // Abort transcation
+      await session.abortTransaction();
+      session.endSession();
+
       return next(
         new AppError(
           "Sorry, we couldn’t find the book you’re looking for.",
@@ -92,6 +101,11 @@ export const addToCart = async (
 
     // Verify the book Stock
     if (!book.stock || book.stock < quantity) {
+      // Abort transcation
+      await session.abortTransaction();
+      session.endSession();
+
+      // Return stock limit error
       return next(
         new AppError(
           `Only ${book.stock} items left in stock - please adjust your quantity.`,
@@ -101,7 +115,7 @@ export const addToCart = async (
     }
 
     // Get user cart
-    let cart = await cartModel.findById(userId);
+    let cart = await cartModel.findById(userId).session(session);
     // User doesn't have a cart
     if (!cart) {
       // Create a new cart with the requested book
@@ -122,6 +136,9 @@ export const addToCart = async (
         const currentQuantity = cart.items[itemIndex].quantity;
         const futureQuantity = currentQuantity + quantity;
         if (futureQuantity > book.stock) {
+          // Abort transcation
+          await session.abortTransaction();
+          // Return stock limit error
           return next(
             new AppError(
               `You can’t add more of this item - stock limit reached.`,
@@ -136,9 +153,17 @@ export const addToCart = async (
         cart.items.push({ bookId, quantity });
       }
     }
-    await cart.save();
+
+    // save cart and commit
+    await cart.save({ session });
+    await session.commitTransaction();
+    session.endSession();
+
     res.status(200).json({ message: "Book added! View cart to proceed." });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+
     next(error);
   }
 };
