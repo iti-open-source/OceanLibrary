@@ -18,11 +18,6 @@ export const viewCart = async (
   try {
     const userId = req.userId;
 
-    // Validate userID
-    if (!mongoose.isValidObjectId(userId)) {
-      return next(new AppError("UserID is not valid please re-login.", 404));
-    }
-
     // Get user's cart and fetch every book info from it
     const cart = await cartModel.findById(userId).populate("items.bookId");
 
