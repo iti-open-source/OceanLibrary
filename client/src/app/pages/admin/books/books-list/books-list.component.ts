@@ -26,7 +26,7 @@ import {
 } from "../../../../types/book.interface";
 import { ErrorModalComponent } from "../../../../components/error-modal/error-modal.component";
 import { BookCardComponent } from "../../../../components/book-card/book-card.component";
-import { SortBy } from "../../../../types/queryEnums";
+import { Fields, SortBy } from "../../../../types/queryEnums";
 
 @Component({
   selector: "app-books-list",
@@ -122,6 +122,16 @@ export class BooksListComponent implements OnInit, OnDestroy {
       page,
       limit: 12,
       sortBy: sortByString,
+      fields: [
+        Fields.STOCK,
+        Fields.TITLE,
+        Fields.AUTHOR_NAME,
+        Fields.RATING_AVERAGE,
+        Fields.RATING_QUANTITY,
+        Fields.GENRES,
+        Fields.PRICE,
+        Fields.IMAGE,
+      ],
     };
 
     // Add search parameter based on search type
@@ -142,7 +152,8 @@ export class BooksListComponent implements OnInit, OnDestroy {
     this.booksService.getAllBooks(options).subscribe({
       next: (response: BooksResponse) => {
         this.books = response.data.books;
-        this.currentPage = response.data.currentPage;
+        // Use the page parameter instead of relying on API response
+        this.currentPage = page;
         this.totalPages = response.data.totalPages;
         this.totalItems = response.data.totalItems;
         this.loading = false;
@@ -221,6 +232,7 @@ export class BooksListComponent implements OnInit, OnDestroy {
 
   onPageChange(page: number) {
     if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page; // Update currentPage immediately
       this.loadBooks(page);
     }
   }

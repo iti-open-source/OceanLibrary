@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
 @import "tailwindcss";
 
@@ -9,8 +9,11 @@
 
   /* -- Colors -- */
   --color-background-light: #f9f6ea;
+  --color-background-light-rgb: 249, 246, 234;
   --color-background-medium: #eee9ce;
+  --color-background-dark: #d2c8b4;
   --color-brand-primary: #5a471d;
+  --color-brand-primary-rgb: 90, 71, 29;
   --color-text-default: #5a471d;
   --color-text-heading: #5a471d;
   --color-link: #5a471d;
@@ -21,8 +24,11 @@
 
 .dark-mode {
   --color-background-light: #382c20;
+  --color-background-light-rgb: 56, 44, 32;
   --color-background-medium: #503c28;
+  --color-background-dark: #2d1f15;
   --color-brand-primary: #d2b48c;
+  --color-brand-primary-rgb: 210, 180, 140;
   --color-text-default: #d2b48c;
   --color-text-heading: #f0dcb4;
   --color-link: #c8aa78;
@@ -31,11 +37,14 @@
   --color-border: #6e553c;
 }
 
-body, .min-h-screen, .flex-1 {
+body,
+.min-h-screen,
+.flex-1 {
   will-change: background-color, color;
 }
 
-html, body {
+html,
+body {
   background-color: var(--color-background-light);
   color: var(--color-text-default);
   transition: background-color 0.3s, color 0.3s;

@@ -15,6 +15,7 @@ export const adminRoutes: Routes = [
         component: DashboardComponent,
       },
       { path: "users", title: "Admin | Users", component: UsersComponent },
+      // { path: "orders", title: "Admin | Orders", component: OrdersComponent}.
       {
         path: "books",
         loadChildren: () =>

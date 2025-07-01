@@ -2,7 +2,9 @@
   class="relative bg-[var(--color-background-light)] text-[var(--color-text-default)] px-4 sm:px-6 lg:px-8 py-2 font-secondary shadow-md"
 >
   <div class="container mx-auto flex justify-between items-center">
-    <a routerLink="" class="cursor-pointer font-brand text-3xl text-[var(--color-text-heading)]"
+    <a
+      routerLink=""
+      class="cursor-pointer font-brand text-3xl text-[var(--color-text-heading)]"
       >oceanlibrary</a
     >
 
@@ -11,7 +13,10 @@
         class="search-container flex items-center border rounded-full border-[var(--color-border)] w-1/2 max-w-xl focus-within:ring-2 focus-within:ring-[var(--color-brand-primary)] focus-within:border-transparent"
       >
         <div class="pl-4 pr-2">
-          <lucide-icon name="search" class="h-6 w-6 text-[var(--color-text-muted)]"></lucide-icon>
+          <lucide-icon
+            name="search"
+            class="h-6 w-6 text-[var(--color-text-muted)]"
+          ></lucide-icon>
         </div>
         <input
           class="search-input w-full py-3 px-4 bg-transparent focus:outline-none placeholder-[var(--color-text-muted)] text-sm rounded-full"
@@ -49,26 +54,48 @@
         <lucide-icon name="compass" class="h-6 w-6"></lucide-icon>
         <span class="text-xs mt-1">Browse</span>
       </a>
-      <div class="relative group" tabindex="0" (focusout)="profileMenuOpen = false">
-        <button type="button" (click)="profileMenuOpen = !profileMenuOpen" class="cursor-pointer focus:outline-none">
+      <div
+        class="relative group"
+        tabindex="0"
+        (focusout)="profileMenuOpen = false"
+      >
+        <button
+          type="button"
+          (click)="profileMenuOpen = !profileMenuOpen"
+          class="cursor-pointer focus:outline-none"
+        >
           <span class="flex items-center">
             <img
               class="h-9 w-9 rounded-full object-cover border-2 border-transparent group-hover:border-[var(--color-brand-primary)] transition cursor-pointer"
               src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&q=80"
               alt="profile image"
             />
-            <lucide-icon name="chevron-down" class="ml-1 h-5 w-5 text-[var(--color-text-muted)]"></lucide-icon>
+            <lucide-icon
+              name="chevron-down"
+              class="ml-1 h-h5 w-5 text-[var(--color-text-muted)]"
+            ></lucide-icon>
           </span>
         </button>
-        <div *ngIf="profileMenuOpen" class="absolute right-0 mt-3 w-44 bg-[var(--color-background-light)] border border-[var(--color-border)] rounded-xl shadow-xl z-30 animate-fade-in">
+        <div
+          *ngIf="profileMenuOpen"
+          class="absolute right-0 mt-3 w-44 bg-[var(--color-background-light)] border border-[var(--color-border)] rounded-xl shadow-xl z-30 animate-fade-in"
+        >
           <div class="flex justify-end pr-4 -mt-2">
-            <span class="block w-3 h-3 rotate-45 bg-[var(--color-background-light)] border-t border-l border-[var(--color-border)] -mb-1"></span>
+            <span
+              class="block w-3 h-3 rotate-45 bg-[var(--color-background-light)] border-t border-l border-[var(--color-border)] -mb-1"
+            ></span>
           </div>
-          <a routerLink="" class="cursor-pointer block px-5 py-3 text-sm text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] rounded-t-xl flex items-center">
+          <a
+            routerLink=""
+            class="cursor-pointer block px-5 py-3 text-sm text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] rounded-t-xl flex items-center"
+          >
             <lucide-icon name="user" class="mr-2 h-5 w-5"></lucide-icon>
             Profile
           </a>
-          <a routerLink="" class="cursor-pointer block px-5 py-3 text-sm text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] rounded-b-xl flex items-center">
+          <a
+            routerLink=""
+            class="cursor-pointer block px-5 py-3 text-sm text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] rounded-b-xl flex items-center"
+          >
             <lucide-icon name="log-out" class="mr-2 h-5 w-5"></lucide-icon>
             Sign Out
           </a>
@@ -85,29 +112,56 @@
         [attr.aria-expanded]="mobileMenuOpen"
         aria-controls="mobile-navbar-menu"
       >
-        <lucide-icon *ngIf="!mobileMenuOpen" name="menu" class="h-6 w-6 transition-transform duration-300"></lucide-icon>
-        <lucide-icon *ngIf="mobileMenuOpen" name="x" class="h-6 w-6 transition-transform duration-300"></lucide-icon>
+        <lucide-icon
+          *ngIf="!mobileMenuOpen"
+          name="menu"
+          class="h-6 w-6 transition-transform duration-300"
+        ></lucide-icon>
+        <lucide-icon
+          *ngIf="mobileMenuOpen"
+          name="x"
+          class="h-6 w-6 transition-transform duration-300"
+        ></lucide-icon>
       </button>
     </div>
   </div>
 
-  <div *ngIf="mobileMenuOpen" class="fixed inset-0 bg-black bg-opacity-40 z-30 lg:hidden" (click)="toggleMobileMenu()" tabindex="-1" aria-hidden="true"></div>
+  <div
+    *ngIf="mobileMenuOpen"
+    class="fixed inset-0 bg-black bg-opacity-40 z-30 lg:hidden"
+    (click)="toggleMobileMenu()"
+    tabindex="-1"
+    aria-hidden="true"
+  ></div>
 
   <div
     id="mobile-navbar-menu"
     class="lg:hidden fixed top-0 right-0 h-full w-4/5 max-w-xs bg-[var(--color-background-light)] z-40 shadow-2xl rounded-l-2xl overflow-y-auto transition-all duration-300 ease-in-out"
-    [ngClass]="mobileMenuOpen ? 'translate-x-0 opacity-100 pointer-events-auto' : 'translate-x-full opacity-0 pointer-events-none'"
+    [ngClass]="
+      mobileMenuOpen
+        ? 'translate-x-0 opacity-100 pointer-events-auto'
+        : 'translate-x-full opacity-0 pointer-events-none'
+    "
     role="menu"
     aria-modal="true"
     tabindex="0"
   >
-    <button (click)="toggleMobileMenu()" class="absolute top-4 right-4 p-3 rounded-full bg-[var(--color-background-light)] shadow-md hover:bg-[var(--color-background-medium)] focus:outline-none z-50" aria-label="Close menu">
+    <button
+      (click)="toggleMobileMenu()"
+      class="absolute top-4 right-4 p-3 rounded-full bg-[var(--color-background-light)] shadow-md hover:bg-[var(--color-background-medium)] focus:outline-none z-50"
+      aria-label="Close menu"
+    >
       <lucide-icon name="x" class="h-7 w-7"></lucide-icon>
     </button>
     <div class="pt-20 pb-4 px-4">
       <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <lucide-icon name="search" class="h-6 w-6 text-[var(--color-text-muted)]"></lucide-icon>
+        <div
+          class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+        >
+          <lucide-icon
+            name="search"
+            class="h-6 w-6 text-[var(--color-text-muted)]"
+          ></lucide-icon>
         </div>
         <input
           class="w-full py-3 pl-12 pr-4 border rounded-full border-[var(--color-border)] focus:outline-none placeholder-[var(--color-text-muted)] text-sm focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:border-transparent bg-[var(--color-background-medium)]"

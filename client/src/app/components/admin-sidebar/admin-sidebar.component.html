@@ -1,0 +1,194 @@
+<!-- Mobile Menu Button -->
+<button
+  (click)="toggleMobileMenu()"
+  class="mobile-menu-btn lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-[var(--color-background-medium)] border border-[var(--color-border)] shadow-lg"
+>
+  <lucide-icon
+    [img]="isMobileMenuOpen ? X : Menu"
+    class="h-6 w-6 text-[var(--color-text-heading)]"
+  ></lucide-icon>
+</button>
+
+<!-- Mobile Overlay -->
+<div
+  *ngIf="isMobileMenuOpen"
+  (click)="closeMobileMenu()"
+  class="mobile-overlay lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+></div>
+
+<!-- Sidebar -->
+<aside
+  class="sidebar"
+  [ngClass]="{
+    'sidebar-collapsed': isCollapsed,
+    'sidebar-mobile-open': isMobileMenuOpen
+  }"
+>
+  <!-- Sidebar Header -->
+  <div class="sidebar-header">
+    <div class="header-content" [ngClass]="{ 'header-collapsed': isCollapsed }">
+      <div class="logo-section">
+        <div class="logo-icon">
+          <lucide-icon [img]="BookOpen" class="h-8 w-8"></lucide-icon>
+        </div>
+        <div class="logo-text" *ngIf="!isCollapsed">
+          <h2 class="logo-title">Library</h2>
+          <p class="logo-subtitle">Admin Panel</p>
+        </div>
+      </div>
+
+      <!-- Desktop Toggle Button -->
+      <button
+        (click)="toggleSidebar()"
+        class="toggle-btn hidden lg:flex"
+        *ngIf="!isCollapsed"
+        [title]="'Collapse Sidebar'"
+      >
+        <lucide-icon [img]="Menu" class="h-5 w-5"></lucide-icon>
+      </button>
+    </div>
+
+    <!-- Collapsed Toggle Button -->
+    <div class="collapsed-toggle" *ngIf="isCollapsed">
+      <button
+        (click)="toggleSidebar()"
+        class="toggle-btn-collapsed hidden lg:flex"
+        [title]="'Expand Sidebar'"
+      >
+        <lucide-icon [img]="Menu" class="h-4 w-4"></lucide-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="sidebar-nav">
+    <ul class="nav-list">
+      <!-- Dashboard -->
+      <li class="nav-item">
+        <a
+          routerLink="/admin/dashboard"
+          routerLinkActive="nav-link-active"
+          class="nav-link"
+          (click)="closeMobileMenu()"
+          [title]="isCollapsed ? 'Dashboard' : ''"
+        >
+          <lucide-icon [img]="Home" class="nav-icon"></lucide-icon>
+          <span class="nav-text" *ngIf="!isCollapsed">Dashboard</span>
+        </a>
+      </li>
+
+      <!-- Books Section -->
+      <li class="nav-section">
+        <div
+          class="section-header"
+          [ngClass]="{ 'section-collapsed': isCollapsed }"
+        >
+          <lucide-icon [img]="BookOpen" class="section-icon"></lucide-icon>
+          <span class="section-title" *ngIf="!isCollapsed">Books</span>
+        </div>
+
+        <ul class="section-list" *ngIf="!isCollapsed">
+          <li class="nav-item">
+            <a
+              routerLink="/admin/books"
+              routerLinkActive="nav-link-active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="nav-link sub-link"
+              (click)="closeMobileMenu()"
+            >
+              <lucide-icon [img]="List" class="nav-icon"></lucide-icon>
+              <span class="nav-text">View All</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              routerLink="/admin/books/new"
+              routerLinkActive="nav-link-active"
+              class="nav-link sub-link"
+              (click)="closeMobileMenu()"
+            >
+              <lucide-icon [img]="Plus" class="nav-icon"></lucide-icon>
+              <span class="nav-text">Add New</span>
+            </a>
+          </li>
+        </ul>
+
+        <!-- Collapsed Books Links -->
+        <ul class="collapsed-section" *ngIf="isCollapsed">
+          <li class="nav-item">
+            <a
+              routerLink="/admin/books"
+              routerLinkActive="nav-link-active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="nav-link"
+              title="View All Books"
+            >
+              <lucide-icon [img]="List" class="nav-icon"></lucide-icon>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              routerLink="/admin/books/new"
+              routerLinkActive="nav-link-active"
+              class="nav-link"
+              title="Add New Book"
+            >
+              <lucide-icon [img]="Plus" class="nav-icon"></lucide-icon>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Users -->
+      <li class="nav-item">
+        <a
+          routerLink="/admin/users"
+          routerLinkActive="nav-link-active"
+          class="nav-link"
+          (click)="closeMobileMenu()"
+          [title]="isCollapsed ? 'Users' : ''"
+        >
+          <lucide-icon [img]="Users" class="nav-icon"></lucide-icon>
+          <span class="nav-text" *ngIf="!isCollapsed">Users</span>
+        </a>
+      </li>
+
+      <!-- Orders -->
+      <li class="nav-item">
+        <a
+          routerLink="/admin/orders"
+          routerLinkActive="nav-link-active"
+          class="nav-link"
+          (click)="closeMobileMenu()"
+        >
+          <lucide-icon [img]="ShoppingCart" class="nav-icon"></lucide-icon>
+          <span class="nav-text" *ngIf="!isCollapsed"> Orders </span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Sidebar Footer -->
+  <div class="sidebar-footer">
+    <div class="footer-content" *ngIf="!isCollapsed">
+      <button (click)="exitToHome()" class="exit-btn" title="Exit to Homepage">
+        <lucide-icon [img]="LogOut" class="exit-icon"></lucide-icon>
+        <span class="exit-text">Exit to Site</span>
+      </button>
+      <div class="footer-info">
+        <p class="footer-text">Library Management</p>
+      </div>
+    </div>
+
+    <!-- Collapsed Footer -->
+    <div class="footer-collapsed" *ngIf="isCollapsed">
+      <button
+        (click)="exitToHome()"
+        class="exit-btn-collapsed"
+        title="Exit to Homepage"
+      >
+        <lucide-icon [img]="LogOut" class="exit-icon"></lucide-icon>
+      </button>
+    </div>
+  </div>
+</aside>

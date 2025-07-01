@@ -1,2 +1,9 @@
-<app-sidebar />
-<router-outlet />
+<div class="admin-layout">
+  <app-admin-sidebar (sidebarToggle)="onSidebarToggle($event)" />
+  <main
+    class="admin-content"
+    [ngClass]="{ 'content-collapsed': isSidebarCollapsed }"
+  >
+    <router-outlet />
+  </main>
+</div>

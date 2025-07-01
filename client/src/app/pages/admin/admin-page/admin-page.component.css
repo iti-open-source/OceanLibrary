@@ -1,0 +1,36 @@
+/* Admin Page Layout */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--color-background-light);
+}
+
+.admin-content {
+  flex: 1;
+  margin-left: 280px; /* Space for expanded sidebar */
+  min-height: 100vh;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
+}
+
+/* When sidebar is collapsed */
+.admin-content.content-collapsed {
+  margin-left: 72px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 1023px) {
+  .admin-content {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .admin-content.content-collapsed {
+    margin-left: 0;
+  }
+}
+
+/* Ensure content doesn't get cut off */
+.admin-content > * {
+  max-width: 100%;
+}
