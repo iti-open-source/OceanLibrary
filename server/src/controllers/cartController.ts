@@ -203,6 +203,56 @@ export const updateCart = async (
 };
 
 /**
+ * Remove spesfic book from cart
+ * @param req - bookId to be removed
+ * @param res - success or error message
+ */
+export const removeFromCart = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId = req.userId;
+    const { bookId } = req.body;
+
+    // Get user Cart
+    const cart = await cartModel.findById(userId);
+    if (!cart) {
+      return next(
+        new AppError("You haven’t added anything to your cart yet.", 400)
+      );
+    }
+
+    // Find which book we need to remove
+    const itemIndex = cart.items.findIndex((item) =>
+      item.bookId.equals(bookId)
+    );
+
+    // The book doesn't exist in user cart
+    if (itemIndex === -1) {
+      return next(
+        new AppError(
+          "Oops! That item isn’t available in your cart anymore.",
+          400
+        )
+      );
+    }
+
+    // Remove the book from the cart
+    cart.items.splice(itemIndex, 1);
+
+    // Save our cart
+    await cart.save();
+    res
+      .status(200)
+      .json({ message: "Item successfully deleted from your cart." });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * Clear all items in cart
  * @param req - Valid userID
  * @param res - Error or success message
