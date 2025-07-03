@@ -6,6 +6,12 @@ import { CustomRequest } from "../middlewares/auth.js";
 import { ICart, ICartItem, IRefBook } from "../types/entities/cart.js";
 
 /**
+ * TODO
+ * 1. Add limit of max number of items a guest can add
+ * 2. Add a watchdog to delete guest cart after x time
+ */
+
+/**
  * View cart - Displays cart items and total amount
  * @param req
  * @param res - items[], total<number>
@@ -75,6 +81,7 @@ export const viewCart = async (
     const itemsList: ICartItem[] = filteredBooks.map((item) => ({
       bookId: item.bookId._id,
       title: item.bookId.title,
+      author: item.bookId.authorName,
       price: item.bookId.price,
       stock: item.bookId.stock,
       image: item.bookId.image,

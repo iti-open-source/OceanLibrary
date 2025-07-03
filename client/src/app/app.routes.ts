@@ -10,6 +10,7 @@ import { PreviewComponent } from "./pages/book-info/preview/preview.component";
 import { adminRoutes } from "./pages/admin/admin.routes";
 import { AdminGuard } from "./guards/admin.guard";
 import { HomeComponent } from "./pages/home/home.component";
+import { CartComponent } from "./pages/cart/cart.component";
 
 export const routes: Routes = [
   {
@@ -23,6 +24,10 @@ export const routes: Routes = [
   {
     path: "register",
     component: RegisterComponent,
+  },
+  {
+    path: "cart",
+    component: CartComponent,
   },
   {
     path: "book-info",

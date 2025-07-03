@@ -48,7 +48,7 @@ export const getAllBooks = async (
     author,
     priceMin,
     match = "any",
-    sortBy = "ratingAverage",
+    sortBy = "-ratingAverage",
     priceMax,
     fields,
   } = req.query;
@@ -63,7 +63,7 @@ export const getAllBooks = async (
 
   if (page) {
     const numOfBooks = await Book.countDocuments();
-    if (skip > numOfBooks) next(new AppError("This page does not exist", 404));
+    if (skip >= numOfBooks) next(new AppError("This page does not exist", 404));
   }
 
   // Build filter object

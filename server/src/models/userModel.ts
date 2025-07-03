@@ -8,8 +8,8 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
-      minlength: 3,
-      maxlength: 32,
+      minLength: 3,
+      maxLength: 32,
       trim: true,
     },
     email: {
@@ -19,17 +19,52 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    password: { type: String, required: true, minlength: 8, maxlength: 128 },
-    phone: { type: String, required: true, unique: true, trim: true },
-    address: { street: String, city: String, country: String, zip: String },
-    role: { type: String, enum: ["admin", "user"], default: "user" },
-    active: { type: Boolean, default: true },
-    verified: { type: Boolean, default: false },
-    verificationToken: { type: String },
-    verificationExpiry: { type: Date },
-    passwordChangeAt: { type: Date },
-    passwordResetToken: { type: String },
-    passwordResetExpiry: { type: Date },
+    password: {
+      type: String,
+      required: true,
+      minLength: 8,
+      maxLength: 128,
+    },
+    phone: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    address: {
+      street: String,
+      city: String,
+      country: String,
+      zip: String,
+    },
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      default: "user",
+    },
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+    },
+    verificationExpiry: {
+      type: Date,
+    },
+    passwordChangeAt: {
+      type: Date,
+    },
+    passwordResetToken: {
+      type: String,
+    },
+    passwordResetExpiry: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );

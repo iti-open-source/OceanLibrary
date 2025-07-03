@@ -5,7 +5,7 @@ const itemSchema = new mongoose.Schema(
     bookId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "books",
+      ref: "Book",
     },
     title: {
       type: String,
@@ -31,7 +31,7 @@ const orderSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: "User",
       required: true,
     },
     items: {
@@ -68,6 +68,6 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const orderModel = mongoose.model("orders", orderSchema);
+const orderModel = mongoose.model("Order", orderSchema);
 
 export default orderModel;

@@ -1,0 +1,156 @@
+<main
+  class="flex-grow container mx-auto py-8 px-4 md:px-6 lg:flex lg:space-x-8"
+>
+  <!-- Cart Items -->
+  @if(cartItems.length > 0){
+  <div class="lg:w-2/3">
+    <h2 class="text-2xl font-bold mb-6">Your Cart (x items)</h2>
+
+    <!-- Cart Item  -->
+    <div
+      class="cart-item bg-medium rounded-lg p-4 mb-4 flex flex-col md:flex-row"
+    >
+      <div class="md:w-1/4 mb-4 md:mb-0">
+        <img
+          src=""
+          alt="book"
+          class="w-full h-auto rounded transition-transform duration-300 hover:scale-105"
+        />
+      </div>
+      <div class="md:w-3/4 md:pl-4 flex flex-col justify-between">
+        <div>
+          <h3 class="text-xl font-bold">Title</h3>
+          <p class="text-muted mb-2">Description</p>
+          <p class="font-bold text-lg">$0</p>
+        </div>
+        <div class="mt-4 flex items-center justify-between">
+          <div
+            class="flex items-center border border-custom rounded overflow-hidden"
+          >
+            <button class="quantity-btn px-3 py-1 text-lg hover:bg-dark">
+              <i class="fas fa-minus"></i>
+            </button>
+            <span class="px-4 py-1">1</span>
+            <button class="quantity-btn px-3 py-1 text-lg hover:bg-dark">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <button class="remove-btn text-muted hover:text-brand-primary">
+            <i class="fas fa-trash"></i> Remove
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-between items-center mt-8">
+      <a href="#" class="continue-shopping text-link hover:underline">
+        <i class="fas fa-arrow-left mr-2"></i> Continue Shopping
+      </a>
+      <button
+        class="update-cart-btn bg-dark px-4 py-2 rounded hover:bg-brand-primary hover:text-on-dark"
+      >
+        Update Cart
+      </button>
+    </div>
+  </div>
+  <!-- Checkout Summary -->
+  <div class="lg:w-1/3 mt-8 lg:mt-0">
+    <div
+      class="bg-medium rounded-lg p-6 sticky top-4 transition-transform duration-300 hover:shadow-lg"
+    >
+      <h3 class="text-2xl font-bold mb-4">Order Summary</h3>
+
+      <div class="space-y-3 mb-6">
+        <div class="flex justify-between">
+          <span>Subtotal (x items)</span>
+          <span>$0</span>
+        </div>
+        <div class="flex justify-between">
+          <span>Shipping</span>
+          <span>$0</span>
+        </div>
+        <div
+          class="border-t border-custom pt-3 mt-3 flex justify-between font-bold text-lg"
+        >
+          <span>Total</span>
+          <span>$0</span>
+        </div>
+      </div>
+
+      <h4 class="font-bold mb-3">Payment Method</h4>
+      <div class="space-y-3 mb-6">
+        <div class="payment-method-container">
+          <input
+            type="radio"
+            id="cash"
+            name="payment"
+            value="cash"
+            class="payment-radio"
+            checked
+          />
+          <label for="cash" class="payment-label">
+            <div class="checkmark">
+              <i class="fas fa-check text-xs"></i>
+            </div>
+            <i class="fas fa-money-bill-wave text-2xl mr-3 text-muted"></i>
+            <div>
+              <div class="font-bold">Cash on Delivery</div>
+              <div class="text-sm text-muted">
+                Pay when you receive your order
+              </div>
+            </div>
+          </label>
+        </div>
+
+        <div class="payment-method-container">
+          <input
+            type="radio"
+            id="card"
+            name="payment"
+            value="card"
+            class="payment-radio"
+          />
+          <label for="card" class="payment-label">
+            <div class="checkmark">
+              <i class="fas fa-check text-xs"></i>
+            </div>
+            <i class="far fa-credit-card text-2xl mr-3 text-muted"></i>
+            <div>
+              <div class="font-bold">Credit/Debit Card</div>
+              <div class="text-sm text-muted">Pay securely with your card</div>
+            </div>
+          </label>
+        </div>
+
+        <div class="payment-method-container">
+          <input
+            type="radio"
+            id="crypto"
+            name="payment"
+            value="crypto"
+            class="payment-radio"
+          />
+          <label for="crypto" class="payment-label">
+            <div class="checkmark">
+              <i class="fas fa-check text-xs"></i>
+            </div>
+            <i class="fab fa-bitcoin text-2xl mr-3 text-muted"></i>
+            <div>
+              <div class="font-bold">Cryptocurrency</div>
+              <div class="text-sm text-muted">Pay with Bitcoin or Ethereum</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <button class="checkout-btn btn-primary w-full py-3 rounded-lg font-bold">
+        Proceed to Checkout
+      </button>
+
+      <div class="mt-4 text-sm text-muted text-center">
+        <i class="fas fa-lock mr-1"></i> Secure checkout
+      </div>
+    </div>
+  </div>
+  }@else{ Your cart is empty }
+</main>
