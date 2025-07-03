@@ -80,6 +80,23 @@ export class CartService {
   }
 
   /**
+   * Delete an item from the cart
+   * @param bookId - the id of the book we want to remove
+   * @returns observable with data
+   */
+  deleteItem(bookId: string): Observable<any> {
+    const client: string[] = this.getClient();
+    return this.http.delete(`${this.endPoint}/item`, {
+      body: {
+        bookId,
+      },
+      headers: {
+        [client[0]]: client[1],
+      },
+    });
+  }
+
+  /**
    * Get All items in cart
    * @returns Observable
    */
