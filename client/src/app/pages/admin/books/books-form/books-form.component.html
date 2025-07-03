@@ -1,1 +1,314 @@
-<p>books-form works!</p>
+<div class="books-form-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p class="loading-text">Loading book data...</p>
+    </div>
+  </div>
+
+  <!-- Form Header -->
+  <div class="form-header">
+    <div class="header-content">
+      <h1 class="form-title">
+        {{ isEditMode ? "Edit Book" : "Create New Book" }}
+      </h1>
+      <p class="form-subtitle">
+        {{
+          isEditMode
+            ? "Update the book information below"
+            : "Fill in the details to add a new book to your collection"
+        }}
+      </p>
+    </div>
+    <div class="header-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onCancel()"
+        [disabled]="submitting"
+      >
+        <lucide-angular [img]="X" size="16"></lucide-angular>
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <!-- Form Content -->
+  <form [formGroup]="bookForm" (ngSubmit)="onSubmit()" class="book-form">
+    <!-- Basic Information Section -->
+    <div class="form-section">
+      <h2 class="section-title">Basic Information</h2>
+      <div class="section-grid">
+        <!-- Title -->
+        <div class="form-field full-width">
+          <label for="title" class="field-label"> Book Title * </label>
+          <input
+            id="title"
+            type="text"
+            formControlName="title"
+            class="field-input"
+            [class.invalid]="isFieldInvalid('title')"
+            placeholder="Enter the book title"
+          />
+          <div *ngIf="isFieldInvalid('title')" class="field-error">
+            <lucide-angular [img]="AlertCircle" size="16"></lucide-angular>
+            {{ getFieldError("title") }}
+          </div>
+        </div>
+
+        <!-- Author -->
+        <div class="form-field">
+          <label for="authorName" class="field-label"> Author Name * </label>
+          <input
+            id="authorName"
+            type="text"
+            formControlName="authorName"
+            class="field-input"
+            [class.invalid]="isFieldInvalid('authorName')"
+            placeholder="Enter author name"
+          />
+          <div *ngIf="isFieldInvalid('authorName')" class="field-error">
+            <lucide-angular [img]="AlertCircle" size="16"></lucide-angular>
+            {{ getFieldError("authorName") }}
+          </div>
+        </div>
+
+        <!-- Pages -->
+        <div class="form-field">
+          <label for="pages" class="field-label"> Number of Pages * </label>
+          <input
+            id="pages"
+            type="number"
+            formControlName="pages"
+            class="field-input"
+            [class.invalid]="isFieldInvalid('pages')"
+            placeholder="e.g. 250"
+            min="1"
+          />
+          <div *ngIf="isFieldInvalid('pages')" class="field-error">
+            <lucide-angular [img]="AlertCircle" size="16"></lucide-angular>
+            {{ getFieldError("pages") }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing & Inventory Section -->
+    <div class="form-section">
+      <h2 class="section-title">Pricing & Inventory</h2>
+      <div class="section-grid">
+        <!-- Price -->
+        <div class="form-field">
+          <label for="price" class="field-label"> Price ($) * </label>
+          <input
+            id="price"
+            type="number"
+            formControlName="price"
+            class="field-input"
+            [class.invalid]="isFieldInvalid('price')"
+            placeholder="0.00"
+            step="0.01"
+            min="0.01"
+          />
+          <div *ngIf="isFieldInvalid('price')" class="field-error">
+            <lucide-angular [img]="AlertCircle" size="16"></lucide-angular>
+            {{ getFieldError("price") }}
+          </div>
+        </div>
+
+        <!-- Stock -->
+        <div class="form-field">
+          <label for="stock" class="field-label"> Stock Quantity * </label>
+          <input
+            id="stock"
+            type="number"
+            formControlName="stock"
+            class="field-input"
+            [class.invalid]="isFieldInvalid('stock')"
+            placeholder="0"
+            min="0"
+          />
+          <div *ngIf="isFieldInvalid('stock')" class="field-error">
+            <lucide-angular [img]="AlertCircle" size="16"></lucide-angular>
+            {{ getFieldError("stock") }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Genres Section -->
+    <div class="form-section">
+      <h2 class="section-title">Genres</h2>
+      <div class="genres-container">
+        <div class="genres-header">
+          <p class="section-description">Add genres that describe this book</p>
+          <button
+            type="button"
+            class="btn btn-outline btn-sm"
+            (click)="addGenre()"
+          >
+            <lucide-angular [img]="Plus" size="16"></lucide-angular>
+            Add Genre
+          </button>
+        </div>
+
+        <div class="genres-list" formArrayName="genres">
+          <div
+            *ngFor="let genre of genresArray.controls; let i = index"
+            class="genre-item"
+          >
+            <input
+              type="text"
+              [formControlName]="i"
+              class="field-input genre-input"
+              [class.invalid]="genre.invalid && (genre.dirty || genre.touched)"
+              placeholder="Enter genre"
+            />
+            <button
+              type="button"
+              class="btn btn-ghost btn-sm remove-genre"
+              (click)="removeGenre(i)"
+              [disabled]="genresArray.length <= 1"
+              [attr.aria-label]="'Remove genre ' + (i + 1)"
+            >
+              <lucide-angular [img]="Trash2" size="16"></lucide-angular>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description Section -->
+    <div class="form-section">
+      <h2 class="section-title">Description</h2>
+      <div class="form-field full-width">
+        <label for="description" class="field-label"> Book Description </label>
+        <textarea
+          id="description"
+          formControlName="description"
+          class="field-textarea"
+          [class.invalid]="isFieldInvalid('description')"
+          placeholder="Enter a detailed description of the book..."
+          rows="6"
+        ></textarea>
+        <div class="field-hint">Optional. Maximum 1000 characters.</div>
+        <div *ngIf="isFieldInvalid('description')" class="field-error">
+          <lucide-angular [img]="AlertCircle" size="16"></lucide-angular>
+          {{ getFieldError("description") }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Section -->
+    <div class="form-section">
+      <h2 class="section-title">Book Cover</h2>
+      <div class="image-section">
+        <!-- Image URL Input -->
+        <div class="form-field">
+          <label for="image" class="field-label"> Image URL </label>
+          <input
+            id="image"
+            type="url"
+            formControlName="image"
+            class="field-input"
+            [class.invalid]="isFieldInvalid('image')"
+            placeholder="https://example.com/book-cover.jpg"
+          />
+          <div class="field-hint">
+            Enter a URL to an image of the book cover
+          </div>
+          <div *ngIf="isFieldInvalid('image')" class="field-error">
+            <lucide-angular [img]="AlertCircle" size="16"></lucide-angular>
+            {{ getFieldError("image") }}
+          </div>
+        </div>
+
+        <!-- Image Preview -->
+        <div class="image-preview-container">
+          <div class="image-preview" *ngIf="imagePreview; else noImagePreview">
+            <img
+              [src]="imagePreview"
+              [alt]="bookForm.get('title')?.value || 'Book cover'"
+              class="preview-image"
+            />
+            <div class="preview-overlay">
+              <lucide-angular
+                [img]="CheckCircle"
+                size="24"
+                class="success-icon"
+              ></lucide-angular>
+            </div>
+          </div>
+          <ng-template #noImagePreview>
+            <div class="no-image-preview">
+              <lucide-angular [img]="ImageIcon" size="48"></lucide-angular>
+              <p>No image preview</p>
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Future File Upload (Commented Out) -->
+        <!--
+        <div class="file-upload-section">
+          <label class="file-upload-label">
+            <input type="file" accept="image/*" class="file-input" />
+            <div class="file-upload-area">
+              <lucide-angular [img]="Upload" size="32"></lucide-angular>
+              <p class="upload-text">Click to upload or drag and drop</p>
+              <p class="upload-hint">PNG, JPG, GIF up to 10MB</p>
+            </div>
+          </label>
+        </div>
+        -->
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <div class="actions-content">
+        <div class="auto-save-indicator" *ngIf="bookForm.dirty && !submitting">
+          <div class="auto-save-dot"></div>
+          <span>Changes auto-saved</span>
+        </div>
+
+        <div class="action-buttons">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="onCancel()"
+            [disabled]="submitting"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="!bookForm.valid || submitting"
+            [class.loading]="submitting"
+          >
+            <span *ngIf="!submitting">
+              <lucide-angular [img]="Save" size="16"></lucide-angular>
+              {{ isEditMode ? "Update Book" : "Create Book" }}
+            </span>
+            <span *ngIf="submitting" class="loading-content">
+              <div class="button-spinner"></div>
+              {{ isEditMode ? "Updating..." : "Creating..." }}
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Error Modal -->
+<app-error-modal
+  [isVisible]="showErrorModal"
+  [title]="errorModalTitle"
+  [message]="errorModalMessage"
+  [showActionButton]="errorModalShowAction"
+  [actionButtonText]="errorModalActionText"
+  (close)="onErrorModalClose()"
+  (action)="onErrorModalAction()"
+></app-error-modal>
