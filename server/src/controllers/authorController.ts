@@ -28,7 +28,7 @@ export const getAllAuthors = async (
 
   if (page) {
     const numOfAuthors = await Author.countDocuments();
-    if (skip > numOfAuthors)
+    if (skip >= numOfAuthors)
       next(new AppError("This page does not exist", 404));
   }
 
