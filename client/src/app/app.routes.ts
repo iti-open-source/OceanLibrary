@@ -9,11 +9,16 @@ import { ReviewsComponent } from "./pages/book-info/reviews/reviews.component";
 import { PreviewComponent } from "./pages/book-info/preview/preview.component";
 import { adminRoutes } from "./pages/admin/admin.routes";
 import { AdminGuard } from "./guards/admin.guard";
+import { HomeComponent } from "./pages/home/home.component";
 
 export const routes: Routes = [
   {
     path: "login",
     component: LoginComponent,
+  },
+  {
+    path: "home",
+    component: HomeComponent,
   },
   {
     path: "register",
