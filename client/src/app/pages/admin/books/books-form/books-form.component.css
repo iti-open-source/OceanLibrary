@@ -369,6 +369,7 @@
   font-family: var(--font-secondary);
   text-transform: uppercase;
   letter-spacing: 0.025em;
+  white-space: nowrap;
 }
 
 .btn:disabled {
@@ -500,6 +501,19 @@
   align-items: center;
 }
 
+.action-buttons .btn {
+  min-width: 160px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.action-buttons .btn span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .books-form-container {
@@ -580,6 +594,7 @@
 
   .action-buttons .btn {
     width: 100%;
+    min-width: unset;
   }
 }
 
