@@ -10,6 +10,7 @@ import { CommonModule } from "@angular/common";
 })
 export class CartComponent implements OnInit {
   cartItems: item[] = [];
+  loading!: boolean;
 
   constructor(private cart: CartService) {}
 
@@ -18,12 +19,15 @@ export class CartComponent implements OnInit {
   }
 
   loadCart() {
+    this.loading = true;
     this.cart.getCart().subscribe({
       next: (data: any) => {
         this.cartItems = data.userCart.items;
+        this.loading = false;
       },
       error: (error) => {
         console.log(error.error.message);
+        this.loading = false;
       },
     });
   }
@@ -34,6 +38,7 @@ export class CartComponent implements OnInit {
    * @param newQuantity - the new quantity to add to cart
    */
   updateCart(bookId: string, newQuantity: number) {
+    this.loading = true;
     this.cart.updateCart(bookId, newQuantity).subscribe({
       next: (data: any) => {
         console.log(data);
@@ -41,6 +46,7 @@ export class CartComponent implements OnInit {
       },
       error: (error) => {
         console.log(error.error.message);
+        this.loading = false;
       },
     });
   }
@@ -50,6 +56,7 @@ export class CartComponent implements OnInit {
    * @param bookId - the id of the book we want to remove
    */
   deleteItem(bookId: string) {
+    this.loading = true;
     this.cart.deleteItem(bookId).subscribe({
       next: (data: any) => {
         console.log(data);
@@ -57,6 +64,7 @@ export class CartComponent implements OnInit {
       },
       error: (error) => {
         console.log(error.error.message);
+        this.loading = false;
       },
     });
   }
