@@ -22,13 +22,13 @@ app.use(express.json());
 app.use(helmet());
 app.use(hpp());
 app.use(logger);
-app.use(limiter);
 app.use(
   cors({
     origin: "http://localhost:4200", // The frontend
     credentials: true, // Allow cookies
   })
 );
+app.use(limiter);
 
 // Routes
 app.use("/api/v1/authors", authorRouter);
