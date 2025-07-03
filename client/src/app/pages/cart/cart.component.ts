@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CartService } from "../../services/cart.service";
 import { CommonModule } from "@angular/common";
+import { TruckElectric } from "lucide-angular";
 
 @Component({
   selector: "app-cart",
@@ -10,7 +11,9 @@ import { CommonModule } from "@angular/common";
 })
 export class CartComponent implements OnInit {
   cartItems: item[] = [];
+  totalAmount: number = 0;
   loading!: boolean;
+  errorMessage: string = "";
 
   constructor(private cart: CartService) {}
 
@@ -19,14 +22,16 @@ export class CartComponent implements OnInit {
   }
 
   loadCart() {
+    this.errorMessage = "";
     this.loading = true;
     this.cart.getCart().subscribe({
       next: (data: any) => {
+        this.totalAmount = data.userCart.total;
         this.cartItems = data.userCart.items;
         this.loading = false;
       },
       error: (error) => {
-        console.log(error.error.message);
+        this.errorMessage = error.error.message;
         this.loading = false;
       },
     });
@@ -38,6 +43,7 @@ export class CartComponent implements OnInit {
    * @param newQuantity - the new quantity to add to cart
    */
   updateCart(bookId: string, newQuantity: number) {
+    this.errorMessage = "";
     this.loading = true;
     this.cart.updateCart(bookId, newQuantity).subscribe({
       next: (data: any) => {
@@ -45,7 +51,7 @@ export class CartComponent implements OnInit {
         this.loadCart();
       },
       error: (error) => {
-        console.log(error.error.message);
+        this.errorMessage = error.error.message;
         this.loading = false;
       },
     });
@@ -56,6 +62,7 @@ export class CartComponent implements OnInit {
    * @param bookId - the id of the book we want to remove
    */
   deleteItem(bookId: string) {
+    this.errorMessage = "";
     this.loading = true;
     this.cart.deleteItem(bookId).subscribe({
       next: (data: any) => {
@@ -63,7 +70,7 @@ export class CartComponent implements OnInit {
         this.loadCart();
       },
       error: (error) => {
-        console.log(error.error.message);
+        this.errorMessage = error.error.message;
         this.loading = false;
       },
     });
