@@ -81,6 +81,7 @@ export const viewCart = async (
     const itemsList: ICartItem[] = filteredBooks.map((item) => ({
       bookId: item.bookId._id,
       title: item.bookId.title,
+      author: item.bookId.authorName,
       price: item.bookId.price,
       stock: item.bookId.stock,
       image: item.bookId.image,
