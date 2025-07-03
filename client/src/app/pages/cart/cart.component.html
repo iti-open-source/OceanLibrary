@@ -2,6 +2,7 @@
   class="flex-grow container mx-auto py-8 px-4 md:px-6 lg:flex lg:space-x-8"
 >
   <!-- Cart Items -->
+  @if(cartItems.length > 0){
   <div class="lg:w-2/3">
     <h2 class="text-2xl font-bold mb-6">Your Cart (x items)</h2>
 
@@ -52,7 +53,6 @@
       </button>
     </div>
   </div>
-
   <!-- Checkout Summary -->
   <div class="lg:w-1/3 mt-8 lg:mt-0">
     <div
@@ -152,4 +152,5 @@
       </div>
     </div>
   </div>
+  }@else{ Your cart is empty }
 </main>
