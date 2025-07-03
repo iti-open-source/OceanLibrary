@@ -6,7 +6,11 @@ export const limiter = rateLimit({
   standardHeaders: "draft-8",
   legacyHeaders: false,
   handler: function (req, res) {
-    res.status(429).json({ status: "fail", message: "too many requests" });
+    res.status(429).json({
+      status: "fail",
+      message:
+        "We're sorry, but we can't process your request right now because you've sent too many requests in a short period. Please try again later.",
+    });
   },
 });
 
@@ -16,8 +20,10 @@ export const loginLimiter = rateLimit({
   standardHeaders: "draft-8",
   legacyHeaders: false,
   handler: function (req, res) {
-    res
-      .status(429)
-      .json({ status: "fail", message: "too many login requests" });
+    res.status(429).json({
+      status: "fail",
+      message:
+        "We're sorry, but we can't process your request right now because you've sent too many requests in a short period. Please try again later.",
+    });
   },
 });
