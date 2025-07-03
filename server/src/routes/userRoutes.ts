@@ -21,7 +21,7 @@ import {
   resetPasswordSchema,
 } from "../utils/validation/userValidation.js";
 import zodValidator from "../middlewares/zodValidator.js";
-import { verifyToken } from "../middlewares/auth.js";
+import { verifyToken, verifyAdmin } from "../middlewares/auth.js";
 import { loginLimiter } from "../middlewares/limiter.js";
 
 const router = Router();
@@ -55,8 +55,8 @@ router.patch(
 );
 
 // admin api
-router.get("/", verifyToken, getUsers);
-router.patch("/promote/:id", verifyToken, promoteUser);
-router.patch("/ban/:id", verifyToken, banUser);
+router.get("/", verifyToken, verifyAdmin, getUsers);
+router.patch("/promote/:id", verifyToken, verifyAdmin, promoteUser);
+router.patch("/ban/:id", verifyToken, verifyAdmin, banUser);
 
 export default router;

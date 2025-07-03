@@ -6,25 +6,6 @@ import { CustomRequest } from "../middlewares/auth.js";
 import { userServiceMail } from "../utils/email.js";
 import AppError from "../utils/appError.js";
 
-export const getUsers = async (
-  req: CustomRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  const role = req.userRole;
-  try {
-    if (role !== "admin") {
-      return next(
-        new AppError("not enough privileges to handle this request", 401)
-      );
-    }
-    const users = await userModel.find();
-    res.status(200).json({ status: "success", data: users });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const loginUser = async (
   req: Request,
   res: Response,
@@ -50,7 +31,7 @@ export const loginUser = async (
         { userId: user._id, userRole: user.role },
         process.env.SECRET_KEY,
         {
-          expiresIn: "1h",
+          expiresIn: "12h",
         }
       );
       res.status(200).json({ status: "success", data: token });
@@ -298,17 +279,26 @@ export const resetPassword = async (
 };
 
 // admin controller
+export const getUsers = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const users = await userModel.find();
+    res.status(200).json({ status: "success", data: users });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const promoteUser = async (
   req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const role = req.userRole;
   const { id } = req.params;
   try {
-    if (!role || role !== "admin") {
-      return next(new AppError("unauthorized request", 401));
-    }
     const user = await userModel.findById(id);
     if (!user || user.role === "admin") {
       return next(new AppError("promotion failed", 400));
@@ -327,12 +317,8 @@ export const banUser = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const role = req.userRole;
   const { id } = req.params;
   try {
-    if (!role || role !== "admin") {
-      return next(new AppError("unauthorized request", 401));
-    }
     const user = await userModel.findById(id);
     if (!user) {
       return next(new AppError("user not found", 404));

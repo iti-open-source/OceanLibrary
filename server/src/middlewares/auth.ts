@@ -13,7 +13,7 @@ export const verifyToken = async (
   req: CustomRequest,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     // Check if the request is made by a guest user and has been verifyed by guest middleware
     if (req.isGuest && req.userId) {
@@ -31,6 +31,21 @@ export const verifyToken = async (
     }
     req.userId = decoded.userId;
     req.userRole = decoded.userRole;
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const verifyAdmin = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (req.userRole !== "admin") {
+      return next(new AppError("requires admin privileges", 401));
+    }
     next();
   } catch (error) {
     next(error);
