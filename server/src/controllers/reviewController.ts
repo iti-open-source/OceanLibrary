@@ -27,7 +27,7 @@ export const submitReview = async (
     // update book rating statistics
     const totalRatings = (book.ratingAverage ?? 0) * (book.ratingQuantity ?? 0);
     book.ratingQuantity = (book.ratingQuantity ?? 0) + 1;
-    book.ratingAverage = (rating + totalRatings) / book.ratingQuantity;
+    book.ratingAverage = (totalRatings + rating) / book.ratingQuantity;
     await book.save();
     // add review to database
     const review = await reviewModel.create({
@@ -37,7 +37,6 @@ export const submitReview = async (
       reviewTitle: filter.clean(reviewTitle),
       reviewContent: filter.clean(reviewContent),
     });
-    await review.save();
     res.status(200).json({ status: "success", data: review });
   } catch (error) {
     next(error);
@@ -84,6 +83,24 @@ export const editReview = async (
     if (!review) {
       return next(new AppError("review not found", 404));
     }
+    // modify statistics and filter review from bad words
+    if (updates.reviewTitle)
+      updates.reviewTitle = filter.clean(String(updates.reviewTitle));
+    if (updates.reviewBody)
+      updates.reviewBody = filter.clean(String(updates.reviewBody));
+    if (updates.rating) {
+      // update book rating statistics
+      const book = await bookModel.findById(review.bookId);
+      if (!book) {
+        return next(new AppError("failed to edit review", 400));
+      }
+      const totalRatings =
+        (book.ratingAverage ?? 0) * (book.ratingQuantity ?? 0);
+      book.ratingQuantity = (book.ratingQuantity ?? 0) + 1;
+      book.ratingAverage =
+        (totalRatings + Number(updates.rating)) / book.ratingQuantity;
+      await book.save();
+    }
     Object.assign(review, updates);
     review.edited = true;
     await review.save();
@@ -101,10 +118,21 @@ export const deleteReview = async (
   const { id } = req.params;
 
   try {
-    const deletedReview = reviewModel.findByIdAndDelete(id);
-    if (!deletedReview) {
+    const review = await reviewModel.findById(id);
+    if (!review) {
       return next(new AppError("review not found", 404));
     }
+    const book = await bookModel.findById(review.bookId);
+    if (!book) {
+      return next(new AppError("invalid request", 400));
+    }
+    // update book rating statistics
+    const totalRatings = (book.ratingAverage ?? 0) * (book.ratingQuantity ?? 0);
+    book.ratingQuantity = (book.ratingQuantity ?? 1) - 1;
+    book.ratingAverage = (totalRatings - review.rating) / book.ratingQuantity;
+    await book.save();
+    // delete review
+    await reviewModel.deleteOne({ _id: review._id });
     res
       .status(200)
       .json({ status: "success", message: "review deleted successfully" });
@@ -122,7 +150,7 @@ export const getBookReviews = async (
   const { id } = req.params;
 
   try {
-    const reviews = reviewModel.find({ bookId: id });
+    const reviews = await reviewModel.find({ bookId: id });
     if (!reviews) {
       return next(new AppError("no reviews found", 404));
     }
@@ -140,13 +168,24 @@ export const removeReview = async (
   const { id } = req.params;
 
   try {
-    const deletedReview = reviewModel.findByIdAndDelete(id);
-    if (!deletedReview) {
+    const review = await reviewModel.findById(id);
+    if (!review) {
       return next(new AppError("review not found", 404));
     }
+    const book = await bookModel.findById(review.bookId);
+    if (!book) {
+      return next(new AppError("invalid request", 400));
+    }
+    // update book rating statistics
+    const totalRatings = (book.ratingAverage ?? 0) * (book.ratingQuantity ?? 0);
+    book.ratingQuantity = (book.ratingQuantity ?? 1) - 1;
+    book.ratingAverage = (totalRatings - review.rating) / book.ratingQuantity;
+    await book.save();
+    // delete review
+    await reviewModel.deleteOne({ _id: review._id });
     res
       .status(200)
-      .json({ status: "success", message: "review deleted successfully" });
+      .json({ status: "success", message: "review removed successfully" });
   } catch (error) {
     next(error);
   }
