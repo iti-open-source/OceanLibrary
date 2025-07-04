@@ -1,16 +1,24 @@
 import { Router } from "express";
-import { submitReview } from "../controllers/reviewController.js";
+import {
+  getUserReviews,
+  submitReview,
+  editReview,
+  deleteReview,
+  getBookReviews,
+  removeReview
+} from "../controllers/reviewController.js";
 import zodValidator from "../middlewares/zodValidator.js";
-import { verifyToken } from "../middlewares/auth.js";
+import { verifyAdmin, verifyToken } from "../middlewares/auth.js";
 import { submitReviewSchema } from "../utils/validation/reviewValidation.js";
 
 const router = Router();
 
-router.post(
-  "/submit",
-  zodValidator(submitReviewSchema),
-  verifyToken,
-  submitReview
-);
+router.get("/userReviews", verifyToken, getUserReviews);
+router.post("/", zodValidator(submitReviewSchema), verifyToken, submitReview);
+router.patch("/:id", verifyToken, editReview);
+router.delete("/:id", verifyToken, deleteReview);
+// admin routes
+router.get("/bookReviews/:id", verifyToken, verifyAdmin, getBookReviews);
+router.delete("/remove/:id", verifyToken, verifyAdmin, removeReview);
 
 export default router;
