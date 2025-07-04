@@ -11,6 +11,7 @@ import { TruckElectric } from "lucide-angular";
 })
 export class CartComponent implements OnInit {
   cartItems: item[] = [];
+  cartQuantity: number = 0;
   totalAmount: number = 0;
   loading!: boolean;
   errorMessage: string = "";
@@ -27,6 +28,7 @@ export class CartComponent implements OnInit {
       next: (data: any) => {
         this.totalAmount = data.userCart.total;
         this.cartItems = data.userCart.items;
+        this.cartQuantity = this.cart.cartCount;
         this.loading = false;
       },
       error: (error) => {

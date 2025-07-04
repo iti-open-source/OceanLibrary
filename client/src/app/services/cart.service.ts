@@ -110,7 +110,11 @@ export class CartService {
       })
       .pipe(
         tap((data: any) => {
-          this.cartCount = data.items?.length ?? 0;
+          this.cartCount =
+            data.userCart.items?.reduce(
+              (total: any, item: any) => total + item.quantity,
+              0
+            ) ?? 0;
         })
       );
   }
