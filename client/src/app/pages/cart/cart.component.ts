@@ -52,7 +52,6 @@ export class CartComponent implements OnInit {
       error: (error) => {
         this.errorMessage = error.error.message;
         this.loading = false;
-        this.loadCart();
       },
     });
   }
@@ -70,7 +69,6 @@ export class CartComponent implements OnInit {
       error: (error) => {
         this.errorMessage = error.error.message;
         this.loading = false;
-        this.loadCart();
       },
     });
   }

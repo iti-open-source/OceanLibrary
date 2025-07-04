@@ -51,18 +51,19 @@ export const viewCart = async (
     }
 
     // Cart is not empty
-    // Remove unavailable books (out of stock)
-    const filteredBooks = (cart.items as unknown as IRefBook[]).filter(
-      (item) => item.bookId && item.bookId.stock > 0
-    );
 
     // Check if requested quantites are available, if not shift it down to max available
     let updated = false;
-    filteredBooks.forEach((item) => {
+    let filteredBooks = (cart.items as unknown as IRefBook[]).filter((item) => {
+      if (item.bookId.stock <= 0) {
+        updated = true;
+        return false;
+      }
       if (item.quantity > item.bookId.stock) {
         item.quantity = item.bookId.stock;
         updated = true;
       }
+      return true;
     });
 
     // Save changes made to the cart

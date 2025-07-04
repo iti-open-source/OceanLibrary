@@ -81,7 +81,6 @@ h6 {
 /* Payment method animations */
 .payment-method-container {
   position: relative;
-  perspective: 1000px;
 }
 
 .payment-radio {
