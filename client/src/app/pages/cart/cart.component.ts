@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { CartService } from "../../services/cart.service";
 import { CommonModule } from "@angular/common";
-import { TruckElectric } from "lucide-angular";
 
 @Component({
   selector: "app-cart",
@@ -32,7 +31,7 @@ export class CartComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        this.errorMessage = error.error.message;
+        this.errorMessage = error?.error?.message ?? "We're having trouble reaching the server. Please check your internet connection and try again shortly.";
         this.loading = false;
       },
     });
@@ -50,7 +49,7 @@ export class CartComponent implements OnInit {
         this.loadCart();
       },
       error: (error) => {
-        this.errorMessage = error.error.message;
+        this.errorMessage = error?.error?.message ?? "We're having trouble reaching the server. Please check your internet connection and try again shortly.";
         this.loading = false;
       },
     });
@@ -67,7 +66,7 @@ export class CartComponent implements OnInit {
         this.loadCart();
       },
       error: (error) => {
-        this.errorMessage = error.error.message;
+        this.errorMessage = error?.error?.message ?? "We're having trouble reaching the server. Please check your internet connection and try again shortly.";
         this.loading = false;
       },
     });
