@@ -1,12 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { Filter } from "bad-words";
 import { CustomRequest } from "../middlewares/auth.js";
 import reviewModel from "../models/reviewModel.js";
 import bookModel from "../models/bookModel.js";
 import userModel from "../models/userModel.js";
 import AppError from "../utils/appError.js";
-
-const filter = new Filter();
 
 export const submitReview = async (
   req: CustomRequest,
@@ -34,8 +31,8 @@ export const submitReview = async (
       userId: user._id,
       bookId: bookId,
       rating: rating,
-      reviewTitle: filter.clean(reviewTitle),
-      reviewContent: filter.clean(reviewContent),
+      reviewTitle: reviewTitle,
+      reviewContent: reviewContent,
     });
     res.status(200).json({ status: "success", data: review });
   } catch (error) {
@@ -66,7 +63,7 @@ export const editReview = async (
   next: NextFunction
 ): Promise<void> => {
   const { id } = req.params;
-  const allowed = ["rating", "reviewTitle", "reviewBody"];
+  const allowed = ["rating", "reviewTitle", "reviewContent"];
   const updates: Record<string, string | number> = {};
 
   for (const field of allowed) {
@@ -83,11 +80,6 @@ export const editReview = async (
     if (!review) {
       return next(new AppError("review not found", 404));
     }
-    // modify statistics and filter review from bad words
-    if (updates.reviewTitle)
-      updates.reviewTitle = filter.clean(String(updates.reviewTitle));
-    if (updates.reviewBody)
-      updates.reviewBody = filter.clean(String(updates.reviewBody));
     if (updates.rating) {
       // update book rating statistics
       const book = await bookModel.findById(review.bookId);

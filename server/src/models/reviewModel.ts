@@ -1,4 +1,8 @@
 import mongoose from "mongoose";
+import { ReviewDocument } from "../types/entities/review.js";
+import { Filter } from "bad-words";
+
+const filter = new Filter();
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -19,6 +23,7 @@ const reviewSchema = new mongoose.Schema(
       required: true,
       min: 1,
       max: 5,
+      set: (v: number) => Math.round(v),
     },
     reviewTitle: {
       type: String,
@@ -34,12 +39,34 @@ const reviewSchema = new mongoose.Schema(
     },
     edited: {
       type: Boolean,
+      required: true,
       default: false,
     },
   },
   { timestamps: true }
 );
 
-const reviewModel = mongoose.model("Review", reviewSchema);
+reviewSchema.pre(
+  "save",
+  async function (
+    this: ReviewDocument,
+    next: mongoose.CallbackWithoutResultAndOptionalError
+  ) {
+    console.log("review pre save");
+
+    if (!this.isModified("reviewTitle") && !this.isModified("reviewContent")) {
+      next();
+    }
+    if (this.isModified("reviewTitle")) {
+      this.reviewTitle = filter.clean(this.reviewTitle);
+    }
+    if (this.isModified("reviewContent")) {
+      this.reviewContent = filter.clean(this.reviewContent);
+    }
+    next();
+  }
+);
+
+const reviewModel = mongoose.model<ReviewDocument>("Review", reviewSchema);
 
 export default reviewModel;
