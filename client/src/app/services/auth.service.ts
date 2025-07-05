@@ -1,9 +1,66 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
+import { jwtDecode } from "jwt-decode";
+import { DecodedToken } from "../types/decodedToken";
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: "root" })
 export class AuthService {
+  private readonly tokenKey = "auth_token";
 
-  constructor() { }
+  login(token: string): void {
+    localStorage.setItem(this.tokenKey, token);
+  }
+
+  logout(): void {
+    localStorage.removeItem(this.tokenKey);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
+  }
+
+  isLoggedIn(): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+
+    const decodedToken = this.decodeToken();
+    if (!decodedToken) return false;
+
+    const { exp } = decodedToken;
+    if (!exp) return true; // no expiration? assume logged in
+    const now = Math.floor(Date.now() / 1000);
+    return exp > now;
+  }
+
+  decodeToken(): DecodedToken | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    // JWT should have exactly 3 parts separated by dots
+    if (token.split(".").length !== 3) {
+      console.error(
+        "Invalid JWT format: token should have 3 parts separated by dots"
+      );
+      return null;
+    }
+
+    try {
+      const decoded = jwtDecode<DecodedToken>(token);
+      return decoded;
+    } catch (error) {
+      console.error("JWT decode error:", error);
+      return null;
+    }
+  }
+
+  getUserId(): string | null {
+    return this.decodeToken()?.userId || null;
+  }
+
+  getUserRole(): string | null {
+    return this.decodeToken()?.userRole || null;
+  }
+
+  isAdmin(): boolean {
+    return this.getUserRole() === "admin";
+  }
 }

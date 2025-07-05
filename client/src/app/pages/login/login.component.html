@@ -1,4 +1,6 @@
-<div class="min-h-screen flex flex-col justify-center items-center bg-[var(--color-background-light)] font-secondary relative h-full">
+<div
+  class="min-h-screen flex flex-col justify-center items-center bg-[var(--color-background-light)] font-secondary relative h-full"
+>
   <div class="w-full max-w-md p-8 rounded-xl flex flex-col items-center">
     <h2 class="text-lg font-normal text-brand-primary mb-2">Welcome back,</h2>
     <h1 class="text-4xl font-primary mb-6">
@@ -6,15 +8,32 @@
       ><span class="text-brand-primary font-bold">library</span>
     </h1>
     <h3 class="text-xl font-normal text-brand-primary mb-6">Sign In</h3>
-    <form class="w-full flex flex-col gap-4">
+    <form
+      [formGroup]="loginForm"
+      (ngSubmit)="onSubmit()"
+      class="w-full flex flex-col gap-4"
+    >
+      <!-- Error Message -->
+      <div
+        *ngIf="errorMessage"
+        class="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm"
+      >
+        {{ errorMessage }}
+      </div>
+
       <div class="flex flex-col gap-1">
         <label for="email" class="text-brand-primary text-base">Email</label>
         <input
           id="email"
           type="email"
+          formControlName="email"
           class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+          [class.border-red-500]="isFieldInvalid('email')"
           placeholder="Enter your email"
         />
+        <span *ngIf="isFieldInvalid('email')" class="text-red-500 text-sm">
+          {{ getFieldError("email") }}
+        </span>
       </div>
       <div class="flex flex-col gap-1">
         <label for="password" class="text-brand-primary text-base"
@@ -23,9 +42,14 @@
         <input
           id="password"
           type="password"
+          formControlName="password"
           class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+          [class.border-red-500]="isFieldInvalid('password')"
           placeholder="Enter your password"
         />
+        <span *ngIf="isFieldInvalid('password')" class="text-red-500 text-sm">
+          {{ getFieldError("password") }}
+        </span>
       </div>
       <div class="flex justify-between items-center mt-1 mb-2">
         <a href="#" class="text-sm text-text-muted hover:underline"
@@ -34,9 +58,11 @@
       </div>
       <button
         type="submit"
-        class="cursor-pointer w-full rounded-full bg-[var(--color-brand-primary)] text-[var(--color-background-light)] font-normal border border-[var(--color-border)] py-3 text-lg mt-2 shadow-sm transition-colors hover:bg-[var(--color-background-light)] hover:text-[var(--color-brand-primary)] dark:bg-[var(--color-background-light)] dark:text-[var(--color-brand-primary)] dark:hover:bg-[var(--color-brand-primary)] dark:hover:text-[var(--color-background-light)]"
+        [disabled]="loginForm.invalid || isSubmitting"
+        class="cursor-pointer w-full rounded-full bg-[var(--color-brand-primary)] text-[var(--color-background-light)] font-normal border border-[var(--color-border)] py-3 text-lg mt-2 shadow-sm transition-colors hover:bg-[var(--color-background-light)] hover:text-[var(--color-brand-primary)] dark:bg-[var(--color-background-light)] dark:text-[var(--color-brand-primary)] dark:hover:bg-[var(--color-brand-primary)] dark:hover:text-[var(--color-background-light)] disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Sign In
+        <span *ngIf="!isSubmitting">Sign In</span>
+        <span *ngIf="isSubmitting">Signing In...</span>
       </button>
     </form>
     <div class="flex items-center w-full my-8">

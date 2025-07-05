@@ -1,5 +1,7 @@
-<div class="min-h-screen flex flex-col justify-center items-center bg-[var(--color-background-light)] font-secondary relative h-full">
-  <div class="w-full max-w-md p-8 rounded-xl flex flex-col items-center">
+<div
+  class="min-h-screen flex flex-col justify-center items-center bg-[var(--color-background-light)] font-secondary relative h-full"
+>
+  <div class="w-full max-w-2xl p-10 rounded-xl flex flex-col items-center">
     <h2 class="text-lg font-normal text-brand-primary mb-2">
       Create your account
     </h2>
@@ -8,25 +10,160 @@
       ><span class="text-brand-primary font-bold">library</span>
     </h1>
     <h3 class="text-xl font-normal text-brand-primary mb-6">Sign Up</h3>
-    <form class="w-full flex flex-col gap-4">
-      <div class="flex flex-col gap-1">
-        <label for="name" class="text-brand-primary text-base">Name</label>
-        <input
-          id="name"
-          type="text"
-          class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
-          placeholder="Enter your name"
-        />
+    <form
+      [formGroup]="registerForm"
+      (ngSubmit)="onSubmit()"
+      class="w-full flex flex-col gap-6"
+    >
+      <!-- Error Message -->
+      <div
+        *ngIf="errorMessage"
+        class="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm"
+      >
+        {{ errorMessage }}
       </div>
+
+      <!-- Name -->
+      <div class="flex flex-col gap-1">
+        <label for="username" class="text-brand-primary text-base"
+          >Username</label
+        >
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+          [class.border-red-500]="isFieldInvalid('username')"
+          placeholder="Enter your username"
+        />
+        <span *ngIf="isFieldInvalid('username')" class="text-red-500 text-sm">
+          {{ getFieldError("username") }}
+        </span>
+      </div>
+
+      <!-- Email -->
       <div class="flex flex-col gap-1">
         <label for="email" class="text-brand-primary text-base">Email</label>
         <input
           id="email"
           type="email"
+          formControlName="email"
           class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+          [class.border-red-500]="isFieldInvalid('email')"
           placeholder="Enter your email"
         />
+        <span *ngIf="isFieldInvalid('email')" class="text-red-500 text-sm">
+          {{ getFieldError("email") }}
+        </span>
       </div>
+
+      <!-- Phone -->
+      <div class="flex flex-col gap-1">
+        <label for="phone" class="text-brand-primary text-base">Phone</label>
+        <input
+          id="phone"
+          type="tel"
+          formControlName="phone"
+          class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+          [class.border-red-500]="isFieldInvalid('phone')"
+          placeholder="Enter your phone number"
+        />
+        <span *ngIf="isFieldInvalid('phone')" class="text-red-500 text-sm">
+          {{ getFieldError("phone") }}
+        </span>
+      </div>
+
+      <!-- Address Section -->
+      <div formGroupName="address" class="flex flex-col gap-4">
+        <h4 class="text-brand-primary text-lg font-medium">
+          Address Information
+        </h4>
+
+        <!-- Street -->
+        <div class="flex flex-col gap-1">
+          <label for="street" class="text-brand-primary text-base"
+            >Street Address</label
+          >
+          <input
+            id="street"
+            type="text"
+            formControlName="street"
+            class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+            [class.border-red-500]="isAddressFieldInvalid('street')"
+            placeholder="Enter your street address"
+          />
+          <span
+            *ngIf="isAddressFieldInvalid('street')"
+            class="text-red-500 text-sm"
+          >
+            {{ getAddressFieldError("street") }}
+          </span>
+        </div>
+
+        <!-- City and ZIP -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1">
+            <label for="city" class="text-brand-primary text-base">City</label>
+            <input
+              id="city"
+              type="text"
+              formControlName="city"
+              class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+              [class.border-red-500]="isAddressFieldInvalid('city')"
+              placeholder="Enter your city"
+            />
+            <span
+              *ngIf="isAddressFieldInvalid('city')"
+              class="text-red-500 text-sm"
+            >
+              {{ getAddressFieldError("city") }}
+            </span>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label for="zip" class="text-brand-primary text-base"
+              >ZIP Code</label
+            >
+            <input
+              id="zip"
+              type="text"
+              formControlName="zip"
+              class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+              [class.border-red-500]="isAddressFieldInvalid('zip')"
+              placeholder="Enter ZIP code"
+            />
+            <span
+              *ngIf="isAddressFieldInvalid('zip')"
+              class="text-red-500 text-sm"
+            >
+              {{ getAddressFieldError("zip") }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Country -->
+        <div class="flex flex-col gap-1">
+          <label for="country" class="text-brand-primary text-base"
+            >Country</label
+          >
+          <input
+            id="country"
+            type="text"
+            formControlName="country"
+            class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+            [class.border-red-500]="isAddressFieldInvalid('country')"
+            placeholder="Enter your country"
+          />
+          <span
+            *ngIf="isAddressFieldInvalid('country')"
+            class="text-red-500 text-sm"
+          >
+            {{ getAddressFieldError("country") }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Password -->
       <div class="flex flex-col gap-1">
         <label for="password" class="text-brand-primary text-base"
           >Password</label
@@ -34,10 +171,17 @@
         <input
           id="password"
           type="password"
+          formControlName="password"
           class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+          [class.border-red-500]="isFieldInvalid('password')"
           placeholder="Enter your password"
         />
+        <span *ngIf="isFieldInvalid('password')" class="text-red-500 text-sm">
+          {{ getFieldError("password") }}
+        </span>
       </div>
+
+      <!-- Confirm Password -->
       <div class="flex flex-col gap-1">
         <label for="confirmPassword" class="text-brand-primary text-base"
           >Confirm Password</label
@@ -45,15 +189,27 @@
         <input
           id="confirmPassword"
           type="password"
+          formControlName="confirmPassword"
           class="rounded-full px-5 py-3 bg-background-medium dark:bg-dark-background-medium text-brand-primary dark:text-dark-brand-primary placeholder:text-text-muted border border-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-primary dark:focus:ring-dark-brand-primary"
+          [class.border-red-500]="isFieldInvalid('confirmPassword')"
           placeholder="Confirm your password"
         />
+        <span
+          *ngIf="isFieldInvalid('confirmPassword')"
+          class="text-red-500 text-sm"
+        >
+          {{ getFieldError("confirmPassword") }}
+        </span>
       </div>
+
+      <!-- Submit Button -->
       <button
         type="submit"
-        class="cursor-pointer w-full rounded-full bg-[var(--color-brand-primary)] text-[var(--color-background-light)] font-normal border border-[var(--color-border)] py-3 text-lg mt-2 shadow-sm transition-colors hover:bg-[var(--color-background-light)] hover:text-[var(--color-brand-primary)] dark:bg-[var(--color-background-light)] dark:text-[var(--color-brand-primary)] dark:hover:bg-[var(--color-brand-primary)] dark:hover:text-[var(--color-background-light)]"
+        [disabled]="registerForm.invalid || isSubmitting"
+        class="cursor-pointer w-full rounded-full bg-[var(--color-brand-primary)] text-[var(--color-background-light)] font-normal border border-[var(--color-border)] py-4 text-lg mt-4 shadow-sm transition-colors hover:bg-[var(--color-background-light)] hover:text-[var(--color-brand-primary)] dark:bg-[var(--color-background-light)] dark:text-[var(--color-brand-primary)] dark:hover:bg-[var(--color-brand-primary)] dark:hover:text-[var(--color-background-light)] disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Sign Up
+        <span *ngIf="!isSubmitting">Sign Up</span>
+        <span *ngIf="isSubmitting">Creating Account...</span>
       </button>
     </form>
     <div class="flex items-center w-full my-8">
