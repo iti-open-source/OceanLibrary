@@ -63,7 +63,18 @@ export const registerUser = async (
       address,
       role,
     });
-    res.status(201).json({ status: "success", data: user });
+    if (!process.env.SECRET_KEY) {
+      return next(new AppError("failed to generate token", 500));
+    }
+    const token = jwt.sign(
+      { userId: user._id, userRole: user.role },
+      process.env.SECRET_KEY,
+      {
+        expiresIn: "12h",
+      }
+    );
+    const result = [user, token];
+    res.status(201).json({ status: "success", data: result });
   } catch (error) {
     next(error);
   }
@@ -101,7 +112,7 @@ export const updateUser = async (
   }
 };
 
-export const deleteUser = async (
+export const disableUser = async (
   req: CustomRequest,
   res: Response,
   next: NextFunction

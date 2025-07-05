@@ -5,7 +5,7 @@ import {
   registerUser,
   updateUser,
   changePassword,
-  deleteUser,
+  disableUser,
   forgetPassword,
   resetPassword,
   reqVerifyUser,
@@ -40,7 +40,7 @@ router.patch(
   zodValidator(changePasswordSchema),
   changePassword
 );
-router.patch("/disable", verifyToken, deleteUser);
+router.patch("/disable", verifyToken, disableUser);
 
 // verify user feature
 router.post("/requestVerification", verifyToken, reqVerifyUser);
