@@ -15,6 +15,7 @@ export class AuthService {
   }
 
   getToken(): string | null {
+    if (!this.isLoggedIn()) return null;
     return localStorage.getItem(this.tokenKey);
   }
 
@@ -26,7 +27,7 @@ export class AuthService {
     if (!decodedToken) return false;
 
     const { exp } = decodedToken;
-    if (!exp) return true; // no expiration? assume logged in
+    if (!exp) return false;
     const now = Math.floor(Date.now() / 1000);
     return exp > now;
   }
