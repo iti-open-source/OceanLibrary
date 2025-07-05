@@ -141,22 +141,69 @@
           </label>
         </div>
 
+        <!-- PayPal Payment Method -->
         <div class="payment-method-container">
           <input
             type="radio"
-            id="crypto"
+            id="paypal"
             name="payment"
-            value="crypto"
+            value="paypal"
             class="payment-radio"
           />
-          <label for="crypto" class="payment-label">
+          <label for="paypal" class="payment-label">
             <div class="checkmark">
               <i class="fas fa-check text-xs"></i>
             </div>
-            <i class="fab fa-bitcoin text-2xl mr-3 text-muted"></i>
+            <i class="fab fa-paypal text-2xl mr-3 text-muted"></i>
             <div>
-              <div class="font-bold">Cryptocurrency</div>
-              <div class="text-sm text-muted">Pay with Bitcoin or Ethereum</div>
+              <div class="font-bold">PayPal</div>
+              <div class="text-sm text-muted">Pay with your PayPal account</div>
+            </div>
+          </label>
+        </div>
+
+        <!-- Mobile Wallet Payment Method -->
+        <div class="payment-method-container">
+          <input
+            type="radio"
+            id="mobile-wallet"
+            name="payment"
+            value="mobile-wallet"
+            class="payment-radio"
+          />
+          <label for="mobile-wallet" class="payment-label">
+            <div class="checkmark">
+              <i class="fas fa-check text-xs"></i>
+            </div>
+            <i class="fas fa-mobile-alt text-2xl mr-3 text-muted"></i>
+            <div>
+              <div class="font-bold">Mobile Wallet</div>
+              <div class="text-sm text-muted">
+                Pay with your mobile payment app
+              </div>
+            </div>
+          </label>
+        </div>
+
+        <!-- Kiosk Payment Method -->
+        <div class="payment-method-container">
+          <input
+            type="radio"
+            id="kiosk"
+            name="payment"
+            value="kiosk"
+            class="payment-radio"
+          />
+          <label for="kiosk" class="payment-label">
+            <div class="checkmark">
+              <i class="fas fa-check text-xs"></i>
+            </div>
+            <i class="fas fa-cash-register text-2xl mr-3 text-muted"></i>
+            <div>
+              <div class="font-bold">Kiosk</div>
+              <div class="text-sm text-muted">
+                Pay at a nearby payment kiosk
+              </div>
             </div>
           </label>
         </div>
