@@ -47,6 +47,8 @@ export class BooksFormComponent implements OnInit, OnDestroy {
   loading = false;
   submitting = false;
   imagePreview: string | null = null;
+  selectedImageFile: File | null = null;
+  dragOver = false;
 
   // Error modal properties
   showErrorModal = false;
@@ -98,7 +100,7 @@ export class BooksFormComponent implements OnInit, OnDestroy {
       pages: [null, [Validators.required, Validators.min(1)]],
       stock: [0, [Validators.required, Validators.min(0)]],
       description: ["", [Validators.maxLength(1000)]],
-      image: ["", [this.urlValidator]],
+      image: [""], // Removed URL validator since we're using file uploads
     });
   }
 
@@ -213,20 +215,8 @@ export class BooksFormComponent implements OnInit, OnDestroy {
   }
 
   private setupImagePreview() {
-    this.bookForm
-      .get("image")
-      ?.valueChanges.pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((url) => {
-        if (url && this.isValidUrl(url)) {
-          this.imagePreview = url;
-        } else {
-          this.imagePreview = null;
-        }
-      });
+    // Image preview is now handled by file upload methods
+    // This method can be used for other image-related setup if needed
   }
 
   private clearAutoSave() {
@@ -257,57 +247,72 @@ export class BooksFormComponent implements OnInit, OnDestroy {
         genre.trim()
       );
 
-      const bookData = {
-        ...formValue,
-        genres: filteredGenres,
-        pages: formValue.pages, // Ensure we use 'pages' for API
-      };
+      // Create FormData for file upload
+      const formData = new FormData();
+
+      // Add all form fields to FormData
+      formData.append("title", formValue.title);
+      formData.append("authorName", formValue.authorName);
+      formData.append("price", formValue.price.toString());
+      formData.append("pages", formValue.pages.toString());
+      formData.append("stock", formValue.stock.toString());
+      formData.append("description", formValue.description || "");
+
+      // Add genres as separate entries or as JSON string
+      filteredGenres.forEach((genre: string, index: number) => {
+        formData.append(`genres[${index}]`, genre);
+      });
+
+      // Add image file if selected
+      if (this.selectedImageFile) {
+        formData.append("image", this.selectedImageFile);
+      }
 
       if (this.isEditMode) {
-        this.updateBook(bookData);
+        this.updateBook(formData);
       } else {
-        this.createBook(bookData);
+        this.createBook(formData);
       }
     } else {
       this.markFormGroupTouched();
     }
   }
 
-  private createBook(bookData: CreateBookOptions) {
-    this.booksService.createBook(bookData).subscribe({
-      next: (response) => {
+  private createBook(formData: FormData) {
+    this.booksService.createBookWithFile(formData).subscribe({
+      next: (response: any) => {
         this.submitting = false;
         this.clearAutoSave();
         this.router.navigate(["/admin/books"]);
       },
-      error: (error) => {
+      error: (error: any) => {
         this.submitting = false;
         this.showError(
           "Failed to Create Book",
-          error.error?.message ||
+          this.getErrorMessage(error) ||
             "Unable to create the book. Please check your data and try again.",
           true,
-          () => this.createBook(bookData)
+          () => this.createBook(formData)
         );
       },
     });
   }
 
-  private updateBook(bookData: UpdateBookOptions) {
-    this.booksService.updateBookById(this.bookId!, bookData).subscribe({
-      next: (response) => {
+  private updateBook(formData: FormData) {
+    this.booksService.updateBookWithFile(this.bookId!, formData).subscribe({
+      next: (response: any) => {
         this.submitting = false;
         this.clearAutoSave();
         this.router.navigate(["/admin/books"]);
       },
-      error: (error) => {
+      error: (error: any) => {
         this.submitting = false;
         this.showError(
           "Failed to Update Book",
-          error.error?.message ||
+          this.getErrorMessage(error) ||
             "Unable to update the book. Please check your data and try again.",
           true,
-          () => this.updateBook(bookData)
+          () => this.updateBook(formData)
         );
       },
     });
@@ -338,21 +343,6 @@ export class BooksFormComponent implements OnInit, OnDestroy {
   }
 
   // Validation helpers
-  private urlValidator(control: any) {
-    if (!control.value) return null;
-    return control.value && !control.value.match(/^https?:\/\/.+/)
-      ? { invalidUrl: true }
-      : null;
-  }
-
-  private isValidUrl(url: string): boolean {
-    try {
-      new URL(url);
-      return url.match(/^https?:\/\/.+/) !== null;
-    } catch {
-      return false;
-    }
-  }
 
   isFieldInvalid(fieldName: string): boolean {
     const field = this.bookForm.get(fieldName);
@@ -367,9 +357,75 @@ export class BooksFormComponent implements OnInit, OnDestroy {
         return `${fieldName} is too long (max ${field.errors["maxlength"].requiredLength} characters)`;
       if (field.errors["min"])
         return `${fieldName} must be greater than ${field.errors["min"].min}`;
-      if (field.errors["invalidUrl"]) return "Please enter a valid URL";
     }
     return "";
+  }
+
+  // Image upload methods
+  onImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.handleImageFile(input.files[0]);
+    }
+  }
+
+  onImageDrop(event: DragEvent) {
+    event.preventDefault();
+    this.dragOver = false;
+
+    if (event.dataTransfer?.files && event.dataTransfer.files[0]) {
+      this.handleImageFile(event.dataTransfer.files[0]);
+    }
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.dragOver = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.dragOver = false;
+  }
+
+  private handleImageFile(file: File) {
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      this.showError(
+        "Invalid File Type",
+        "Please select an image file (PNG, JPG, GIF, WebP)."
+      );
+      return;
+    }
+
+    // Validate file size (10MB limit)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      this.showError(
+        "File Too Large",
+        "Please select an image smaller than 10MB."
+      );
+      return;
+    }
+
+    this.selectedImageFile = file;
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.imagePreview = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+
+    // Mark the image field as valid since we have a file
+    this.bookForm.get("image")?.setValue("has-file");
+    this.bookForm.get("image")?.markAsTouched();
+  }
+
+  removeImage() {
+    this.selectedImageFile = null;
+    this.imagePreview = null;
+    this.bookForm.get("image")?.setValue("");
   }
 
   // Error modal methods
@@ -401,4 +457,15 @@ export class BooksFormComponent implements OnInit, OnDestroy {
   }
 
   private errorActionCallback?: () => void;
+
+  // Helper method to extract error messages
+  private getErrorMessage(error: any): string {
+    if (error?.error?.message) {
+      return error.error.message;
+    }
+    if (error?.message) {
+      return error.message;
+    }
+    return "";
+  }
 }

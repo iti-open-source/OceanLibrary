@@ -30,6 +30,9 @@ app.use(
 );
 app.use(limiter);
 
+// Serve static files from uploads directory
+app.use("/uploads", express.static("uploads"));
+
 // Routes
 app.use("/api/v1/authors", authorRouter);
 app.use("/api/v1/books", bookRouter);

@@ -204,63 +204,104 @@
     <div class="form-section">
       <h2 class="section-title">Book Cover</h2>
       <div class="image-section">
-        <!-- Image URL Input -->
-        <div class="form-field">
-          <label for="image" class="field-label"> Image URL </label>
-          <input
-            id="image"
-            type="url"
-            formControlName="image"
-            class="field-input"
-            [class.invalid]="isFieldInvalid('image')"
-            placeholder="https://example.com/book-cover.jpg"
-          />
-          <div class="field-hint">
-            Enter a URL to an image of the book cover
-          </div>
-          <div *ngIf="isFieldInvalid('image')" class="field-error">
-            <lucide-angular [img]="AlertCircle" size="16"></lucide-angular>
-            {{ getFieldError("image") }}
-          </div>
-        </div>
-
-        <!-- Image Preview -->
-        <div class="image-preview-container">
-          <div class="image-preview" *ngIf="imagePreview; else noImagePreview">
-            <img
-              [src]="imagePreview"
-              [alt]="bookForm.get('title')?.value || 'Book cover'"
-              class="preview-image"
+        <!-- Image Upload Area -->
+        <div class="image-upload-container">
+          <!-- Upload Zone (only show when no image) -->
+          <div
+            class="image-upload-zone"
+            [class.drag-over]="dragOver"
+            *ngIf="!imagePreview"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onImageDrop($event)"
+            (click)="fileInput.click()"
+          >
+            <input
+              #fileInput
+              type="file"
+              accept="image/*"
+              class="file-input"
+              (change)="onImageSelected($event)"
             />
-            <div class="preview-overlay">
+
+            <!-- Upload Content -->
+            <div class="upload-content">
+              <div class="upload-icon">
+                <lucide-angular [img]="Upload" size="48"></lucide-angular>
+              </div>
+              <div class="upload-text">
+                <h3>Upload Book Cover</h3>
+                <p>Drag and drop an image here, or click to browse</p>
+                <span class="upload-hint">PNG, JPG, GIF, WebP up to 10MB</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Image Preview Card -->
+          <div class="image-preview-card" *ngIf="imagePreview">
+            <div class="card-header">
+              <h3>Book Cover Preview</h3>
+              <div class="card-actions">
+                <button
+                  type="button"
+                  class="btn btn-outline btn-sm"
+                  (click)="fileInput.click()"
+                  title="Change image"
+                >
+                  <lucide-angular [img]="Upload" size="16"></lucide-angular>
+                  Change
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline btn-sm btn-danger"
+                  (click)="removeImage()"
+                  title="Remove image"
+                >
+                  <lucide-angular [img]="Trash2" size="16"></lucide-angular>
+                  Remove
+                </button>
+              </div>
+            </div>
+
+            <div class="card-content">
+              <div class="image-container">
+                <img
+                  crossorigin="anonymous"
+                  [src]="imagePreview"
+                  [alt]="bookForm.get('title')?.value || 'Book cover'"
+                  class="preview-image"
+                />
+              </div>
+            </div>
+
+            <!-- Hidden file input for change functionality -->
+            <input
+              #fileInput
+              type="file"
+              accept="image/*"
+              class="file-input"
+              (change)="onImageSelected($event)"
+            />
+          </div>
+
+          <!-- Image Info -->
+          <div class="image-info" *ngIf="selectedImageFile">
+            <div class="file-details">
+              <div class="file-name">{{ selectedImageFile.name }}</div>
+              <div class="file-size">
+                {{ (selectedImageFile.size / 1024 / 1024).toFixed(2) }} MB
+              </div>
+            </div>
+            <div class="upload-status">
               <lucide-angular
                 [img]="CheckCircle"
-                size="24"
+                size="16"
                 class="success-icon"
               ></lucide-angular>
+              <span>Ready to upload</span>
             </div>
           </div>
-          <ng-template #noImagePreview>
-            <div class="no-image-preview">
-              <lucide-angular [img]="ImageIcon" size="48"></lucide-angular>
-              <p>No image preview</p>
-            </div>
-          </ng-template>
         </div>
-
-        <!-- Future File Upload (Commented Out) -->
-        <!--
-        <div class="file-upload-section">
-          <label class="file-upload-label">
-            <input type="file" accept="image/*" class="file-input" />
-            <div class="file-upload-area">
-              <lucide-angular [img]="Upload" size="32"></lucide-angular>
-              <p class="upload-text">Click to upload or drag and drop</p>
-              <p class="upload-hint">PNG, JPG, GIF up to 10MB</p>
-            </div>
-          </label>
-        </div>
-        -->
       </div>
     </div>
 

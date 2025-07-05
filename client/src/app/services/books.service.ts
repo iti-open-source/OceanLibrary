@@ -19,6 +19,11 @@ export class BooksService {
     return this.http.post(`${this.API_URL}`, bookData);
   }
 
+  createBookWithFile(formData: FormData): Observable<any> {
+    // TODO: Check for the user role before making the request, only admins allowed
+    return this.http.post(`${this.API_URL}`, formData);
+  }
+
   getAllBooks(options: GetBooksOptions = {}): Observable<any> {
     const {
       page,
@@ -67,6 +72,11 @@ export class BooksService {
   ): Observable<any> {
     // TODO: Check for the user role before making the request, only admins allowed
     return this.http.patch(`${this.API_URL}/${id}`, updateOptions);
+  }
+
+  updateBookWithFile(id: string, formData: FormData): Observable<any> {
+    // TODO: Check for the user role before making the request, only admins allowed
+    return this.http.patch(`${this.API_URL}/${id}`, formData);
   }
 
   deleteBookById(id: string) {
