@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { required } from "zod/v4-mini";
 
 const itemSchema = new mongoose.Schema(
   {
@@ -61,9 +62,15 @@ const orderSchema = new mongoose.Schema(
     },
     paymentStatus: {
       type: String,
-      enum: ["paid", "pendingPayment"],
-      default: "pendingPayment",
+      enum: ["pending", "paid"],
+      default: "pending",
+      required: false
     },
+    paymentLink: {
+      type: String,
+      default: "",
+      required: false
+    }
   },
   { timestamps: true }
 );

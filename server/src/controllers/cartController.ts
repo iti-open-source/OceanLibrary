@@ -4,6 +4,7 @@ import Book from "../models/bookModel.js";
 import AppError from "../utils/appError.js";
 import { CustomRequest } from "../middlewares/auth.js";
 import { ICart, ICartItem, IRefBook } from "../types/entities/cart.js";
+import mongoose from "mongoose";
 
 /**
  * TODO
@@ -22,7 +23,7 @@ export const viewCart = async (
   next: NextFunction
 ): Promise<void> => {
   // Prepare transcation session
-  const session = await cartModel.startSession();
+  const session = await mongoose.startSession();
 
   try {
     const userId = req.userId;
@@ -126,7 +127,7 @@ export const addToCart = async (
   next: NextFunction
 ): Promise<void> => {
   // Prepare transcation session
-  const session = await cartModel.startSession();
+  const session = await mongoose.startSession();
 
   try {
     const userId = req.userId;
@@ -236,7 +237,7 @@ export const updateCart = async (
   next: NextFunction
 ): Promise<void> => {
   // Prepare transcation session
-  const session = await cartModel.startSession();
+  const session = await mongoose.startSession();
 
   try {
     const userId = req.userId;
@@ -334,7 +335,7 @@ export const removeFromCart = async (
   next: NextFunction
 ): Promise<void> => {
   // Prepare transcation session
-  const session = await cartModel.startSession();
+  const session = await mongoose.startSession();
 
   try {
     const userId = req.userId;
@@ -403,7 +404,7 @@ export const deleteCart = async (
   next: NextFunction
 ): Promise<void> => {
   // Prepare transcation session
-  const session = await cartModel.startSession();
+  const session = await mongoose.startSession();
 
   try {
     const userId = req.userId;
@@ -448,7 +449,7 @@ export const mergeCart = async (
   next: NextFunction
 ): Promise<void> => {
   // Prepare transcation session
-  const session = await cartModel.startSession();
+  const session = await mongoose.startSession();
 
   try {
     const userId = req.userId;
