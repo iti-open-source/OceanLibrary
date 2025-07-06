@@ -1,11 +1,7 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import {
-  CreateBookOptions,
-  GetBooksOptions,
-  UpdateBookOptions,
-} from "../types/bookOptions";
+import { Observable, throwError } from "rxjs";
+import { GetBooksOptions } from "../types/bookOptions";
 import { AuthService } from "./auth.service";
 @Injectable({
   providedIn: "root",
@@ -15,14 +11,42 @@ export class BooksService {
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
-  createBook(bookData: CreateBookOptions): Observable<any> {
-    // TODO: Check for the user role before making the request, only admins allowed
-    return this.http.post(`${this.API_URL}`, bookData);
+  /**
+   * Helper method to check if user has admin privileges
+   * @returns void - throws error if not authorized
+   * @throws Error if user is not logged in or not an admin
+   */
+  private checkAdminAuthorization(): void {
+    if (!this.authService.isLoggedIn()) {
+      throw new Error("Authentication required. Please log in.");
+    }
+
+    if (!this.authService.isAdmin()) {
+      throw new Error(
+        "Admin access required. Only administrators can perform this action."
+      );
+    }
   }
 
-  createBookWithFile(formData: FormData): Observable<any> {
-    // TODO: Check for the user role before making the request, only admins allowed
-    return this.http.post(`${this.API_URL}`, formData);
+  /**
+   * Helper method to create authorization headers with JWT token
+   * @returns HttpHeaders with Authorization header
+   */
+  private createAuthHeaders(): HttpHeaders {
+    const token = this.authService.getToken();
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+  }
+
+  createBook(formData: FormData): Observable<any> {
+    try {
+      this.checkAdminAuthorization();
+      const headers = this.createAuthHeaders();
+      return this.http.post(`${this.API_URL}`, formData, { headers });
+    } catch (error) {
+      return throwError(() => error);
+    }
   }
 
   getAllBooks(options: GetBooksOptions = {}): Observable<any> {
@@ -69,20 +93,24 @@ export class BooksService {
     return this.http.get(`${this.API_URL}/${id}`);
   }
 
-  updateBookById(
-    id: string,
-    updateOptions: UpdateBookOptions
-  ): Observable<any> {
-    return this.http.patch(`${this.API_URL}/${id}`, updateOptions);
+  updateBookById(id: string, formData: FormData): Observable<any> {
+    try {
+      this.checkAdminAuthorization();
+      const headers = this.createAuthHeaders();
+      return this.http.patch(`${this.API_URL}/${id}`, formData, { headers });
+    } catch (error) {
+      return throwError(() => error);
+    }
   }
 
-  updateBookWithFile(id: string, formData: FormData): Observable<any> {
-    // TODO: Check for the user role before making the request, only admins allowed
-    return this.http.patch(`${this.API_URL}/${id}`, formData);
-  }
-
-  deleteBookById(id: string) {
-    return this.http.delete(`${this.API_URL}/${id}`);
+  deleteBookById(id: string): Observable<any> {
+    try {
+      this.checkAdminAuthorization();
+      const headers = this.createAuthHeaders();
+      return this.http.delete(`${this.API_URL}/${id}`, { headers });
+    } catch (error) {
+      return throwError(() => error);
+    }
   }
 
   /**
@@ -94,7 +122,7 @@ export class BooksService {
     const params = {
       search: searchTerm,
       limit: "6", // Reduce for better performance
-      fields: "title,authorName", // Remove genres from autocomplete
+      fields: "title,authorName",
     };
 
     const urlParams = new URLSearchParams();

@@ -24,10 +24,6 @@ import {
 import { BooksService } from "../../../../services/books.service";
 import { ErrorModalComponent } from "../../../../components/error-modal/error-modal.component";
 import { Book } from "../../../../types/book.interface";
-import {
-  CreateBookOptions,
-  UpdateBookOptions,
-} from "../../../../types/bookOptions";
 
 @Component({
   selector: "app-books-form",
@@ -279,7 +275,7 @@ export class BooksFormComponent implements OnInit, OnDestroy {
   }
 
   private createBook(formData: FormData) {
-    this.booksService.createBookWithFile(formData).subscribe({
+    this.booksService.createBook(formData).subscribe({
       next: (response: any) => {
         this.submitting = false;
         this.clearAutoSave();
@@ -299,7 +295,7 @@ export class BooksFormComponent implements OnInit, OnDestroy {
   }
 
   private updateBook(formData: FormData) {
-    this.booksService.updateBookWithFile(this.bookId!, formData).subscribe({
+    this.booksService.updateBookById(this.bookId!, formData).subscribe({
       next: (response: any) => {
         this.submitting = false;
         this.clearAutoSave();
