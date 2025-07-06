@@ -12,7 +12,7 @@ export const checkGuestId = (
 
     // If it doesn't exists then the user is a guest
     if (!authHeader) {
-      // Check if the guest suppled a valid guest id
+      // Check if the guest supplied a valid guest id
       const guestId = req.headers["x-guest-id"];
       if (
         typeof guestId === "string" &&

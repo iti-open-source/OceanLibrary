@@ -2,12 +2,12 @@ import { z } from "zod/v4";
 
 export const createBookSchema = z.object({
   title: z
-    .string({ message: "Title is required" })
+    .string("Title is required")
     .trim()
     .min(1, "Title cannot be empty")
     .max(200, "Title must be 200 characters or less"),
   authorName: z
-    .string({ message: "Author name is required" })
+    .string("Author name is required")
     .trim()
     .min(1, "Author name cannot be empty")
     .max(100, "Author name must be 100 characters or less"),
@@ -17,10 +17,10 @@ export const createBookSchema = z.object({
     })
     .min(1, "At least one genre is required"),
   price: z
-    .number({ message: "Price is required" })
+    .number("Price is required")
     .positive("Price must be a positive number"),
   pages: z
-    .number({ message: "Pages is required" })
+    .number("Pages is required")
     .positive("Pages must be a positive number"),
   ratingAverage: z
     .number()
@@ -37,10 +37,10 @@ export const createBookSchema = z.object({
     .max(1000, "Description must be 1000 characters or less")
     .optional(),
   stock: z
-    .number({ message: "Stock is required" })
+    .number("Stock is required")
     .int("Stock must be an integer")
     .min(0, "Stock cannot be negative"),
-  image: z.url({ message: "Image must be a valid URL" }).optional(),
+  image: z.url("Image must be a valid URL").optional(),
 });
 
 export const updateBookSchema = z.object({

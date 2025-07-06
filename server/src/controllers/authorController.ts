@@ -139,7 +139,7 @@ export const updateAuthorById = async (
       { new: true }
     );
     if (!updatedAuthor) {
-      throw new AppError("Author not found", 404);
+      return next(new AppError("Author not found", 404));
     }
     res.status(200).json({
       status: "Success",
@@ -166,7 +166,7 @@ export const deleteAuthorById = async (
     const deletedAuthor = await Author.findByIdAndDelete(id);
 
     if (!deletedAuthor) {
-      throw new AppError("Author not found", 404);
+      return next(new AppError("Author not found", 404));
     }
 
     res.status(204).send();

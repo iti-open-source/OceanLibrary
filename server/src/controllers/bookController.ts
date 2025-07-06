@@ -234,7 +234,7 @@ export const updateBookById = async (
     );
     // if the updatedBook is null, that means there are no books with that id
     if (!updatedBook) {
-      throw new AppError("Book not found", 404);
+      return next(new AppError("Book not found", 404));
     }
     // otherwise, the book was updated successfully
     res.status(200).json({
@@ -277,7 +277,7 @@ export const deleteBookById = async (
 
     // if the deletedBook is null, that means there are no books with that id
     if (!deletedBook) {
-      throw new AppError("Book not found", 404);
+      return next(new AppError("Book not found", 404));
     }
 
     // otherwise, the book was deleted successfully

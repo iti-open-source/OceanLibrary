@@ -16,7 +16,7 @@ export const createAuthorSchema = z.object({
     .trim()
     .max(50, "Nationality must be less than 50 characters")
     .optional(),
-  photo: z.string().url("Photo must be a valid URL").optional(),
+  photo: z.url("Photo must be a valid URL").optional(),
   genres: z
     .array(z.string().trim().min(1, "Genre cannot be empty"))
     .min(1, "At least one genre is required")
@@ -40,7 +40,7 @@ export const updateAuthorSchema = z.object({
     .trim()
     .max(50, "Nationality must be less than 50 characters")
     .optional(),
-  photo: z.string().url("Photo must be a valid URL").optional(),
+  photo: z.url("Photo must be a valid URL").optional(),
   genres: z
     .array(z.string().trim().min(1, "Genre cannot be empty"))
     .min(1, "At least one genre is required")

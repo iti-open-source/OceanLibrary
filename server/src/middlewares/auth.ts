@@ -15,7 +15,7 @@ export const verifyToken = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    // Check if the request is made by a guest user and has been verifyed by guest middleware
+    // Check if the request is made by a guest user and has been verified by guest middleware
     if (req.isGuest && req.userId) {
       return next();
     }

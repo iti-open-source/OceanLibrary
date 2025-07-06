@@ -8,48 +8,48 @@ export const loginUserSchema = z.object({
   email: z.email().trim(),
   password: z
     .string()
-    .regex(passwordRegex, "password must be alphanumeric")
-    .min(8)
-    .max(128),
+    .regex(passwordRegex, "Password must be alphanumeric")
+    .min(8, "Passwords cannot be less than 8 characters long")
+    .max(128, "Password limit exceeded"),
 });
 
 export const registerUserSchema = z
   .object({
     username: z
       .string()
-      .min(3)
-      .max(32)
+      .min(3, "Usernames cannot be less than 3 characters long")
+      .max(32, "Usernames cannot exceed 32 characters")
       .trim()
-      .regex(/^[a-zA-Z0-9]*$/, "only alphanumeric characters allowed"),
+      .regex(/^[a-zA-Z0-9]*$/, "Only alphanumeric characters allowed"),
     email: z.email().trim(),
     password: z
       .string()
-      .regex(passwordRegex, "password must be alphanumeric")
-      .min(8)
-      .max(128),
+      .regex(passwordRegex, "Password must be alphanumeric")
+      .min(8, "Passwords cannot be less than 8 characters long")
+      .max(128, "Password limit exceeded"),
     confirmPassword: z.string(),
     phone: z
       .string()
       .refine((phone) => validator.isMobilePhone(phone, "ar-EG"), {
-        message: "invalid egyptian phone number",
+        message: "Invalid egyptian phone number",
       }),
     address: z.object({
-      street: z.string().max(128),
-      city: z.string().max(32),
-      country: z.string().max(32),
-      zip: z.string().regex(zipRegex, "invalid zip").min(5).max(10),
+      street: z.string().max(128).trim(),
+      city: z.string().max(32).trim(),
+      country: z.string().max(32).trim(),
+      zip: z.string().regex(zipRegex, "Invalid zip").min(5).max(10).trim(),
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "passwords do not match",
+    message: "Passwords do not match",
     path: ["confirmPassword"],
   });
 
 export const updateUserSchema = z.object({
   username: z
     .string()
-    .min(3)
-    .max(32)
+    .min(3, "Usernames cannot be less than 3 characters long")
+    .max(32, "Usernames cannot exceed 32 characters")
     .trim()
     .regex(/^[a-zA-Z0-9]*$/, "only alphanumeric characters allowed")
     .optional(),
@@ -57,15 +57,21 @@ export const updateUserSchema = z.object({
   phone: z
     .string()
     .refine((phone) => validator.isMobilePhone(phone, "ar-EG"), {
-      message: "invalid Egyptian phone number",
+      message: "Invalid Egyptian phone number",
     })
     .optional(),
   address: z
     .object({
-      street: z.string().max(128).optional(),
-      city: z.string().max(32).optional(),
-      country: z.string().max(32).optional(),
-      zip: z.string().regex(zipRegex, "invalid zip").min(5).max(10).optional(),
+      street: z.string().max(128).trim().optional(),
+      city: z.string().max(32).trim().optional(),
+      country: z.string().max(32).trim().optional(),
+      zip: z
+        .string()
+        .regex(zipRegex, "Invalid zip")
+        .min(5)
+        .max(10)
+        .trim()
+        .optional(),
     })
     .optional(),
 });
@@ -74,18 +80,18 @@ export const changePasswordSchema = z
   .object({
     password: z
       .string()
-      .regex(passwordRegex, "password must be alphanumeric")
-      .min(8)
-      .max(128),
+      .regex(passwordRegex, "Password must be alphanumeric")
+      .min(8, "Passwords cannot be less than 8 characters long")
+      .max(128, "Password limit exceeded"),
     newPassword: z
       .string()
-      .regex(passwordRegex, "password must be alphanumeric")
-      .min(8)
-      .max(128),
+      .regex(passwordRegex, "Password must be alphanumeric")
+      .min(8, "Passwords cannot be less than 8 characters long")
+      .max(128, "Password limit exceeded"),
     confirmNewPassword: z.string(),
   })
   .refine((data) => data.newPassword === data.confirmNewPassword, {
-    message: "passwords do not match",
+    message: "Passwords do not match",
     path: ["confirmNewPassword"],
   });
 
@@ -93,12 +99,12 @@ export const resetPasswordSchema = z
   .object({
     password: z
       .string()
-      .regex(passwordRegex, "password must be alphanumeric")
-      .min(8)
-      .max(128),
+      .regex(passwordRegex, "Password must be alphanumeric")
+      .min(8, "Passwords cannot be less than 8 characters long")
+      .max(128, "Password limit exceeded"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "passwords do not match",
+    message: "Passwords do not match",
     path: ["confirmPassword"],
   });

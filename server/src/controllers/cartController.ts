@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import cartModel from "../models/cartModel.js";
 import Book from "../models/bookModel.js";
 import AppError from "../utils/appError.js";
@@ -22,13 +22,13 @@ export const viewCart = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  // Prepare transcation session
+  // Prepare transaction session
   const session = await mongoose.startSession();
 
   try {
     const userId = req.userId;
 
-    // Start transcation
+    // Start transaction
     session.startTransaction();
 
     // Get user's cart and fetch every book info from it
@@ -39,7 +39,7 @@ export const viewCart = async (
 
     // User's cart is hasn't been created yet, return empty cart.
     if (!cart) {
-      // Abort transcation
+      // Abort transaction
       await session.abortTransaction();
       session.endSession();
 
@@ -53,19 +53,21 @@ export const viewCart = async (
 
     // Cart is not empty
 
-    // Check if requested quantites are available, if not shift it down to max available
+    // Check if requested quantities are available, if not shift it down to max available
     let updated = false;
-    let filteredBooks = (cart.items as unknown as IRefBook[]).filter((item) => {
-      if (item.bookId.stock <= 0) {
-        updated = true;
-        return false;
+    const filteredBooks = (cart.items as unknown as IRefBook[]).filter(
+      (item) => {
+        if (item.bookId.stock <= 0) {
+          updated = true;
+          return false;
+        }
+        if (item.quantity > item.bookId.stock) {
+          item.quantity = item.bookId.stock;
+          updated = true;
+        }
+        return true;
       }
-      if (item.quantity > item.bookId.stock) {
-        item.quantity = item.bookId.stock;
-        updated = true;
-      }
-      return true;
-    });
+    );
 
     // Save changes made to the cart
     if (updated) {
@@ -126,27 +128,27 @@ export const addToCart = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  // Prepare transcation session
+  // Prepare transaction session
   const session = await mongoose.startSession();
 
   try {
     const userId = req.userId;
     const { bookId, quantity } = req.body;
 
-    // Start transcation
+    // Start transaction
     session.startTransaction();
 
     // Fetch Book info
     const book = await Book.findById(bookId).session(session);
     // Book doesn't exists
     if (!book) {
-      // Abort transcation
+      // Abort transaction
       await session.abortTransaction();
       session.endSession();
 
       return next(
         new AppError(
-          "Sorry, we couldn’t find the book you’re looking for.",
+          "Sorry, we could not find the book you are looking for.",
           400
         )
       );
@@ -154,7 +156,7 @@ export const addToCart = async (
 
     // Verify the book Stock
     if (!book.stock || book.stock < quantity) {
-      // Abort transcation
+      // Abort transaction
       await session.abortTransaction();
       session.endSession();
 
@@ -192,14 +194,14 @@ export const addToCart = async (
 
         // There is no enough stock available to add up
         if (futureQuantity > book.stock) {
-          // Abort transcation
+          // Abort transaction
           await session.abortTransaction();
           session.endSession();
 
           // Return stock limit error
           return next(
             new AppError(
-              `You can’t add more of this item - stock limit reached.`,
+              `You cannot add more of this item - stock limit reached.`,
               400
             )
           );
@@ -236,25 +238,25 @@ export const updateCart = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  // Prepare transcation session
+  // Prepare transaction session
   const session = await mongoose.startSession();
 
   try {
     const userId = req.userId;
     const { bookId, quantity } = req.body;
 
-    // Start transcation
+    // Start transaction
     session.startTransaction();
 
     // Get user Cart
     const cart = await cartModel.findById(userId).session(session);
     if (!cart) {
-      // Abort transcation
+      // Abort transaction
       await session.abortTransaction();
       session.endSession();
 
       return next(
-        new AppError("You haven’t added anything to your cart yet.", 400)
+        new AppError("You have not added anything to your cart yet.", 400)
       );
     }
 
@@ -265,13 +267,13 @@ export const updateCart = async (
 
     // The book doesn't exist in user cart
     if (itemIndex === -1) {
-      // Abort transcation
+      // Abort transaction
       await session.abortTransaction();
       session.endSession();
 
       return next(
         new AppError(
-          "Oops! That item isn’t available in your cart anymore.",
+          "Oops! That item is not available in your cart anymore.",
           400
         )
       );
@@ -284,7 +286,7 @@ export const updateCart = async (
       // Check if book exists in our DB
       const book = await Book.findById(bookId).session(session);
       if (!book) {
-        // Abort transcation
+        // Abort transaction
         await session.abortTransaction();
         session.endSession();
 
@@ -295,7 +297,7 @@ export const updateCart = async (
 
       // Check if there is stock available
       if (!book.stock || quantity > book.stock) {
-        // Abort transcation
+        // Abort transaction
         await session.abortTransaction();
         session.endSession();
 
@@ -334,25 +336,25 @@ export const removeFromCart = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  // Prepare transcation session
+  // Prepare transaction session
   const session = await mongoose.startSession();
 
   try {
     const userId = req.userId;
     const { bookId } = req.body;
 
-    // Start transcation
+    // Start transaction
     session.startTransaction();
 
     // Get user Cart
     const cart = await cartModel.findById(userId).session(session);
     if (!cart) {
-      // Abort transcation
+      // Abort transaction
       await session.abortTransaction();
       session.endSession();
 
       return next(
-        new AppError("You haven’t added anything to your cart yet.", 400)
+        new AppError("You have not added anything to your cart yet.", 400)
       );
     }
 
@@ -363,13 +365,13 @@ export const removeFromCart = async (
 
     // The book doesn't exist in user cart
     if (itemIndex === -1) {
-      // Abort transcation
+      // Abort transaction
       await session.abortTransaction();
       session.endSession();
 
       return next(
         new AppError(
-          "Oops! That item isn’t available in your cart anymore.",
+          "Oops! That item is not available in your cart anymore.",
           400
         )
       );
@@ -403,13 +405,13 @@ export const deleteCart = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  // Prepare transcation session
+  // Prepare transaction session
   const session = await mongoose.startSession();
 
   try {
     const userId = req.userId;
 
-    // Start transcation
+    // Start transaction
     session.startTransaction();
 
     // Get user's Cart
@@ -417,7 +419,7 @@ export const deleteCart = async (
 
     // If the user doesn't have cart then there is nothing to delete
     if (!cart) {
-      // Abort transcation
+      // Abort transaction
       await session.abortTransaction();
       session.endSession();
 
@@ -448,14 +450,14 @@ export const mergeCart = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  // Prepare transcation session
+  // Prepare transaction session
   const session = await mongoose.startSession();
 
   try {
     const userId = req.userId;
     const { guestId } = req.body;
 
-    // start transcation
+    // start transaction
     session.startTransaction();
 
     // Get user's Cart
@@ -466,7 +468,7 @@ export const mergeCart = async (
 
     // Guest has no cart, nothing to merge
     if (!guestCart) {
-      // Abort transcation
+      // Abort transaction
       await session.abortTransaction();
       session.endSession();
 
@@ -483,7 +485,7 @@ export const mergeCart = async (
       await newCart.save({ session });
     } else {
       // Merge the existing user's cart with the guest cart
-      // If client had already some of that items lets increase quantitiy
+      // If client had already some of that items lets increase quantity
       for (const guestItem of guestCart.items) {
         const index = cart.items.findIndex((item) =>
           item.bookId.equals(guestItem.bookId)

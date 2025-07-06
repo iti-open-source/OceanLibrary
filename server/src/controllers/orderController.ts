@@ -1,9 +1,10 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import orderModel from "../models/orderModel.js";
 import cartModel from "../models/cartModel.js";
 import AppError from "../utils/appError.js";
 import { CustomRequest } from "../middlewares/auth.js";
 import mongoose from "mongoose";
+import { BookDocument } from "../types/entities/book.js";
 
 /**
  * Place a new order
@@ -15,7 +16,7 @@ export const placeOrder = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  // Prepare transcation session
+  // Prepare transaction session
   const session = await mongoose.startSession();
 
   try {
@@ -23,13 +24,13 @@ export const placeOrder = async (
     let paymentStatus = "To be Shipped"; // Current payment status (pending for cod)
     const userId = req.userId;
 
-    // Start transcation
+    // Start transaction
     session.startTransaction();
 
     // Validate payment method
     const validPayments = ["cash", "paymob"];
     if (!validPayments.includes(paymentMethod)) {
-      // Abort transcation
+      // Abort transaction
       await session.abortTransaction();
       session.endSession();
 
@@ -43,11 +44,14 @@ export const placeOrder = async (
     }
 
     // Get the current user's cart and fetch Books info from DB
-    const cart: any = await cartModel.findById(userId).populate("items.bookId").session(session);
+    const cart: any = await cartModel
+      .findById(userId)
+      .populate("items.bookId")
+      .session(session);
 
     // Lets check if there is items in the cart
     if (!cart || cart.items.length === 0) {
-      // Abort transcation
+      // Abort transaction
       await session.abortTransaction();
       session.endSession();
 
@@ -63,10 +67,10 @@ export const placeOrder = async (
 
       // Check if book Exists and if stock still available
       if (!book || book.stock < item.quantity) {
-        // Abort transcation
+        // Abort transaction
         await session.abortTransaction();
         session.endSession();
-        
+
         throw Error(
           "We are sorry but 1 or more Book is no longer available, your order will be canceled and refunded"
         );
@@ -88,27 +92,32 @@ export const placeOrder = async (
     }
 
     // Create the order in the database
-    const order: any = await orderModel.create([{
-      userId,
-      items: orderItems,
-      total,
-      status: "pending",
-      paymentMethod,
-      paymentStatus,
-    }], { session });
+    const order: any = await orderModel.create(
+      [
+        {
+          userId,
+          items: orderItems,
+          total,
+          status: "pending",
+          paymentMethod,
+          paymentStatus,
+        },
+      ],
+      { session }
+    );
 
     // Reduce our book stock in the DB
     for (const item of cart.items) {
-      const book: any = item.bookId;
+      const book: BookDocument = item.bookId;
       book.stock -= item.quantity;
-      await book.save({session});
+      await book.save({ session });
     }
 
     // Clear the user's cart
     cart.items = [];
     await cart.save({ session });
-    
-    // commit transcation
+
+    // commit transaction
     await session.commitTransaction();
     session.endSession();
 

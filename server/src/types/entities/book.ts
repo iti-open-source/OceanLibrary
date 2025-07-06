@@ -1,5 +1,6 @@
-import mongoose from "mongoose";
-export interface IBook {
+import mongoose, { Document, HydratedDocument } from "mongoose";
+
+export interface IBook extends Document {
   title: string;
   authorName: string;
   authorID: mongoose.Types.ObjectId;
@@ -12,3 +13,5 @@ export interface IBook {
   ratingQuantity?: number;
   image: string;
 }
+
+export type BookDocument = HydratedDocument<IBook>;

@@ -12,13 +12,13 @@ import ZodValidator from "../middlewares/zodValidator.js";
 import {
   addToCartSchema,
   mergeCartSchema,
-  modfiyCartSchema,
+  modifyCartSchema,
 } from "../utils/validation/cartValidation.js";
 import { checkGuestId } from "../middlewares/guest.js";
 
 const router = Router();
 
-// Retrive Guest or User cart
+// Retrieve Guest or User cart
 router.get("/", checkGuestId, verifyToken, viewCart);
 
 // Add new items into Guest or user cart
@@ -30,16 +30,16 @@ router.post(
   addToCart
 );
 
-// Modify quantity for spesfic item in cart
+// Modify quantity for specific item in cart
 router.patch(
   "/",
-  ZodValidator(modfiyCartSchema),
+  ZodValidator(modifyCartSchema),
   checkGuestId,
   verifyToken,
   updateCart
 );
 
-// Delete spesfic item in the cart
+// Delete specific item in the cart
 router.delete("/item", checkGuestId, verifyToken, removeFromCart);
 
 // Delete the entire cart (clear)
