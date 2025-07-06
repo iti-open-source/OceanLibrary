@@ -30,75 +30,13 @@
         <!-- Search Section -->
         <div class="w-full">
           <div class="flex flex-col sm:flex-row gap-3">
-            <!-- Search Type Dropdown -->
-            <div class="relative search-dropdown w-full sm:w-auto">
-              <button
-                (click)="toggleSearchDropdown()"
-                class="flex items-center justify-between gap-2 w-full sm:w-auto px-4 py-2.5 border border-[var(--color-border)] rounded-lg bg-[var(--color-background-light)] text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] transition-colors min-w-[120px]"
-              >
-                <div class="flex items-center gap-2">
-                  <lucide-icon
-                    [img]="Filter"
-                    class="h-4 w-4 flex-shrink-0"
-                  ></lucide-icon>
-                  <span class="text-sm">{{ getSearchTypeLabel() }}</span>
-                </div>
-                <lucide-icon
-                  [img]="ChevronDown"
-                  class="h-4 w-4 flex-shrink-0"
-                ></lucide-icon>
-              </button>
-
-              <!-- Search Type Dropdown Menu -->
-              <div
-                *ngIf="showSearchDropdown"
-                class="absolute top-full left-0 mt-1 w-full sm:w-40 bg-[var(--color-background-light)] border border-[var(--color-border)] rounded-lg shadow-lg z-20"
-              >
-                <button
-                  (click)="onSearchTypeChange('title')"
-                  class="w-full px-4 py-2.5 text-left text-sm hover:bg-[var(--color-background-medium)] transition-colors rounded-t-lg"
-                  [class.bg-[var(--color-brand-primary)]]="
-                    searchType === 'title'
-                  "
-                  [class.text-[var(--color-on-dark)]]="searchType === 'title'"
-                >
-                  Title
-                </button>
-                <button
-                  (click)="onSearchTypeChange('author')"
-                  class="w-full px-4 py-2.5 text-left text-sm hover:bg-[var(--color-background-medium)] transition-colors"
-                  [class.bg-[var(--color-brand-primary)]]="
-                    searchType === 'author'
-                  "
-                  [class.text-[var(--color-on-dark)]]="searchType === 'author'"
-                >
-                  Author
-                </button>
-                <!-- <button
-                  (click)="onSearchTypeChange('genre')"
-                  class="w-full px-4 py-2.5 text-left text-sm hover:bg-[var(--color-background-medium)] transition-colors rounded-b-lg"
-                  [class.bg-[var(--color-brand-primary)]]="
-                    searchType === 'genre'
-                  "
-                  [class.text-[var(--color-on-dark)]]="searchType === 'genre'"
-                >
-                  Genre
-                </button> -->
-              </div>
-            </div>
-
-            <!-- Search Input -->
-            <div class="relative flex-1 min-w-0">
-              <lucide-icon
-                [img]="Search"
-                class="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--color-text-muted)] h-5 w-5"
-              ></lucide-icon>
-              <input
-                type="text"
-                [placeholder]="'Search books by ' + searchType + '...'"
-                (input)="onSearch($event)"
-                class="w-full pl-12 pr-4 py-2.5 border border-[var(--color-border)] rounded-lg bg-[var(--color-background-light)] text-[var(--color-text-default)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:border-transparent"
-              />
+            <!-- Autocomplete Search Input -->
+            <div class="flex-1 min-w-0">
+              <app-autocomplete-search
+                placeholder="Search books and authors..."
+                (searchSelected)="onSearch($event)"
+                (suggestionSelected)="onSuggestionSelected($event)"
+              ></app-autocomplete-search>
             </div>
 
             <!-- Sort Dropdown -->
@@ -242,11 +180,13 @@
 
           <!-- Active filters indicator -->
           <div *ngIf="searchTerm" class="flex items-center gap-2 text-sm">
-            <span class="text-[var(--color-text-muted)]">Filtering by:</span>
+            <span class="text-[var(--color-text-muted)]"
+              >Search results for:</span
+            >
             <span
               class="bg-[var(--color-brand-primary)] text-[var(--color-on-dark)] px-2 py-1 rounded-full text-xs"
             >
-              {{ getSearchTypeLabel() }}: "{{ searchTerm }}"
+              "{{ searchTerm }}"
             </span>
           </div>
         </div>

@@ -1,17 +1,21 @@
 import { Request, Response, NextFunction } from "express";
 import Book from "../models/bookModel.js";
 import AppError from "../utils/appError.js";
-import { BookFilter } from "../types/filters/bookFilter.js";
 import Author from "../models/authorModel.js";
+import {
+  buildAggregationPipeline,
+  countDocuments,
+} from "../utils/searchHelpers.js";
 
 /**
- * Retrieves all books with pagination and filtering support.
+ * Retrieves all books with pagination, filtering, and full-text search support.
  *
  * @param req - Express request object containing query parameters:
+ *   - `search` (optional): Full-text search across title, description, and author
  *   - `page` (optional): Page number for pagination (default: 1)
  *   - `limit` (optional): Number of items per page (default: 10)
- *   - `title` (optional): Title filter for case-insensitive partial match
- *   - `author` (optional): Author filter for case-insensitive partial match
+ *   - `title` (optional): Title filter for case-insensitive partial match (ignored if search is used)
+ *   - `author` (optional): Author filter for case-insensitive partial match (ignored if search is used)
  *   - `priceMin` (optional): Minimum price filter
  *   - `priceMax` (optional): Maximum price filter
  *   - `sortBy` (optional): The comma-separated field(s) by which to sort the books and the order to sort by (each prefexed '-' for desc) (default by ratingAverage)
@@ -28,10 +32,11 @@ import Author from "../models/authorModel.js";
  * - `totalPages`: Total number of pages
  * - `totalItems`: Total number of books matching the filter criteria
  * - `data`: Array of books for the current page
+ * - `searchTerm`: The search term used (only if search parameter was provided)
  *
  * @example
- * GET /books?page=1&limit=10&title=javascript&author=smith&priceMin=10&priceMax=50
- * Returns filtered books with pagination metadata
+ * GET /books?search=gatsby&page=1&limit=10&genres=fiction,classic&priceMin=10&priceMax=50
+ * Returns books matching "gatsby" with additional filters and pagination metadata
  *
  * @throws {500} When database operation fails
  */
@@ -44,6 +49,7 @@ export const getAllBooks = async (
   const {
     page = 1,
     limit = 10,
+    search,
     title,
     author,
     priceMin,
@@ -53,61 +59,42 @@ export const getAllBooks = async (
     fields,
   } = req.query;
 
-  // Genres are expected to be a comma-separated string, so we convert it to an array here and make sure that they're all lower case
+  // Parse genres from comma-separated string to array
   const genres = req.query.genres
     ? (req.query.genres as string).split(",").map((g) => g.toLowerCase())
     : undefined;
 
-  // ex: If we're on page 1 and the limit is 10 -> (1 - 1) * 10 = 0, which is correct we don't wanna skip anything in this case
+  // Calculate pagination skip value
   const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
 
-  if (page) {
-    const numOfBooks = await Book.countDocuments();
-    if (skip >= numOfBooks) next(new AppError("This page does not exist", 404));
-  }
-
-  // Build filter object
-  const filter: BookFilter = {};
-
-  // Check for each filter item, if it exists, apply it to the filter object
-  if (title) {
-    filter.title = { $regex: title as string, $options: "i" }; // case-insensitive partial match
-  }
-
-  if (author) {
-    filter.authorName = { $regex: author as string, $options: "i" }; // case-insensitive partial match
-  }
-
-  if (genres) {
-    if (match == "any") {
-      // if the match is 'any' , then that means we want the 'UNION', which means we want the books having 'ANY' of these genres
-      // so a book having at least one of the genres will pass
-      filter.genres = { $in: genres };
-    } else if (match == "all") {
-      // but if the match is 'all', then that means we want the 'INTERSECTION', which means we want the books having 'ALL' of these genres
-      // so the book must have all of the provided genres to pass
-      filter.genres = { $all: genres };
-    }
-  }
-
-  if (priceMin || priceMax) {
-    filter.price = {};
-    if (priceMin) {
-      filter.price.$gte = parseFloat(priceMin as string);
-    }
-    if (priceMax) {
-      filter.price.$lte = parseFloat(priceMax as string);
-    }
-  }
-
   try {
-    const books = await Book.find(filter)
-      .select(fields ? (fields as string).split(",").join(" ") : "-__v")
-      // You can sort by price, title, ratingAverage, ratingQuantity, stock, ..etc
-      .sort((sortBy as string).split(",").join(" "))
-      .skip(skip)
-      .limit(parseInt(limit as string));
-    const total = await Book.countDocuments(filter);
+    // Count total documents
+    const total = await countDocuments(
+      search as string,
+      title as string,
+      author as string,
+      genres,
+      match as string,
+      priceMin as string,
+      priceMax as string
+    );
+
+    // Build and execute aggregation pipeline
+    const pipeline = buildAggregationPipeline(
+      search as string,
+      title as string,
+      author as string,
+      genres,
+      match as string,
+      priceMin as string,
+      priceMax as string,
+      sortBy as string,
+      fields as string,
+      skip,
+      parseInt(limit as string)
+    );
+
+    const books = await Book.aggregate(pipeline);
 
     res.status(200).json({
       status: "Success",
@@ -116,6 +103,7 @@ export const getAllBooks = async (
         totalPages: Math.ceil(total / parseInt(limit as string)),
         totalItems: total,
         books,
+        ...(search && { searchTerm: search }),
       },
     });
   } catch (error) {

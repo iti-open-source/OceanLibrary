@@ -16,7 +16,6 @@ import {
   ChevronRight,
   ChevronDown,
   ArrowUpDown,
-  Filter,
 } from "lucide-angular";
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from "rxjs";
 import { BooksService } from "../../../../services/books.service";
@@ -26,6 +25,10 @@ import {
 } from "../../../../types/book.interface";
 import { ErrorModalComponent } from "../../../../components/error-modal/error-modal.component";
 import { BookCardComponent } from "../../../../components/book-card/book-card.component";
+import {
+  AutocompleteSearchComponent,
+  AutocompleteOption,
+} from "../../../../components/autocomplete-search/autocomplete-search.component";
 import { Fields, SortBy } from "../../../../types/queryEnums";
 
 @Component({
@@ -35,6 +38,7 @@ import { Fields, SortBy } from "../../../../types/queryEnums";
     LucideAngularModule,
     ErrorModalComponent,
     BookCardComponent,
+    AutocompleteSearchComponent,
   ],
   templateUrl: "./books-list.component.html",
   styleUrl: "./books-list.component.css",
@@ -47,12 +51,10 @@ export class BooksListComponent implements OnInit, OnDestroy {
   totalPages = 1;
   totalItems = 0;
   searchTerm = "";
-  searchType: "title" | "author" | "genre" = "title";
   sortBy: SortBy = SortBy.TITLE;
   sortOrder: "asc" | "desc" = "asc";
   showDeleteModal = false;
   bookToDelete: BookInterface | null = null;
-  showSearchDropdown = false;
   showSortDropdown = false;
 
   // Error modal properties
@@ -80,7 +82,6 @@ export class BooksListComponent implements OnInit, OnDestroy {
   readonly ChevronRight = ChevronRight;
   readonly ChevronDown = ChevronDown;
   readonly ArrowUpDown = ArrowUpDown;
-  readonly Filter = Filter;
 
   // Enums for template
   readonly SortBy = SortBy;
@@ -134,19 +135,9 @@ export class BooksListComponent implements OnInit, OnDestroy {
       ],
     };
 
-    // Add search parameter based on search type
+    // Add elastic search parameter
     if (this.searchTerm) {
-      switch (this.searchType) {
-        case "title":
-          options.title = this.searchTerm;
-          break;
-        case "author":
-          options.author = this.searchTerm;
-          break;
-        // case "genre":
-        //   options.genre = this.searchTerm;
-        //   break;
-      }
+      options.search = this.searchTerm;
     }
 
     this.booksService.getAllBooks(options).subscribe({
@@ -170,17 +161,25 @@ export class BooksListComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSearch(event: any) {
-    this.searchSubject.next(event.target.value);
+  onSearch(searchTerm: string) {
+    this.searchTerm = searchTerm;
+    this.currentPage = 1;
+    this.loadBooks(1);
   }
 
-  onSearchTypeChange(type: "title" | "author" | "genre") {
-    this.searchType = type;
-    this.showSearchDropdown = false;
-    if (this.searchTerm) {
-      this.currentPage = 1;
-      this.loadBooks(1);
+  onSuggestionSelected(suggestion: AutocompleteOption) {
+    // Handle different suggestion types
+    switch (suggestion.type) {
+      case "book":
+        // Navigate to book details or keep search term
+        this.searchTerm = suggestion.title;
+        break;
+      case "author":
+        this.searchTerm = suggestion.title;
+        break;
     }
+    this.currentPage = 1;
+    this.loadBooks(1);
   }
 
   onSortChange(sortBy: SortBy, order: "asc" | "desc" = "asc") {
@@ -191,27 +190,8 @@ export class BooksListComponent implements OnInit, OnDestroy {
     this.loadBooks(1);
   }
 
-  toggleSearchDropdown() {
-    this.showSearchDropdown = !this.showSearchDropdown;
-    this.showSortDropdown = false;
-  }
-
   toggleSortDropdown() {
     this.showSortDropdown = !this.showSortDropdown;
-    this.showSearchDropdown = false;
-  }
-
-  getSearchTypeLabel(): string {
-    switch (this.searchType) {
-      case "title":
-        return "Title";
-      case "author":
-        return "Author";
-      case "genre":
-        return "Genre";
-      default:
-        return "Title";
-    }
   }
 
   getSortLabel(): string {
@@ -325,11 +305,7 @@ export class BooksListComponent implements OnInit, OnDestroy {
 
   private closeDropdownsOnClickOutside = (event: Event) => {
     const target = event.target as HTMLElement;
-    if (
-      !target.closest(".search-dropdown") &&
-      !target.closest(".sort-dropdown")
-    ) {
-      this.showSearchDropdown = false;
+    if (!target.closest(".sort-dropdown")) {
       this.showSortDropdown = false;
     }
   };

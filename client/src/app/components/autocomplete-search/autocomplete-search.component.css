@@ -1,0 +1,40 @@
+/* Autocomplete Search Component Styles */
+.suggestion-item:hover {
+  background-color: var(--color-background-medium);
+}
+
+.suggestion-item.highlighted {
+  background-color: var(--color-background-medium);
+}
+
+/* Scrollbar styling for suggestions dropdown */
+.suggestions-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.suggestions-container::-webkit-scrollbar-track {
+  background: var(--color-background-light);
+}
+
+.suggestions-container::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+}
+
+.suggestions-container::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* Loading animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}

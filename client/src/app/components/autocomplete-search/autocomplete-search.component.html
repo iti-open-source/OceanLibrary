@@ -1,0 +1,95 @@
+<div class="relative w-full">
+  <!-- Search Input -->
+  <div class="relative">
+    <lucide-icon
+      [img]="Search"
+      class="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--color-text-muted)] h-5 w-5"
+    ></lucide-icon>
+    <input
+      #searchInput
+      type="text"
+      [placeholder]="placeholder"
+      (input)="onInput($event)"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+      (keydown)="onKeydown($event)"
+      class="w-full pl-12 pr-4 py-2.5 border border-[var(--color-border)] rounded-lg bg-[var(--color-background-light)] text-[var(--color-text-default)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:border-transparent"
+    />
+  </div>
+
+  <!-- Suggestions Dropdown -->
+  <div
+    *ngIf="showSuggestions && (suggestions.length > 0 || isLoading)"
+    class="absolute top-full left-0 right-0 mt-1 bg-[var(--color-background-light)] border border-[var(--color-border)] rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto suggestions-container"
+  >
+    <!-- Loading State -->
+    <div
+      *ngIf="isLoading"
+      class="px-4 py-3 text-[var(--color-text-muted)] text-sm"
+    >
+      <div class="flex items-center gap-2">
+        <div
+          class="animate-spin rounded-full h-4 w-4 border-2 border-[var(--color-brand-primary)] border-t-transparent"
+        ></div>
+        Searching...
+      </div>
+    </div>
+
+    <!-- Suggestions -->
+    <div *ngIf="!isLoading && suggestions.length > 0" class="py-2">
+      <div
+        *ngFor="let suggestion of suggestions; let i = index"
+        (mousedown)="onSelectSuggestion(suggestion)"
+        (mouseenter)="highlightedIndex = i"
+        class="px-4 py-2 cursor-pointer transition-colors suggestion-item"
+        [class.highlighted]="highlightedIndex === i"
+      >
+        <div class="flex items-center gap-3">
+          <!-- Icon based on type -->
+          <div class="flex-shrink-0">
+            <lucide-icon
+              [img]="getIconForType(suggestion.type)"
+              class="h-4 w-4 text-[var(--color-text-muted)]"
+            ></lucide-icon>
+          </div>
+
+          <!-- Content -->
+          <div class="flex-1 min-w-0">
+            <div
+              class="text-sm font-medium text-[var(--color-text-default)] truncate"
+            >
+              {{ suggestion.title }}
+            </div>
+            <div
+              *ngIf="suggestion.subtitle"
+              class="text-xs text-[var(--color-text-muted)] truncate"
+            >
+              {{ suggestion.subtitle }}
+            </div>
+          </div>
+
+          <!-- Type badge -->
+          <div class="flex-shrink-0">
+            <span
+              class="text-xs px-2 py-1 rounded-full"
+              [class.bg-blue-100]="suggestion.type === 'book'"
+              [class.text-blue-700]="suggestion.type === 'book'"
+              [class.bg-green-100]="suggestion.type === 'author'"
+              [class.text-green-700]="suggestion.type === 'author'"
+            >
+              {{ suggestion.type }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Results -->
+    <div
+      *ngIf="!isLoading && suggestions.length === 0 && searchTerm"
+      class="px-4 py-3 text-[var(--color-text-muted)] text-sm"
+    >
+      No suggestions found for "{{ searchTerm }}"
+    </div>
+  </div>
+</div>

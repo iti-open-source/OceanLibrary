@@ -3,6 +3,7 @@ import { Fields, Match, SortBy } from "./queryEnums";
 export interface GetBooksOptions {
   page?: number;
   limit?: number;
+  search?: string;
   title?: string;
   author?: string;
   genres?: string[];

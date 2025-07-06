@@ -6,13 +6,14 @@ import {
   GetBooksOptions,
   UpdateBookOptions,
 } from "../types/bookOptions";
+import { AuthService } from "./auth.service";
 @Injectable({
   providedIn: "root",
 })
 export class BooksService {
   private readonly API_URL = "http://localhost:3000/api/v1/books";
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   createBook(bookData: CreateBookOptions): Observable<any> {
     // TODO: Check for the user role before making the request, only admins allowed
@@ -28,6 +29,7 @@ export class BooksService {
     const {
       page,
       limit,
+      search,
       title,
       author,
       priceMin,
@@ -42,6 +44,7 @@ export class BooksService {
 
     if (page !== undefined) params["page"] = page.toString();
     if (limit !== undefined) params["limit"] = limit.toString();
+    if (search) params["search"] = search;
     if (title) params["title"] = title;
     if (author) params["author"] = author;
     if (priceMin !== undefined) params["priceMin"] = priceMin.toString();
@@ -70,7 +73,6 @@ export class BooksService {
     id: string,
     updateOptions: UpdateBookOptions
   ): Observable<any> {
-    // TODO: Check for the user role before making the request, only admins allowed
     return this.http.patch(`${this.API_URL}/${id}`, updateOptions);
   }
 
@@ -81,5 +83,25 @@ export class BooksService {
 
   deleteBookById(id: string) {
     return this.http.delete(`${this.API_URL}/${id}`);
+  }
+
+  /**
+   * Get autocomplete suggestions for search
+   * @param searchTerm - The search term to get suggestions for
+   * @returns Observable with limited book results for suggestions
+   */
+  getSearchSuggestions(searchTerm: string): Observable<any> {
+    const params = {
+      search: searchTerm,
+      limit: "6", // Reduce for better performance
+      fields: "title,authorName", // Remove genres from autocomplete
+    };
+
+    const urlParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value) urlParams.append(key, value);
+    });
+
+    return this.http.get(`${this.API_URL}?${urlParams.toString()}`);
   }
 }
