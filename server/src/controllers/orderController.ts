@@ -4,7 +4,6 @@ import cartModel from "../models/cartModel.js";
 import AppError from "../utils/appError.js";
 import { CustomRequest } from "../middlewares/auth.js";
 import mongoose from "mongoose";
-import { BookDocument } from "../types/entities/book.js";
 
 /**
  * Place a new order
@@ -108,7 +107,7 @@ export const placeOrder = async (
 
     // Reduce our book stock in the DB
     for (const item of cart.items) {
-      const book: BookDocument = item.bookId;
+      const book: any = item.bookId;
       book.stock -= item.quantity;
       await book.save({ session });
     }
