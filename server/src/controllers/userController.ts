@@ -6,6 +6,11 @@ import { CustomRequest } from "../middlewares/auth.js";
 import { userServiceMail } from "../utils/email.js";
 import AppError from "../utils/appError.js";
 
+/**
+ * @route POST /api/v1/users/login
+ * @desc user login to account and generates a token
+ * @access Public
+ */
 export const loginUser = async (
   req: Request,
   res: Response,
@@ -43,6 +48,11 @@ export const loginUser = async (
   }
 };
 
+/**
+ * @route POST /api/v1/users/register
+ * @desc user creates an account and generates a token
+ * @access Public
+ */
 export const registerUser = async (
   req: Request,
   res: Response,
@@ -80,6 +90,11 @@ export const registerUser = async (
   }
 };
 
+/**
+ * @route PATCH /api/v1/users/profile
+ * @desc user updates profile information except for password
+ * @access Public
+ */
 export const updateUser = async (
   req: CustomRequest,
   res: Response,
@@ -112,6 +127,11 @@ export const updateUser = async (
   }
 };
 
+/**
+ * @route PATCH /api/v1/users/disable
+ * @desc user disables their own account
+ * @access Private
+ */
 export const disableUser = async (
   req: CustomRequest,
   res: Response,
@@ -129,6 +149,11 @@ export const disableUser = async (
   }
 };
 
+/**
+ * @route PATCH /api/v1/users/changePassword
+ * @desc user changes password
+ * @access Private
+ */
 export const changePassword = async (
   req: CustomRequest,
   res: Response,
@@ -154,8 +179,12 @@ export const changePassword = async (
   }
 };
 
-// verify user feature
-export const reqVerifyUser = async (
+/**
+ * @route POST /api/v1/users/verify/request
+ * @desc users requests making their account verified to access all features
+ * @access Private
+ */
+export const requestVerification = async (
   req: CustomRequest,
   res: Response,
   next: NextFunction
@@ -190,7 +219,12 @@ export const reqVerifyUser = async (
   }
 };
 
-export const verifyUser = async (
+/**
+ * @route PATCH /api/v1/users/verify/:token
+ * @desc confirm user verification from email
+ * @access Private
+ */
+export const confirmVerification = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -219,7 +253,11 @@ export const verifyUser = async (
   }
 };
 
-// reset password feature
+/**
+ * @route POST /api/v1/users/forgotPassword
+ * @desc user request password reset
+ * @access Private
+ */
 export const forgetPassword = async (
   req: Request,
   res: Response,
@@ -256,6 +294,11 @@ export const forgetPassword = async (
   }
 };
 
+/**
+ * @route PATCH /api/v1/users/resetPassword/:token
+ * @desc user responds to email and creates a new password
+ * @access Private
+ */
 export const resetPassword = async (
   req: Request,
   res: Response,
@@ -289,7 +332,11 @@ export const resetPassword = async (
   }
 };
 
-// admin controller
+/**
+ * @route GET /api/v1/users/
+ * @desc admin get list of all users
+ * @access Private
+ */
 export const getUsers = async (
   req: CustomRequest,
   res: Response,
@@ -303,6 +350,11 @@ export const getUsers = async (
   }
 };
 
+/**
+ * @route PATCH /api/v1/users/promote/:id
+ * @desc admin promotes user to admin
+ * @access Private
+ */
 export const promoteUser = async (
   req: CustomRequest,
   res: Response,
@@ -323,6 +375,11 @@ export const promoteUser = async (
   }
 };
 
+/**
+ * @route PATCH /api/v1/users/ban/:id
+ * @desc admin bans specific user
+ * @access Private
+ */
 export const banUser = async (
   req: CustomRequest,
   res: Response,

@@ -27,3 +27,17 @@ export const loginLimiter = rateLimit({
     });
   },
 });
+
+export const emailRequestsLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  limit: 1,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  handler: function (req, res) {
+    res.status(429).json({
+      status: "fail",
+      message:
+        "We're sorry, but we can't process your request right now because you've sent too many requests in a short period. Please try again later.",
+    });
+  },
+});

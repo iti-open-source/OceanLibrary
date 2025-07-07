@@ -8,8 +8,8 @@ import {
   disableUser,
   forgetPassword,
   resetPassword,
-  reqVerifyUser,
-  verifyUser,
+  requestVerification,
+  confirmVerification,
   promoteUser,
   banUser,
 } from "../controllers/userController.js";
@@ -22,7 +22,7 @@ import {
 } from "../utils/validation/userValidation.js";
 import zodValidator from "../middlewares/zodValidator.js";
 import { verifyToken, verifyAdmin } from "../middlewares/auth.js";
-import { loginLimiter } from "../middlewares/limiter.js";
+import { emailRequestsLimiter, loginLimiter } from "../middlewares/limiter.js";
 
 const router = Router();
 
@@ -34,20 +34,30 @@ router.patch(
   verifyToken,
   updateUser
 );
+router.patch("/disable", verifyToken, disableUser);
 router.patch(
   "/changePassword",
   verifyToken,
   zodValidator(changePasswordSchema),
   changePassword
 );
-router.patch("/disable", verifyToken, disableUser);
 
 // verify user feature
-router.post("/requestVerification", verifyToken, reqVerifyUser);
-router.patch("/verify/:token", verifyUser);
+router.post(
+  "/verify/request",
+  verifyToken,
+  emailRequestsLimiter,
+  requestVerification
+);
+router.patch("/verify/confirm/:token", confirmVerification);
 
 // forgot password feature
-router.post("/forgotPassword", verifyToken, forgetPassword);
+router.post(
+  "/forgotPassword",
+  verifyToken,
+  emailRequestsLimiter,
+  forgetPassword
+);
 router.patch(
   "/resetPassword/:token",
   zodValidator(resetPasswordSchema),
