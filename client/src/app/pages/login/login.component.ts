@@ -80,9 +80,7 @@ export class LoginComponent implements OnInit {
         },
         error: (error) => {
           console.error("Login failed:", error);
-          this.errorMessage =
-            error.error?.message ||
-            "Login failed. Please check your credentials.";
+          this.errorMessage = "Invalid email or password.";
           this.triggerErrorBar();
           this.isSubmitting = false;
         },
