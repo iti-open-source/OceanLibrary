@@ -22,6 +22,7 @@ import {
   CalendarCheck,
   MessagesSquare,
   Eye,
+  ShoppingCart,
 } from "lucide-angular";
 import { provideHttpClient } from "@angular/common/http";
 
@@ -45,6 +46,7 @@ export const appConfig: ApplicationConfig = {
         CalendarCheck,
         MessagesSquare,
         Eye,
+        ShoppingCart,
       })
     ),
     provideHttpClient(),

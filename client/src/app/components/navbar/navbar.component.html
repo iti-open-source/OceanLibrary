@@ -54,22 +54,15 @@
         routerLink=""
         class="cursor-pointer flex flex-col items-center text-[var(--color-text-muted)] hover:text-[var(--color-text-default)] transition-colors duration-200"
       >
-        <lucide-icon name="book" class="h-6 w-6"></lucide-icon>
-        <span class="text-xs mt-1">Book Shelf</span>
-      </a>
-      <a
-        routerLink=""
-        class="cursor-pointer flex flex-col items-center text-[var(--color-text-muted)] hover:text-[var(--color-text-default)] transition-colors duration-200"
-      >
-        <lucide-icon name="users" class="h-6 w-6"></lucide-icon>
-        <span class="text-xs mt-1">Community</span>
-      </a>
-      <a
-        routerLink=""
-        class="cursor-pointer flex flex-col items-center text-[var(--color-text-muted)] hover:text-[var(--color-text-default)] transition-colors duration-200"
-      >
         <lucide-icon name="compass" class="h-6 w-6"></lucide-icon>
         <span class="text-xs mt-1">Browse</span>
+      </a>
+      <a
+        routerLink="cart"
+        class="cursor-pointer flex flex-col items-center text-[var(--color-text-muted)] hover:text-[var(--color-text-default)] transition-colors duration-200"
+      >
+        <lucide-icon name="shopping-cart" class="h-6 w-6"></lucide-icon>
+        <span class="text-xs mt-1">Cart</span>
       </a>
       <div
         class="relative group"
@@ -205,33 +198,22 @@
         class="cursor-pointer py-3 px-4 rounded-xl hover:bg-[var(--color-background-medium)] active:bg-[var(--color-brand-primary)]/10 transition-colors duration-200 flex items-center text-base focus:bg-[var(--color-brand-primary)]/10 outline-none"
         tabindex="0"
         role="menuitem"
-        aria-label="Book Shelf"
-        (click)="toggleMobileMenu()"
-      >
-        <lucide-icon name="book" class="h-5 w-5 mr-3"></lucide-icon>
-        Book Shelf
-      </a>
-      <a
-        routerLink=""
-        class="cursor-pointer py-3 px-4 rounded-xl hover:bg-[var(--color-background-medium)] active:bg-[var(--color-brand-primary)]/10 transition-colors duration-200 flex items-center text-base focus:bg-[var(--color-brand-primary)]/10 outline-none"
-        tabindex="0"
-        role="menuitem"
-        aria-label="Community"
-        (click)="toggleMobileMenu()"
-      >
-        <lucide-icon name="users" class="h-5 w-5 mr-3"></lucide-icon>
-        Community
-      </a>
-      <a
-        routerLink=""
-        class="cursor-pointer py-3 px-4 rounded-xl hover:bg-[var(--color-background-medium)] active:bg-[var(--color-brand-primary)]/10 transition-colors duration-200 flex items-center text-base focus:bg-[var(--color-brand-primary)]/10 outline-none"
-        tabindex="0"
-        role="menuitem"
         aria-label="Browse"
         (click)="toggleMobileMenu()"
       >
         <lucide-icon name="compass" class="h-5 w-5 mr-3"></lucide-icon>
         Browse
+      </a>
+      <a
+        routerLink="cart"
+        class="cursor-pointer py-3 px-4 rounded-xl hover:bg-[var(--color-background-medium)] active:bg-[var(--color-brand-primary)]/10 transition-colors duration-200 flex items-center text-base focus:bg-[var(--color-brand-primary)]/10 outline-none"
+        tabindex="0"
+        role="menuitem"
+        aria-label="Cart"
+        (click)="toggleMobileMenu()"
+      >
+        <lucide-icon name="shopping-cart" class="h-5 w-5 mr-3"></lucide-icon>
+        Cart
       </a>
       <a
         routerLink=""
