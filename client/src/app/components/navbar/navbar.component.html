@@ -8,7 +8,7 @@
       >oceanlibrary</a
     >
 
-    <div class="lg:flex flex-grow items-center justify-center mx-8">
+    <div class="hidden lg:flex flex-grow items-center justify-center mx-8">
       <div
         class="search-container flex items-center border rounded-full border-[var(--color-border)] w-1/2 max-w-xl focus-within:ring-2 focus-within:ring-[var(--color-brand-primary)] focus-within:border-transparent"
       >
@@ -20,6 +20,23 @@
         </div>
         <input
           class="search-input w-full py-3 px-4 bg-transparent focus:outline-none placeholder-[var(--color-text-muted)] text-sm rounded-full"
+          type="text"
+          placeholder="Search book name, author,......"
+        />
+      </div>
+    </div>
+    <div class="flex lg:hidden w-full mt-2 mb-2 mobile-search-bar">
+      <div
+        class="search-container flex items-center border rounded-full border-[var(--color-border)] w-full focus-within:ring-2 focus-within:ring-[var(--color-brand-primary)] focus-within:border-transparent mx-2"
+      >
+        <div class="pl-2 pr-1">
+          <lucide-icon
+            name="search"
+            class="h-5 w-5 text-[var(--color-text-muted)]"
+          ></lucide-icon>
+        </div>
+        <input
+          class="search-input w-full py-2 px-2 bg-transparent focus:outline-none placeholder-[var(--color-text-muted)] text-xs rounded-full"
           type="text"
           placeholder="Search book name, author,......"
         />
