@@ -13,12 +13,32 @@
       (ngSubmit)="onSubmit()"
       class="w-full flex flex-col gap-4"
     >
-      <!-- Error Message -->
       <div
-        *ngIf="errorMessage"
-        class="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm"
+        *ngIf="showError"
+        class="fixed left-1/2 top-20 z-50 transform -translate-x-1/2 flex items-center gap-3 min-w-[320px] max-w-[90vw] px-6 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-base font-medium shadow-lg animate-drop-down"
       >
-        {{ errorMessage }}
+        <svg
+          class="w-5 h-5 text-red-500 flex-shrink-0"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="2"
+            fill="#fee2e2"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 8v4m0 4h.01"
+          />
+        </svg>
+        <span>{{ errorMessage }}</span>
       </div>
 
       <div class="flex flex-col gap-1">

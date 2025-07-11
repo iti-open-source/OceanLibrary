@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   isSubmitting = false;
   errorMessage = "";
+  showError = false;
 
   constructor(
     private renderer: Renderer2,
@@ -44,6 +45,7 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
       this.errorMessage = "";
+      this.showError = false;
 
       const { email, password } = this.loginForm.value;
 
@@ -56,6 +58,7 @@ export class LoginComponent implements OnInit {
             console.error("No token received in response");
             this.errorMessage =
               "Login failed: No authentication token received";
+            this.triggerErrorBar();
             this.isSubmitting = false;
             return;
           }
@@ -80,6 +83,7 @@ export class LoginComponent implements OnInit {
           this.errorMessage =
             error.error?.message ||
             "Login failed. Please check your credentials.";
+          this.triggerErrorBar();
           this.isSubmitting = false;
         },
         complete: () => {
@@ -87,6 +91,16 @@ export class LoginComponent implements OnInit {
         },
       });
     }
+  }
+
+  triggerErrorBar() {
+    this.showError = false;
+    setTimeout(() => {
+      this.showError = true;
+      setTimeout(() => {
+        this.showError = false;
+      }, 1000);
+    }, 10);
   }
 
   isFieldInvalid(fieldName: string): boolean {
