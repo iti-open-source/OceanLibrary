@@ -342,8 +342,16 @@ export const getUsers = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  const { page = 1, limit = 10 } = req.params;
+
   try {
-    const users = await userModel.find();
+    const skip = parseInt(limit as string) * (parseInt(page as string) - 1);
+
+    const users = await userModel
+      .find()
+      .limit(parseInt(limit as string))
+      .skip(skip);
+
     res.status(200).json({ status: "success", data: users });
   } catch (error) {
     next(error);

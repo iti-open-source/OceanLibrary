@@ -1,8 +1,18 @@
 import { z } from "zod/v4";
 import validator from "validator";
 
-const passwordRegex = /^[a-zA-Z0-9]+$/;
-const zipRegex = /^\d+$/;
+const usernameRegex = new RegExp("^[a-zA-Z0-9]+$");
+/**
+ * 1. At least 8 characters long (`.{8,}`).
+ * 2. Contains at least one uppercase letter (`(?=.*[A-Z])`).
+ * 3. Contains at least one lowercase letter (`(?=.*[a-z])`).
+ * 4. Contains at least one digit (`(?=.*\d)`).
+ * 5. Contains at least one special character (`(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-])`).
+ */
+const passwordRegex = new RegExp(
+  "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+{}\\[\\]:;<>,.?~\\\\-])[A-Za-z\\d!@#$%^&*()_+{}\\[\\]:;<>,.?~\\\\-]{8,}$"
+);
+const zipRegex = new RegExp("^\\d{5}(?:[-\\s]\\d{4})?$");
 
 export const loginUserSchema = z.object({
   email: z.email().trim(),
@@ -20,11 +30,11 @@ export const registerUserSchema = z
       .min(3, "Usernames cannot be less than 3 characters long")
       .max(32, "Usernames cannot exceed 32 characters")
       .trim()
-      .regex(/^[a-zA-Z0-9]*$/, "Only alphanumeric characters allowed"),
+      .regex(usernameRegex, "Only alphanumeric characters allowed"),
     email: z.email().trim(),
     password: z
       .string()
-      .regex(passwordRegex, "Password must be alphanumeric")
+      .regex(passwordRegex, "Password must be alphanumeric xxx")
       .min(8, "Passwords cannot be less than 8 characters long")
       .max(128, "Password limit exceeded"),
     confirmPassword: z.string(),
@@ -51,7 +61,7 @@ export const updateUserSchema = z.object({
     .min(3, "Usernames cannot be less than 3 characters long")
     .max(32, "Usernames cannot exceed 32 characters")
     .trim()
-    .regex(/^[a-zA-Z0-9]*$/, "only alphanumeric characters allowed")
+    .regex(usernameRegex, "Only alphanumeric characters allowed")
     .optional(),
   email: z.email().trim().optional(),
   phone: z
