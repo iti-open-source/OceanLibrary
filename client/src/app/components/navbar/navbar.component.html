@@ -51,7 +51,7 @@
         <span class="text-xs mt-1">Home</span>
       </a>
       <a
-        routerLink=""
+        routerLink="browse"
         class="cursor-pointer flex flex-col items-center text-[var(--color-text-muted)] hover:text-[var(--color-text-default)] transition-colors duration-200"
       >
         <lucide-icon name="compass" class="h-6 w-6"></lucide-icon>
@@ -133,7 +133,7 @@
           <button
             type="button"
             class="w-full text-left cursor-pointer block px-5 py-3 text-sm text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] rounded-b-xl flex items-center bg-transparent border-0 outline-none"
-            (click)="signOut(); profileMenuOpen = false;"
+            (click)="signOut(); profileMenuOpen = false"
           >
             <lucide-icon name="log-out" class="mr-2 h-5 w-5"></lucide-icon>
             Sign Out
@@ -223,7 +223,7 @@
         Home
       </a>
       <a
-        routerLink=""
+        routerLink="browse"
         class="cursor-pointer py-3 px-4 rounded-xl hover:bg-[var(--color-background-medium)] active:bg-[var(--color-brand-primary)]/10 transition-colors duration-200 flex items-center text-base focus:bg-[var(--color-brand-primary)]/10 outline-none"
         tabindex="0"
         role="menuitem"
@@ -261,7 +261,7 @@
         tabindex="0"
         role="menuitem"
         aria-label="Sign Out"
-        (click)="signOut(); $event.preventDefault(); toggleMobileMenu();"
+        (click)="signOut(); $event.preventDefault(); toggleMobileMenu()"
       >
         <lucide-icon name="log-out" class="h-5 w-5 mr-3"></lucide-icon>
         Sign Out

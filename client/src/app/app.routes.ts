@@ -11,6 +11,7 @@ import { adminRoutes } from "./pages/admin/admin.routes";
 import { AdminGuard } from "./guards/admin.guard";
 import { HomeComponent } from "./pages/home/home.component";
 import { CartComponent } from "./pages/cart/cart.component";
+import { BrowseComponent } from "./pages/browse/browse.component";
 
 export const routes: Routes = [
   {
@@ -20,6 +21,10 @@ export const routes: Routes = [
   {
     path: "",
     component: HomeComponent,
+  },
+  {
+    path: "browse",
+    component: BrowseComponent,
   },
   {
     path: "register",
