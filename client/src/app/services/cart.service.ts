@@ -123,4 +123,31 @@ export class CartService {
         })
       );
   }
+
+  syncCart(): void{
+    const clientJWT = this.auth.isLoggedIn() ? this.auth.getToken() : null;
+    const guestToken = this.getGuestToken();
+    if (clientJWT && guestToken) {
+      alert(1); 
+      this.http.post(
+        `${this.endPoint}/merge`,
+        {
+          "guestId": guestToken,
+        },
+        {
+          headers: {
+            "Authorization": `Bearer ${clientJWT}`
+          },
+        }
+      ).subscribe({
+        next: (res) => { 
+          // cart synced
+          //console.log(res);
+        },
+        error: (err) => {
+          // cart sync failed
+          //console.log(err);
+      }});
+    }
+  }
 }

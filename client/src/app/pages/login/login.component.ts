@@ -9,6 +9,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { AuthApiService } from "../../services/auth-api.service";
 import { AuthService } from "../../services/auth.service";
+import { CartService } from "../../services/cart.service";
 
 @Component({
   imports: [RouterLink, ReactiveFormsModule, CommonModule],
@@ -28,7 +29,8 @@ export class LoginComponent implements OnInit {
     private authApi: AuthApiService,
     private auth: AuthService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private cart: CartService,
   ) {
     this.loginForm = this.fb.group({
       email: ["", [Validators.required, Validators.email]],
@@ -69,6 +71,9 @@ export class LoginComponent implements OnInit {
           // Check user role and redirect accordingly
           // Wait a bit to ensure token is stored before decoding
           setTimeout(() => {
+            // Sync cart
+            this.cart.syncCart();
+            
             const userRole = this.auth.getUserRole();
 
             if (userRole === "admin") {
