@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, tap } from "rxjs";
 import { AuthService } from "./auth.service";
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
   providedIn: "root",
@@ -16,17 +17,27 @@ export class CartService {
   cartCount: number = 0;
 
 
+  private getGuestToken() {
+    let uuid = localStorage.getItem("guestId");
+    if (!uuid || !(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i).test(uuid)) {
+      uuid = uuidv4();
+      localStorage.setItem("guestId", uuid);
+    }
+    return uuid;
+  }
+
   /**
    * Set client header
    * @returns either JWT token or guest ID
    */
   private getClient(): string[] {
-    const JWT_Token = this.auth.getToken();
+    const JWT_Token = this.auth.isLoggedIn() ? this.auth.getToken() : null;
+    const guestToken = this.getGuestToken();
     const clientHeader: string[] = JWT_Token 
       ? [
           "Authorization",
           `Bearer ${JWT_Token}`,
-        ]: ["x-guest-id", "550e8400-e29b-41d4-a716-446655440000"];
+        ]: ["x-guest-id", guestToken];
     return clientHeader;
   }
 
