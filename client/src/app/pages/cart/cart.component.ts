@@ -1,10 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import { CartService } from "../../services/cart.service";
 import { CommonModule } from "@angular/common";
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: "app-cart",
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: "./cart.component.html",
   styleUrl: "./cart.component.css",
 })
@@ -31,7 +32,9 @@ export class CartComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        this.errorMessage = error?.error?.message ?? "We're having trouble reaching the server. Please check your internet connection and try again shortly.";
+        this.errorMessage =
+          error?.error?.message ??
+          "We're having trouble reaching the server. Please check your internet connection and try again shortly.";
         this.loading = false;
       },
     });
@@ -49,7 +52,9 @@ export class CartComponent implements OnInit {
         this.loadCart();
       },
       error: (error) => {
-        this.errorMessage = error?.error?.message ?? "We're having trouble reaching the server. Please check your internet connection and try again shortly.";
+        this.errorMessage =
+          error?.error?.message ??
+          "We're having trouble reaching the server. Please check your internet connection and try again shortly.";
         this.loading = false;
       },
     });
@@ -66,7 +71,9 @@ export class CartComponent implements OnInit {
         this.loadCart();
       },
       error: (error) => {
-        this.errorMessage = error?.error?.message ?? "We're having trouble reaching the server. Please check your internet connection and try again shortly.";
+        this.errorMessage =
+          error?.error?.message ??
+          "We're having trouble reaching the server. Please check your internet connection and try again shortly.";
         this.loading = false;
       },
     });
