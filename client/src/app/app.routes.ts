@@ -38,16 +38,11 @@ export const routes: Routes = [
     path: "book-info",
     component: BookInfoComponent,
     children: [
-      { path: "", redirectTo: "detaills", pathMatch: "full" },
+      { path: "", redirectTo: "details", pathMatch: "full" },
       { path: "details", component: DetailsComponent },
       { path: "schedule", component: ScheduleComponent },
       { path: "reviews", component: ReviewsComponent },
       { path: "preview", component: PreviewComponent },
-      {
-        path: "",
-        pathMatch: "full",
-        redirectTo: "details",
-      },
     ],
   },
   {
