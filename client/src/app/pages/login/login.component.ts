@@ -30,11 +30,11 @@ export class LoginComponent implements OnInit {
     private auth: AuthService,
     private fb: FormBuilder,
     private router: Router,
-    private cart: CartService,
+    private cart: CartService
   ) {
     this.loginForm = this.fb.group({
       email: ["", [Validators.required, Validators.email]],
-      password: ["", [Validators.required, Validators.minLength(6)]],
+      password: ["", [Validators.required, Validators.minLength(8)]],
     });
   }
 
@@ -73,7 +73,7 @@ export class LoginComponent implements OnInit {
           setTimeout(() => {
             // Sync cart
             this.cart.syncCart();
-            
+
             const userRole = this.auth.getUserRole();
 
             if (userRole === "admin") {
@@ -85,7 +85,19 @@ export class LoginComponent implements OnInit {
         },
         error: (error) => {
           console.error("Login failed:", error);
-          this.errorMessage = "Invalid email or password.";
+          if (error.status === 0) {
+            this.errorMessage =
+              "Cannot connect to server. Please check your internet connection.";
+          } else if (error.status === 401) {
+            this.errorMessage = "Invalid email or password.";
+          } else if (error.status === 403) {
+            this.errorMessage =
+              "Your account has been disabled. Please contact support.";
+          } else if (error.error?.message) {
+            this.errorMessage = error.error.message;
+          } else {
+            this.errorMessage = "Login failed. Please try again.";
+          }
           this.triggerErrorBar();
           this.isSubmitting = false;
         },
@@ -93,6 +105,11 @@ export class LoginComponent implements OnInit {
           this.isSubmitting = false;
         },
       });
+    } else {
+      // Mark all fields as touched to show validation errors
+      this.loginForm.markAllAsTouched();
+      this.errorMessage = "Please enter valid email and password.";
+      this.triggerErrorBar();
     }
   }
 

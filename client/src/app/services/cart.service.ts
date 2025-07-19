@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, tap } from "rxjs";
 import { AuthService } from "./auth.service";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 @Injectable({
   providedIn: "root",
@@ -16,10 +16,14 @@ export class CartService {
   // Can be used in (navbar) to display number of items in cart
   cartCount: number = 0;
 
-
   private getGuestToken() {
     let uuid = localStorage.getItem("guestId");
-    if (!uuid || !(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i).test(uuid)) {
+    if (
+      !uuid ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        uuid
+      )
+    ) {
       uuid = uuidv4();
       localStorage.setItem("guestId", uuid);
     }
@@ -33,11 +37,9 @@ export class CartService {
   private getClient(): string[] {
     const JWT_Token = this.auth.isLoggedIn() ? this.auth.getToken() : null;
     const guestToken = this.getGuestToken();
-    const clientHeader: string[] = JWT_Token 
-      ? [
-          "Authorization",
-          `Bearer ${JWT_Token}`,
-        ]: ["x-guest-id", guestToken];
+    const clientHeader: string[] = JWT_Token
+      ? ["Authorization", `Bearer ${JWT_Token}`]
+      : ["x-guest-id", guestToken];
     return clientHeader;
   }
 
@@ -124,30 +126,32 @@ export class CartService {
       );
   }
 
-  syncCart(): void{
+  syncCart(): void {
     const clientJWT = this.auth.isLoggedIn() ? this.auth.getToken() : null;
     const guestToken = this.getGuestToken();
     if (clientJWT && guestToken) {
-      alert(1); 
-      this.http.post(
-        `${this.endPoint}/merge`,
-        {
-          "guestId": guestToken,
-        },
-        {
-          headers: {
-            "Authorization": `Bearer ${clientJWT}`
+      this.http
+        .post(
+          `${this.endPoint}/merge`,
+          {
+            guestId: guestToken,
           },
-        }
-      ).subscribe({
-        next: (res) => { 
-          // cart synced
-          //console.log(res);
-        },
-        error: (err) => {
-          // cart sync failed
-          //console.log(err);
-      }});
+          {
+            headers: {
+              Authorization: `Bearer ${clientJWT}`,
+            },
+          }
+        )
+        .subscribe({
+          next: (res) => {
+            // cart synced
+            //console.log(res);
+          },
+          error: (err) => {
+            // cart sync failed
+            //console.log(err);
+          },
+        });
     }
   }
 }
