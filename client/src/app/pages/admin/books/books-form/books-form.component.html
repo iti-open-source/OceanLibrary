@@ -36,6 +36,92 @@
 
   <!-- Form Content -->
   <form [formGroup]="bookForm" (ngSubmit)="onSubmit()" class="book-form">
+    <!-- System Information Section -->
+    <div class="form-section">
+      <h2 class="section-title">System Information</h2>
+      <div class="section-grid">
+        <!-- Book ID (only shown in edit mode) -->
+        <div class="form-field" *ngIf="isEditMode && bookId">
+          <label for="bookId" class="field-label"> Book ID </label>
+          <input
+            id="bookId"
+            type="text"
+            [value]="bookId"
+            class="field-input field-readonly"
+            readonly
+          />
+          <div class="field-hint">
+            Unique identifier for this book (read-only)
+          </div>
+        </div>
+
+        <!-- Author ID Section -->
+        <div class="form-field" [class.full-width]="!isEditMode || !bookId">
+          <div class="field-header">
+            <label for="authorID" class="field-label">
+              Author ID
+              <span class="field-optional">(Optional)</span>
+            </label>
+            <button
+              type="button"
+              class="btn btn-ghost btn-sm"
+              (click)="toggleAuthorIdEdit()"
+              *ngIf="!showAuthorIdField"
+            >
+              <lucide-angular [img]="Edit3" size="14"></lucide-angular>
+              Edit Author ID
+            </button>
+          </div>
+
+          <div *ngIf="showAuthorIdField">
+            <input
+              id="authorID"
+              type="text"
+              formControlName="authorID"
+              class="field-input"
+              [class.invalid]="isFieldInvalid('authorID')"
+              placeholder="Enter author ObjectId (e.g., 64b8a7c123d4567890abcdef)"
+            />
+            <div class="field-actions">
+              <button
+                type="button"
+                class="btn btn-outline btn-sm"
+                (click)="clearAuthorId()"
+              >
+                Clear
+              </button>
+              <button
+                type="button"
+                class="btn btn-ghost btn-sm"
+                (click)="hideAuthorIdField()"
+              >
+                Hide
+              </button>
+            </div>
+            <div class="field-hint">
+              Link this book to an existing author by entering their authorID
+            </div>
+            <div *ngIf="isFieldInvalid('authorID')" class="field-error">
+              <lucide-angular [img]="AlertCircle" size="16"></lucide-angular>
+              {{ getFieldError("authorID") }}
+            </div>
+          </div>
+
+          <div
+            *ngIf="!showAuthorIdField && bookForm.get('authorID')?.value"
+            class="author-id-display"
+          >
+            <div class="current-value">
+              <span class="value-label">Current:</span>
+              <code class="value-text">{{
+                bookForm.get("authorID")?.value
+              }}</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Basic Information Section -->
     <div class="form-section">
       <h2 class="section-title">Basic Information</h2>

@@ -19,6 +19,7 @@ import {
   Image as ImageIcon,
   AlertCircle,
   CheckCircle,
+  Edit3,
 } from "lucide-angular";
 
 import { BooksService } from "../../../../services/books.service";
@@ -46,6 +47,9 @@ export class BooksFormComponent implements OnInit, OnDestroy {
   selectedImageFile: File | null = null;
   dragOver = false;
 
+  // Author ID field visibility
+  showAuthorIdField = false;
+
   // Error modal properties
   showErrorModal = false;
   errorModalTitle = "Error";
@@ -67,6 +71,7 @@ export class BooksFormComponent implements OnInit, OnDestroy {
   readonly ImageIcon = ImageIcon;
   readonly AlertCircle = AlertCircle;
   readonly CheckCircle = CheckCircle;
+  readonly Edit3 = Edit3;
 
   constructor(
     private fb: FormBuilder,
@@ -91,6 +96,7 @@ export class BooksFormComponent implements OnInit, OnDestroy {
     this.bookForm = this.fb.group({
       title: ["", [Validators.required, Validators.maxLength(200)]],
       authorName: ["", [Validators.required, Validators.maxLength(100)]],
+      authorID: [""], // Made optional - no required validator
       genres: this.fb.array([this.fb.control("", Validators.required)]),
       price: [null, [Validators.required, Validators.min(0.01)]],
       pages: [null, [Validators.required, Validators.min(1)]],
@@ -149,6 +155,7 @@ export class BooksFormComponent implements OnInit, OnDestroy {
     this.bookForm.patchValue({
       title: book.title,
       authorName: book.authorName,
+      authorID: book.authorID,
       price: book.price,
       pages: book.pages, // Note: API uses 'page' but form uses 'pages'
       stock: book.stock,
@@ -158,6 +165,11 @@ export class BooksFormComponent implements OnInit, OnDestroy {
 
     if (book.image) {
       this.imagePreview = book.image;
+    }
+
+    // Show author ID field if there's a value
+    if (book.authorID) {
+      this.showAuthorIdField = true;
     }
   }
 
@@ -203,6 +215,11 @@ export class BooksFormComponent implements OnInit, OnDestroy {
         // Patch other form values (excluding genres as we handled them above)
         const { genres, ...otherValues } = parsedData;
         this.bookForm.patchValue(otherValues);
+
+        // Show author ID field if there's a value
+        if (otherValues.authorID) {
+          this.showAuthorIdField = true;
+        }
       } catch (error) {
         console.warn("Failed to load auto-saved data:", error);
         localStorage.removeItem(this.autoSaveKey);
@@ -249,6 +266,10 @@ export class BooksFormComponent implements OnInit, OnDestroy {
       // Add all form fields to FormData
       formData.append("title", formValue.title);
       formData.append("authorName", formValue.authorName);
+      // Only append authorID if it's not empty
+      if (formValue.authorID && formValue.authorID.trim()) {
+        formData.append("authorID", formValue.authorID.trim());
+      }
       formData.append("price", formValue.price.toString());
       formData.append("pages", formValue.pages.toString());
       formData.append("stock", formValue.stock.toString());
@@ -336,6 +357,19 @@ export class BooksFormComponent implements OnInit, OnDestroy {
         control.controls.forEach((ctrl) => ctrl.markAsTouched());
       }
     });
+  }
+
+  // Author ID field management
+  toggleAuthorIdEdit() {
+    this.showAuthorIdField = !this.showAuthorIdField;
+  }
+
+  clearAuthorId() {
+    this.bookForm.get("authorID")?.setValue("");
+  }
+
+  hideAuthorIdField() {
+    this.showAuthorIdField = false;
   }
 
   // Validation helpers

@@ -107,6 +107,26 @@
             </div>
           </div>
 
+          <!-- Author ID (only shown in edit mode) -->
+          <div *ngIf="isEditMode && authorId" class="space-y-2">
+            <label
+              for="authorId"
+              class="block text-sm font-semibold text-[var(--color-text-heading)]"
+            >
+              Author ID
+            </label>
+            <input
+              id="authorId"
+              type="text"
+              [value]="authorId"
+              readonly
+              class="w-full px-4 py-2.5 border rounded-lg bg-[var(--color-background-medium)] text-[var(--color-text-muted)] cursor-not-allowed"
+            />
+            <div class="text-xs text-[var(--color-text-muted)]">
+              Unique identifier for this author (read-only)
+            </div>
+          </div>
+
           <!-- Basic Information -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Name -->

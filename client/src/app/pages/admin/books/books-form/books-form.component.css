@@ -514,6 +514,64 @@
   white-space: nowrap;
 }
 
+/* System Information Section Styles */
+.field-readonly {
+  background-color: var(--color-background-medium);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.field-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.field-optional {
+  font-weight: 400;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.field-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.author-id-display {
+  padding: 0.75rem;
+  background-color: var(--color-background-medium);
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  margin-top: 0.5rem;
+}
+
+.current-value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.value-label {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.value-text {
+  font-family: "Courier New", monospace;
+  background-color: var(--color-background-light);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  font-size: 0.8rem;
+  color: var(--color-text-default);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .books-form-container {
@@ -571,6 +629,23 @@
     position: static;
     margin: 2rem 0 0 0;
   }
+
+  .field-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .field-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .current-value {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -595,6 +670,40 @@
   .action-buttons .btn {
     width: 100%;
     min-width: unset;
+  }
+
+  .image-upload-zone {
+    min-height: 250px;
+  }
+
+  .upload-content {
+    padding: 2rem 1rem;
+    min-height: 250px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .card-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .card-content {
+    padding: 1rem;
+  }
+
+  .image-container {
+    max-height: 300px;
+  }
+
+  .image-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 }
 
