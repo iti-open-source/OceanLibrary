@@ -1,0 +1,145 @@
+<div
+  class="bg-[var(--color-background-light)] border border-[var(--color-border)] rounded-xl overflow-hidden group cursor-pointer w-full h-full min-h-[350px] sm:min-h-[380px] md:min-h-[400px] lg:min-h-[420px] flex flex-col transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 hover:border-[var(--color-brand-primary)]/50"
+  (click)="onCardClick()"
+>
+  <!-- Book Cover Section -->
+  <div
+    class="relative w-full h-36 sm:h-40 md:h-44 lg:h-48 flex-shrink-0 overflow-hidden bg-[var(--color-background-medium)]"
+  >
+    <!-- Book Image -->
+    <img
+      [src]="book.image"
+      [alt]="book.title"
+      class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+      loading="lazy"
+    />
+
+    <!-- Stock Status Badge -->
+    <div class="absolute top-2 left-2">
+      <div
+        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium backdrop-blur-sm shadow-sm"
+        [ngClass]="{
+          'bg-emerald-100/90 text-emerald-700 border border-emerald-200':
+            book.stock > 10,
+          'bg-amber-100/90 text-amber-700 border border-amber-200':
+            book.stock > 0 && book.stock <= 10,
+          'bg-red-100/90 text-red-700 border border-red-200': book.stock === 0
+        }"
+      >
+        {{ book.stock === 0 ? "Out of Stock" : book.stock + " left" }}
+      </div>
+    </div>
+
+    <!-- Rating Badge -->
+    <div class="absolute top-2 right-2">
+      <div
+        class="bg-[var(--color-brand-primary)]/90 text-white px-2 py-1 rounded-full flex items-center space-x-1 text-xs font-medium backdrop-blur-sm"
+      >
+        <lucide-icon
+          [img]="Star"
+          class="w-3 h-3 text-yellow-400"
+          fill="currentColor"
+        ></lucide-icon>
+        <span>{{ book.ratingAverage.toFixed(1) }}</span>
+      </div>
+    </div>
+
+    <!-- Wishlist Button -->
+    <div
+      class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+    >
+      <button
+        (click)="onAddToWishlist($event)"
+        class="p-2 bg-white/90 hover:bg-white text-[var(--color-brand-primary)] rounded-full shadow-md hover:shadow-lg transition-all duration-200"
+        title="Add to Wishlist"
+      >
+        <lucide-icon [img]="Heart" class="w-4 h-4"></lucide-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Book Info -->
+  <div class="p-3 sm:p-4 flex flex-col flex-1 min-h-0">
+    <!-- Book Title & Author -->
+    <div class="mb-2 flex-shrink-0">
+      <h3
+        class="font-semibold text-sm sm:text-base text-[var(--color-text-heading)] leading-tight mb-1 group-hover:text-[var(--color-brand-primary)] transition-colors duration-200 line-clamp-2 h-10 sm:h-12"
+        style="font-family: var(--font-primary)"
+        [title]="book.title"
+      >
+        {{ book.title }}
+      </h3>
+      <p
+        class="text-xs sm:text-sm text-[var(--color-text-muted)] truncate h-4 sm:h-5"
+        style="font-family: var(--font-secondary)"
+      >
+        by {{ book.authorName }}
+      </p>
+    </div>
+
+    <!-- Rating & Pages -->
+    <div class="flex items-center justify-between mb-2 flex-shrink-0 h-5">
+      <div class="flex items-center space-x-1">
+        <div class="flex items-center">
+          <lucide-icon
+            *ngFor="
+              let filled of getStarArray(book.ratingAverage);
+              let i = index
+            "
+            [img]="Star"
+            class="w-3 h-3"
+            [class.text-yellow-500]="filled"
+            [class.text-gray-300]="!filled"
+            [attr.fill]="filled ? 'currentColor' : 'none'"
+          ></lucide-icon>
+        </div>
+        <span class="text-xs text-[var(--color-text-muted)]">
+          ({{ book.ratingQuantity }})
+        </span>
+      </div>
+      <span
+        class="text-xs text-[var(--color-text-muted)] bg-[var(--color-background-medium)] px-2 py-0.5 rounded"
+      >
+        {{ book.pages }}p
+      </span>
+    </div>
+
+    <!-- Genres -->
+    <div class="flex flex-wrap gap-1 mb-3 flex-shrink-0 min-h-[24px]">
+      <span
+        *ngFor="let genre of book.genres.slice(0, 2)"
+        class="px-2 py-0.5 bg-[var(--color-brand-primary)]/10 text-[var(--color-brand-primary)] text-xs rounded font-medium border border-[var(--color-brand-primary)]/20"
+      >
+        {{ capitalizeGenre(genre) }}
+      </span>
+      <span
+        *ngIf="book.genres.length > 2"
+        class="px-2 py-0.5 text-xs text-[var(--color-text-muted)] bg-[var(--color-background-medium)] rounded"
+      >
+        +{{ book.genres.length - 2 }}
+      </span>
+    </div>
+
+    <!-- Price Section -->
+    <div
+      class="mt-auto pt-2 border-t border-[var(--color-border)] flex-shrink-0"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="flex items-baseline space-x-1">
+            <span
+              class="text-lg sm:text-xl font-bold text-[var(--color-brand-primary)]"
+              style="font-family: var(--font-primary)"
+            >
+              ${{ book.price.toFixed(2) }}
+            </span>
+            <span class="text-xs text-[var(--color-text-muted)]">USD</span>
+          </div>
+          <span class="text-xs text-[var(--color-text-muted)]">
+            {{ book.stock > 0 ? "Available Now" : "Out of Stock" }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
