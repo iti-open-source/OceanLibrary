@@ -37,6 +37,21 @@ export const verifyToken = async (
   }
 };
 
+export const verifySuperAdmin = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (req.userRole !== "superadmin") {
+      return next(new AppError("requires superadmin privileges", 401));
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const verifyAdmin = async (
   req: CustomRequest,
   res: Response,
