@@ -35,7 +35,7 @@ export const routes: Routes = [
     component: CartComponent,
   },
   {
-    path: "book-info",
+    path: "book-info/:bookID",
     component: BookInfoComponent,
     children: [
       { path: "", redirectTo: "details", pathMatch: "full" },

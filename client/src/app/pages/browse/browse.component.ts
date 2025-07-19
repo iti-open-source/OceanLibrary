@@ -17,6 +17,7 @@ import { BrowseBookCardComponent } from "../../components/browse-book-card/brows
 import { Book, BooksResponse } from "../../types/book.interface";
 import { BooksService } from "../../services/books.service";
 import { CartService } from "../../services/cart.service";
+import { Router } from "@angular/router";
 
 interface QuickFilterTag {
   label: string;
@@ -112,7 +113,8 @@ export class BrowseComponent implements OnInit, OnDestroy {
 
   constructor(
     private booksService: BooksService,
-    private cartService: CartService
+    private cartService: CartService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -304,7 +306,7 @@ export class BrowseComponent implements OnInit, OnDestroy {
 
   onViewBookDetails(book: Book) {
     // Navigate to book details page
-    console.log("View details:", book.title);
+    this.router.navigate(["book-info/" + book._id]);
   }
 
   toggleSidebar() {
