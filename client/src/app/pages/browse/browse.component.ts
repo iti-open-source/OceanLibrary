@@ -158,7 +158,7 @@ export class BrowseComponent implements OnInit, OnDestroy {
     this.booksService.getAllBooks(options).subscribe({
       next: (response) => {
         console.log("Books response:", response); // Debug log
-        if (response && response.status === "success" && response.data) {
+        if (response && response.status === "Success" && response.data) {
           this.books = response.data.books || [];
           this.totalPages = response.data.totalPages || 1;
           this.totalItems = response.data.totalItems || 0;
