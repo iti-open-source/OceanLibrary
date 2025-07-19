@@ -1,0 +1,229 @@
+/* Sidebar animations and transitions */
+.transform {
+  will-change: transform;
+}
+
+/* Enhanced filter sections */
+.filter-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.filter-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-brand-primary),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.filter-section:hover::before {
+  opacity: 0.3;
+}
+
+/* Compact spacing for filter content */
+.filter-section h3 {
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+}
+
+.filter-section button {
+  font-size: 0.75rem !important;
+}
+
+/* Remove extra spacing from filter components */
+.filter-section .space-y-2 > * + * {
+  margin-top: 0.5rem !important;
+}
+
+.filter-section .space-y-3 > * + * {
+  margin-top: 0.75rem !important;
+}
+
+.filter-section .space-y-4 > * + * {
+  margin-top: 1rem !important;
+}
+
+/* Scrollbar styling for sidebar */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: var(--color-background-light);
+  border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    var(--color-brand-primary),
+    var(--color-brand-primary) / 70
+  );
+  border-radius: 10px;
+  border: 2px solid var(--color-background-light);
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    var(--color-brand-primary),
+    var(--color-brand-primary) / 90
+  );
+}
+
+/* Sticky header and footer enhanced shadows */
+.sticky.top-0 {
+  box-shadow: 0 4px 12px rgba(var(--color-brand-primary-rgb), 0.15);
+  backdrop-filter: blur(12px);
+}
+
+.sticky.bottom-0 {
+  box-shadow: 0 -4px 12px rgba(var(--color-brand-primary-rgb), 0.15);
+  backdrop-filter: blur(12px);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 1024px) {
+  .max-w-sm {
+    max-width: 85vw !important;
+    width: 100% !important;
+  }
+
+  /* Remove rounded corners on mobile for full screen effect */
+  .lg\:rounded-r-3xl,
+  .lg\:rounded-tr-3xl,
+  .lg\:rounded-br-3xl {
+    border-radius: 0 !important;
+  }
+}
+
+/* Ensure sidebar doesn't cause horizontal overflow */
+@media (min-width: 1024px) {
+  .lg\:w-80 {
+    width: 20rem !important;
+    max-width: 20rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Enhanced curved design for desktop */
+  .lg\:rounded-r-3xl {
+    border-radius: 0 1.5rem 1.5rem 0 !important;
+    position: relative;
+  }
+
+  .lg\:rounded-tr-3xl {
+    border-radius: 0 1.5rem 0 0 !important;
+  }
+
+  .lg\:rounded-br-3xl {
+    border-radius: 0 0 1.5rem 0 !important;
+  }
+}
+
+/* Enhanced filter section dividers and spacing */
+.space-y-8 > * + * {
+  border-top: none; /* Remove top border since we have individual section styling */
+  padding-top: 0;
+}
+
+.space-y-6 > * + * {
+  border-top: none; /* Remove top border since we have individual section styling */
+  padding-top: 0;
+}
+
+/* Prevent sidebar content from causing overflow */
+.filter-content {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Enhanced mobile layout */
+@media (max-width: 640px) {
+  .p-3 {
+    padding: 0.75rem !important;
+  }
+
+  .space-y-4 > * + * {
+    margin-top: 1rem !important;
+  }
+
+  .space-y-6 > * + * {
+    margin-top: 1.5rem !important;
+  }
+
+  .space-y-8 > * + * {
+    margin-top: 2rem !important;
+  }
+
+  .filter-section {
+    border-radius: 1rem !important;
+    padding: 0.625rem !important; /* p-2.5 = 10px */
+  }
+
+  .filter-section h3 {
+    font-size: 0.8125rem !important; /* Slightly smaller on mobile */
+  }
+
+  .filter-section .space-y-2 > * + * {
+    margin-top: 0.375rem !important;
+  }
+
+  .filter-section .space-y-3 > * + * {
+    margin-top: 0.5rem !important;
+  }
+}
+
+/* Additional visual enhancements */
+.group:hover .group-hover\:text-\[var\(--color-brand-primary\)\] {
+  color: var(--color-brand-primary);
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition-property: color, background-color, border-color, box-shadow,
+    transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* Enhanced button hover effects */
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Glass morphism effect for modern look */
+@supports (backdrop-filter: blur(10px)) {
+  .backdrop-blur-sm {
+    backdrop-filter: blur(8px);
+  }
+
+  .backdrop-blur-md {
+    backdrop-filter: blur(12px);
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .filter-section {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .filter-section:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+}

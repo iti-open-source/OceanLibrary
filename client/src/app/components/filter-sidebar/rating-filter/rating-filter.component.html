@@ -1,0 +1,75 @@
+<div>
+  <div class="flex items-center justify-between mb-2">
+    <h3
+      class="font-semibold text-[var(--color-text-heading)] font-brand text-sm"
+    >
+      Minimum Rating
+    </h3>
+    <button
+      *ngIf="selectedRating > 0"
+      (click)="clearRating()"
+      class="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-primary)] transition-colors duration-200"
+    >
+      Clear
+    </button>
+  </div>
+
+  <div class="space-y-2">
+    <label
+      *ngFor="let option of ratingOptions"
+      class="flex items-center space-x-3 cursor-pointer group hover:bg-[var(--color-background-medium)] p-2 rounded-md transition-colors duration-200"
+    >
+      <input
+        type="radio"
+        name="rating"
+        [value]="option.value"
+        [(ngModel)]="selectedRating"
+        (change)="onRatingChange()"
+        class="w-4 h-4 text-[var(--color-brand-primary)] border-[var(--color-border)] focus:ring-[var(--color-brand-primary)] focus:ring-2"
+      />
+
+      <div class="flex items-center space-x-2 flex-1">
+        <span
+          class="text-sm text-[var(--color-text-default)] group-hover:text-[var(--color-text-heading)] transition-colors duration-200"
+        >
+          {{ option.label }}
+        </span>
+
+        <div *ngIf="option.stars > 0" class="flex items-center space-x-1">
+          <lucide-icon
+            *ngFor="let star of getStarArray(option.stars)"
+            [img]="Star"
+            class="w-4 h-4 text-yellow-500"
+            fill="currentColor"
+          ></lucide-icon>
+          <span
+            *ngIf="option.stars < 5"
+            class="text-xs text-[var(--color-text-muted)]"
+            >& up</span
+          >
+        </div>
+      </div>
+    </label>
+  </div>
+
+  <!-- Visual rating display -->
+  <div
+    *ngIf="selectedRating > 0"
+    class="mt-4 p-3 bg-[var(--color-background-medium)] rounded-lg"
+  >
+    <div class="flex items-center space-x-2">
+      <span class="text-sm text-[var(--color-text-default)]"
+        >Showing books with</span
+      >
+      <div class="flex items-center space-x-1">
+        <lucide-icon
+          *ngFor="let star of getStarArray(selectedRating)"
+          [img]="Star"
+          class="w-4 h-4 text-yellow-500"
+          fill="currentColor"
+        ></lucide-icon>
+      </div>
+      <span class="text-sm text-[var(--color-text-default)]">or higher</span>
+    </div>
+  </div>
+</div>

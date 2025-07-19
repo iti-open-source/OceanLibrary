@@ -1,0 +1,161 @@
+/* Custom checkbox styling */
+input[type="checkbox"] {
+  accent-color: var(--color-brand-primary);
+}
+
+/* Custom scrollbar for genre list */
+.space-y-2::-webkit-scrollbar {
+  width: 4px;
+}
+
+.space-y-2::-webkit-scrollbar-track {
+  background: var(--color-background-light);
+}
+
+.space-y-2::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+}
+
+.space-y-2::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-primary);
+}
+
+/* Genre Filter Component Styles */
+
+/* Selected genres pill container */
+.selected-genres-container {
+  background: linear-gradient(
+    135deg,
+    var(--color-background-medium) 0%,
+    var(--color-background-light) 100%
+  );
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(var(--color-brand-primary-rgb), 0.05);
+}
+
+/* Genre chip base styles */
+.genre-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* Remove button in selected chips */
+.chip-remove-button {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: currentColor;
+  font-size: 12px;
+  font-weight: bold;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chip-remove-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* Search input styles */
+.genre-search-input {
+  width: 100%;
+  padding: 10px 40px 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-background-light);
+  color: var(--color-text-default);
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.genre-search-input:focus {
+  outline: none;
+  border-color: var(--color-brand-primary);
+  box-shadow: 0 0 0 3px rgba(var(--color-brand-primary-rgb), 0.1);
+}
+
+/* Clear all button */
+.clear-all-button {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-all-button:hover {
+  color: var(--color-brand-primary);
+  background: var(--color-background-medium);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .genre-chip {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .chip-remove-button {
+    width: 14px;
+    height: 14px;
+    font-size: 10px;
+    margin-left: 6px;
+  }
+
+  .genre-search-input {
+    padding: 8px 36px 8px 10px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+
+/* Animation for chip interactions */
+@keyframes chipPop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.genre-chip:active {
+  animation: chipPop 0.2s ease;
+}
+
+/* Focus styles for accessibility */
+.genre-chip:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+.genre-search-input:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}

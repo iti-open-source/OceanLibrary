@@ -1,0 +1,86 @@
+<div>
+  <div class="flex items-center justify-between mb-2">
+    <h3
+      class="font-semibold text-[var(--color-text-heading)] font-brand text-sm"
+    >
+      Price Range
+    </h3>
+    <button
+      (click)="resetPriceRange()"
+      class="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-primary)] transition-colors duration-200"
+    >
+      Reset
+    </button>
+  </div>
+
+  <div class="space-y-3">
+    <!-- Price range display -->
+    <div
+      class="flex items-center justify-between text-sm text-[var(--color-text-default)]"
+    >
+      <span>${{ currentMinPrice }}</span>
+      <span class="text-[var(--color-text-muted)]">to</span>
+      <span>${{ currentMaxPrice }}</span>
+    </div>
+
+    <!-- Min price slider -->
+    <div class="space-y-2">
+      <label class="block text-sm text-[var(--color-text-muted)]"
+        >Minimum Price</label
+      >
+      <input
+        type="range"
+        [(ngModel)]="currentMinPrice"
+        [min]="minPrice"
+        [max]="maxPrice"
+        (input)="onMinPriceChange()"
+        class="w-full h-2 bg-[var(--color-background-medium)] rounded-lg appearance-none cursor-pointer range-slider"
+      />
+    </div>
+
+    <!-- Max price slider -->
+    <div class="space-y-2">
+      <label class="block text-sm text-[var(--color-text-muted)]"
+        >Maximum Price</label
+      >
+      <input
+        type="range"
+        [(ngModel)]="currentMaxPrice"
+        [min]="minPrice"
+        [max]="maxPrice"
+        (input)="onMaxPriceChange()"
+        class="w-full h-2 bg-[var(--color-background-medium)] rounded-lg appearance-none cursor-pointer range-slider"
+      />
+    </div>
+
+    <!-- Price input fields -->
+    <div class="flex items-center space-x-2">
+      <div class="flex-1">
+        <label class="block text-xs text-[var(--color-text-muted)] mb-1"
+          >Min</label
+        >
+        <input
+          type="number"
+          [(ngModel)]="currentMinPrice"
+          [min]="minPrice"
+          [max]="maxPrice"
+          (input)="onMinPriceChange()"
+          class="w-full px-2 py-1 text-sm border border-[var(--color-border)] rounded bg-[var(--color-background-light)] text-[var(--color-text-default)] focus:outline-none focus:ring-1 focus:ring-[var(--color-brand-primary)]"
+        />
+      </div>
+      <div class="flex-1">
+        <label class="block text-xs text-[var(--color-text-muted)] mb-1"
+          >Max</label
+        >
+        <input
+          type="number"
+          [(ngModel)]="currentMaxPrice"
+          [min]="minPrice"
+          [max]="maxPrice"
+          (input)="onMaxPriceChange()"
+          class="w-full px-2 py-1 text-sm border border-[var(--color-border)] rounded bg-[var(--color-background-light)] text-[var(--color-text-default)] focus:outline-none focus:ring-1 focus:ring-[var(--color-brand-primary)]"
+        />
+      </div>
+    </div>
+  </div>
+</div>

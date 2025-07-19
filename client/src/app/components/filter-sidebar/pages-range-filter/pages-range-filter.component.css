@@ -1,0 +1,53 @@
+/* Custom range slider styling */
+.range-slider::-webkit-slider-thumb {
+  appearance: none;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background: var(--color-brand-primary);
+  cursor: pointer;
+  border: 2px solid var(--color-background-light);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.range-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(var(--color-brand-primary-rgb), 0.3);
+}
+
+.range-slider::-moz-range-thumb {
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background: var(--color-brand-primary);
+  cursor: pointer;
+  border: 2px solid var(--color-background-light);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.range-slider::-webkit-slider-track {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-background-medium);
+}
+
+.range-slider::-moz-range-track {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-background-medium);
+  border: none;
+}
+
+/* Number input styling */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

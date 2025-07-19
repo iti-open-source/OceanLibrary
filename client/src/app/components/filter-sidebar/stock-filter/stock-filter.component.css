@@ -1,0 +1,39 @@
+/* Custom toggle switch styling */
+.toggle-bg {
+  background-color: var(--color-background-dark);
+  border: 1px solid var(--color-border);
+}
+
+.toggle-bg.bg-brand-primary {
+  background-color: var(--color-brand-primary);
+  border-color: var(--color-brand-primary);
+}
+
+.toggle-dot {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.toggle-dot:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Status indicator animation */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.w-2.h-2.bg-green-500 {
+  animation: pulse 2s infinite;
+}
+
+/* Focus states for accessibility */
+.sr-only:focus + .toggle-bg {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}

@@ -1,0 +1,55 @@
+<div>
+  <div class="flex items-center justify-between mb-2">
+    <h3
+      class="font-semibold text-[var(--color-text-heading)] font-brand text-sm"
+    >
+      Availability
+    </h3>
+    <button
+      *ngIf="showInStockOnly"
+      (click)="clearStockFilter()"
+      class="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-primary)] transition-colors duration-200"
+    >
+      Clear
+    </button>
+  </div>
+
+  <div class="space-y-3">
+    <!-- Toggle switch for stock filter -->
+    <label
+      class="flex items-center justify-between cursor-pointer group hover:bg-[var(--color-background-medium)] p-3 rounded-lg transition-colors duration-200"
+    >
+      <div class="flex flex-col">
+        <span
+          class="text-sm font-medium text-[var(--color-text-default)] group-hover:text-[var(--color-text-heading)] transition-colors duration-200"
+        >
+          In Stock Only
+        </span>
+        <span class="text-xs text-[var(--color-text-muted)]">
+          Show only available books
+        </span>
+      </div>
+
+      <!-- Custom toggle switch -->
+      <div class="relative">
+        <input
+          type="checkbox"
+          [(ngModel)]="showInStockOnly"
+          (change)="onStockFilterChange()"
+          class="sr-only"
+          id="stock-toggle"
+        />
+        <div
+          class="toggle-bg w-12 h-6 rounded-full shadow-inner transition-colors duration-200"
+          [class.bg-brand-primary]="showInStockOnly"
+          [class.bg-background-dark]="!showInStockOnly"
+        ></div>
+        <div
+          class="toggle-dot absolute w-4 h-4 bg-white rounded-full shadow-md top-1 transition-transform duration-200"
+          [class.translate-x-7]="showInStockOnly"
+          [class.translate-x-1]="!showInStockOnly"
+        ></div>
+      </div>
+    </label>
+  </div>
+</div>

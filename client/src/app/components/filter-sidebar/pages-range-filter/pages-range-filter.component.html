@@ -1,0 +1,88 @@
+<div>
+  <div class="flex items-center justify-between mb-2">
+    <h3
+      class="font-semibold text-[var(--color-text-heading)] font-brand text-sm"
+    >
+      Page Count
+    </h3>
+    <button
+      (click)="resetPagesRange()"
+      class="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-primary)] transition-colors duration-200"
+    >
+      Reset
+    </button>
+  </div>
+
+  <div class="space-y-3">
+    <!-- Pages range display -->
+    <div
+      class="flex items-center justify-between text-sm text-[var(--color-text-default)]"
+    >
+      <span>{{ currentMinPages }} pages</span>
+      <span class="text-[var(--color-text-muted)]">to</span>
+      <span>{{ currentMaxPages }} pages</span>
+    </div>
+
+    <!-- Min pages slider -->
+    <div class="space-y-2">
+      <label class="block text-sm text-[var(--color-text-muted)]"
+        >Minimum Pages</label
+      >
+      <input
+        type="range"
+        [(ngModel)]="currentMinPages"
+        [min]="minPages"
+        [max]="maxPages"
+        [step]="10"
+        (input)="onMinPagesChange()"
+        class="w-full h-2 bg-[var(--color-background-medium)] rounded-lg appearance-none cursor-pointer range-slider"
+      />
+    </div>
+
+    <!-- Max pages slider -->
+    <div class="space-y-2">
+      <label class="block text-sm text-[var(--color-text-muted)]"
+        >Maximum Pages</label
+      >
+      <input
+        type="range"
+        [(ngModel)]="currentMaxPages"
+        [min]="minPages"
+        [max]="maxPages"
+        [step]="10"
+        (input)="onMaxPagesChange()"
+        class="w-full h-2 bg-[var(--color-background-medium)] rounded-lg appearance-none cursor-pointer range-slider"
+      />
+    </div>
+
+    <!-- Pages input fields -->
+    <div class="flex items-center space-x-2">
+      <div class="flex-1">
+        <label class="block text-xs text-[var(--color-text-muted)] mb-1"
+          >Min</label
+        >
+        <input
+          type="number"
+          [(ngModel)]="currentMinPages"
+          [min]="minPages"
+          [max]="maxPages"
+          (input)="onMinPagesChange()"
+          class="w-full px-2 py-1 text-sm border border-[var(--color-border)] rounded bg-[var(--color-background-light)] text-[var(--color-text-default)] focus:outline-none focus:ring-1 focus:ring-[var(--color-brand-primary)]"
+        />
+      </div>
+      <div class="flex-1">
+        <label class="block text-xs text-[var(--color-text-muted)] mb-1"
+          >Max</label
+        >
+        <input
+          type="number"
+          [(ngModel)]="currentMaxPages"
+          [min]="minPages"
+          [max]="maxPages"
+          (input)="onMaxPagesChange()"
+          class="w-full px-2 py-1 text-sm border border-[var(--color-border)] rounded bg-[var(--color-background-light)] text-[var(--color-text-default)] focus:outline-none focus:ring-1 focus:ring-[var(--color-brand-primary)]"
+        />
+      </div>
+    </div>
+  </div>
+</div>

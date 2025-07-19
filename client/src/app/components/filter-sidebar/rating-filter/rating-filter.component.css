@@ -1,0 +1,18 @@
+/* Custom radio button styling */
+input[type="radio"] {
+  accent-color: var(--color-brand-primary);
+}
+
+/* Star icon animations */
+lucide-icon {
+  transition: all 0.2s ease;
+}
+
+.group:hover lucide-icon {
+  transform: scale(1.05);
+}
+
+/* Rating display container */
+.bg-\[var\(--color-background-medium\)\] {
+  border: 1px solid var(--color-border);
+}

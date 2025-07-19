@@ -1,0 +1,220 @@
+<!-- Mobile overlay -->
+<div
+  *ngIf="isOpen"
+  class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+  (click)="closeSidebar()"
+></div>
+
+<!-- Mobile overlay -->
+<div
+  *ngIf="isOpen"
+  class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+  (click)="closeSidebar()"
+></div>
+
+<!-- Sidebar -->
+<div
+  class="fixed top-0 left-0 h-full w-full max-w-sm bg-[var(--color-background-light)] border-r border-[var(--color-border)] z-50 transform transition-all duration-300 ease-in-out lg:relative lg:translate-x-0 lg:z-auto lg:w-80 lg:max-w-80 lg:flex-shrink-0 overflow-y-auto shadow-2xl lg:shadow-lg lg:rounded-r-3xl lg:border-2 lg:border-l-0 lg:backdrop-blur-sm"
+  [class.translate-x-0]="isOpen"
+  [class.-translate-x-full]="!isOpen"
+>
+  <!-- Header -->
+  <div
+    class="sticky top-0 bg-gradient-to-r from-[var(--color-background-light)] to-[var(--color-background-medium)] border-b-2 border-[var(--color-border)] p-3 sm:p-4 flex items-center justify-between backdrop-blur-sm bg-opacity-95 lg:rounded-tr-3xl"
+  >
+    <div class="flex items-center space-x-2">
+      <div
+        class="p-2 bg-gradient-to-br from-[var(--color-brand-primary)]/20 to-[var(--color-brand-primary)]/10 rounded-xl shadow-sm border border-[var(--color-brand-primary)]/20"
+      >
+        <lucide-icon
+          [img]="Filter"
+          class="w-4 h-4 text-[var(--color-brand-primary)]"
+        ></lucide-icon>
+      </div>
+      <h2
+        class="text-base sm:text-lg font-semibold text-[var(--color-text-heading)] font-brand"
+      >
+        Filters
+      </h2>
+    </div>
+
+    <div class="flex items-center space-x-2">
+      <!-- Clear all filters button -->
+      <button
+        *ngIf="hasActiveFilters() || hasPendingChanges()"
+        (click)="clearAllFilters()"
+        class="text-xs sm:text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-primary)] transition-all duration-200 px-3 py-1.5 rounded-full hover:bg-[var(--color-background-medium)] font-medium border border-transparent hover:border-[var(--color-brand-primary)]/30 hover:shadow-sm"
+      >
+        Clear all
+      </button>
+
+      <!-- Close button (mobile only) -->
+      <button
+        (click)="closeSidebar()"
+        class="lg:hidden p-2 hover:bg-[var(--color-background-medium)] rounded-xl transition-all duration-200 hover:shadow-sm group"
+      >
+        <lucide-icon
+          [img]="X"
+          class="w-4 h-4 text-[var(--color-text-default)] group-hover:text-[var(--color-brand-primary)] transition-colors duration-200"
+        ></lucide-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Content -->
+  <div class="p-3 sm:p-4 space-y-4 sm:space-y-5">
+    <!-- Genre Filter -->
+    <div
+      class="filter-section bg-gradient-to-br from-[var(--color-background-light)] to-[var(--color-background-medium)] rounded-2xl p-2.5 sm:p-3 border border-[var(--color-border)] shadow-sm hover:shadow-md transition-all duration-300"
+    >
+      <app-genre-filter
+        [selectedGenres]="tempFilterState.genres"
+        (genresChange)="onGenresChange($event)"
+      ></app-genre-filter>
+    </div>
+
+    <!-- Price Range Filter -->
+    <div
+      class="filter-section bg-gradient-to-br from-[var(--color-background-light)] to-[var(--color-background-medium)] rounded-2xl p-2.5 sm:p-3 border border-[var(--color-border)] shadow-sm hover:shadow-md transition-all duration-300"
+    >
+      <app-price-range-filter
+        [initialPriceRange]="tempFilterState.priceRange"
+        (priceRangeChange)="onPriceRangeChange($event)"
+      ></app-price-range-filter>
+    </div>
+
+    <!-- Pages Range Filter -->
+    <div
+      class="filter-section bg-gradient-to-br from-[var(--color-background-light)] to-[var(--color-background-medium)] rounded-2xl p-2.5 sm:p-3 border border-[var(--color-border)] shadow-sm hover:shadow-md transition-all duration-300"
+    >
+      <app-pages-range-filter
+        [initialPagesRange]="tempFilterState.pagesRange"
+        (pagesRangeChange)="onPagesRangeChange($event)"
+      ></app-pages-range-filter>
+    </div>
+
+    <!-- Rating Filter -->
+    <div
+      class="filter-section bg-gradient-to-br from-[var(--color-background-light)] to-[var(--color-background-medium)] rounded-2xl p-2.5 sm:p-3 border border-[var(--color-border)] shadow-sm hover:shadow-md transition-all duration-300"
+    >
+      <app-rating-filter
+        [selectedRating]="tempFilterState.minRating"
+        (ratingChange)="onRatingChange($event)"
+      ></app-rating-filter>
+    </div>
+
+    <!-- Stock Filter -->
+    <div
+      class="filter-section bg-gradient-to-br from-[var(--color-background-light)] to-[var(--color-background-medium)] rounded-2xl p-2.5 sm:p-3 border border-[var(--color-border)] shadow-sm hover:shadow-md transition-all duration-300"
+    >
+      <app-stock-filter
+        [inStockOnly]="tempFilterState.inStockOnly"
+        (stockFilterChange)="onStockFilterChange($event)"
+      ></app-stock-filter>
+    </div>
+  </div>
+
+  <!-- Apply/Discard Buttons (Sticky) -->
+  <div
+    class="sticky bottom-0 bg-gradient-to-t from-[var(--color-background-medium)] to-[var(--color-background-light)] border-t-2 border-[var(--color-border)] p-3 sm:p-4 backdrop-blur-md bg-opacity-95 lg:rounded-br-3xl shadow-lg"
+  >
+    <!-- Action Buttons -->
+    <div class="flex gap-2 mb-3" *ngIf="hasPendingChanges()">
+      <button
+        (click)="applyFilters()"
+        class="flex-1 bg-gradient-to-r from-[var(--color-brand-primary)] to-[var(--color-brand-primary)]/90 hover:from-[var(--color-brand-primary)]/90 hover:to-[var(--color-brand-primary)] text-white font-semibold py-2.5 px-4 rounded-xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 text-sm"
+      >
+        Apply Filters
+      </button>
+      <button
+        (click)="discardChanges()"
+        class="bg-[var(--color-background-medium)] hover:bg-[var(--color-background-dark)] text-[var(--color-text-default)] font-medium py-2.5 px-4 rounded-xl transition-all duration-200 hover:shadow-sm border border-[var(--color-border)] text-sm"
+      >
+        Discard
+      </button>
+    </div>
+
+    <!-- Active Filters Summary -->
+    <div
+      *ngIf="hasActiveFilters()"
+      class="text-sm text-[var(--color-text-default)]"
+    >
+      <div class="flex items-center justify-between mb-3">
+        <span
+          class="font-semibold text-xs sm:text-sm text-[var(--color-text-heading)]"
+          >Active Filters:</span
+        >
+        <span
+          class="text-[var(--color-brand-primary)] text-xs sm:text-sm font-bold px-3 py-1.5 bg-gradient-to-r from-[var(--color-brand-primary)]/20 to-[var(--color-brand-primary)]/10 rounded-full border border-[var(--color-brand-primary)]/30 shadow-sm"
+        >
+          {{ getActiveFilterCount() }} applied
+        </span>
+      </div>
+
+      <div class="space-y-2 text-xs text-[var(--color-text-muted)]">
+        <div
+          *ngIf="filterState.genres.length > 0"
+          class="flex items-center space-x-2 p-2 bg-[var(--color-background-light)] rounded-lg border border-[var(--color-border)]"
+        >
+          <span
+            class="w-2 h-2 bg-gradient-to-r from-[var(--color-brand-primary)] to-[var(--color-brand-primary)]/70 rounded-full shadow-sm"
+          ></span>
+          <span class="font-medium"
+            >{{ filterState.genres.length }} genre{{
+              filterState.genres.length > 1 ? "s" : ""
+            }}</span
+          >
+        </div>
+        <div
+          *ngIf="filterState.minRating > 0"
+          class="flex items-center space-x-2 p-2 bg-[var(--color-background-light)] rounded-lg border border-[var(--color-border)]"
+        >
+          <span
+            class="w-2 h-2 bg-gradient-to-r from-[var(--color-brand-primary)] to-[var(--color-brand-primary)]/70 rounded-full shadow-sm"
+          ></span>
+          <span class="font-medium"
+            >{{ filterState.minRating }}+ star rating</span
+          >
+        </div>
+        <div
+          *ngIf="filterState.inStockOnly"
+          class="flex items-center space-x-2 p-2 bg-[var(--color-background-light)] rounded-lg border border-[var(--color-border)]"
+        >
+          <span
+            class="w-2 h-2 bg-gradient-to-r from-green-500 to-green-400 rounded-full shadow-sm"
+          ></span>
+          <span class="font-medium">In stock only</span>
+        </div>
+        <div
+          *ngIf="
+            filterState.priceRange.min > 0 || filterState.priceRange.max < 100
+          "
+          class="flex items-center space-x-2 p-2 bg-[var(--color-background-light)] rounded-lg border border-[var(--color-border)]"
+        >
+          <span
+            class="w-2 h-2 bg-gradient-to-r from-[var(--color-brand-primary)] to-[var(--color-brand-primary)]/70 rounded-full shadow-sm"
+          ></span>
+          <span class="font-medium"
+            >${{ filterState.priceRange.min }} - ${{
+              filterState.priceRange.max
+            }}</span
+          >
+        </div>
+        <div
+          *ngIf="
+            filterState.pagesRange.min > 0 || filterState.pagesRange.max < 1000
+          "
+          class="flex items-center space-x-2 p-2 bg-[var(--color-background-light)] rounded-lg border border-[var(--color-border)]"
+        >
+          <span
+            class="w-2 h-2 bg-gradient-to-r from-[var(--color-brand-primary)] to-[var(--color-brand-primary)]/70 rounded-full shadow-sm"
+          ></span>
+          <span class="font-medium"
+            >{{ filterState.pagesRange.min }} -
+            {{ filterState.pagesRange.max }} pages</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
