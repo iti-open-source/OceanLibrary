@@ -23,7 +23,7 @@ router.post(
   "/",
   uploadImage.single("image"),
   validateFormData(createBookSchema),
-  processImageFile(),
+  processImageFile("uploads/books/", "image"),
   verifyToken,
   verifyAdmin,
   createBook
@@ -32,7 +32,7 @@ router.patch(
   "/:id",
   uploadImage.single("image"),
   validateFormData(updateBookSchema),
-  processImageFile(),
+  processImageFile("uploads/books/", "image"),
   verifyToken,
   verifyAdmin,
   updateBookById

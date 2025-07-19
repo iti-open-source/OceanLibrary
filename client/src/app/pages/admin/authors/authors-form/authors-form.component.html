@@ -1,0 +1,287 @@
+<!-- Authors Form Content -->
+<div class="authors-form-page">
+  <div class="container mx-auto px-4 py-8 max-w-4xl">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-4xl font-brand text-[var(--color-text-heading)] mb-2">
+            {{ isEditMode ? "Edit Author" : "Add New Author" }}
+          </h1>
+          <p class="text-[var(--color-text-muted)] text-lg">
+            {{
+              isEditMode
+                ? "Update author information"
+                : "Add a new author to your library"
+            }}
+          </p>
+        </div>
+        <button
+          (click)="onCancel()"
+          class="inline-flex items-center gap-2 px-4 py-2 text-[var(--color-text-default)] bg-[var(--color-background-light)] border border-[var(--color-border)] rounded-lg hover:bg-[var(--color-background-medium)] transition-colors"
+        >
+          <lucide-icon [img]="X" class="h-4 w-4"></lucide-icon>
+          Cancel
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center py-12">
+      <div
+        class="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-brand-primary)]"
+      ></div>
+    </div>
+
+    <!-- Form -->
+    <div
+      *ngIf="!loading"
+      class="bg-[var(--color-background-light)] rounded-lg shadow-sm border border-[var(--color-border)] overflow-hidden"
+    >
+      <form [formGroup]="authorForm" (ngSubmit)="onSubmit()">
+        <div class="p-6 space-y-6">
+          <!-- Photo Upload Section -->
+          <div class="space-y-4">
+            <label
+              class="block text-sm font-semibold text-[var(--color-text-heading)]"
+            >
+              Author Photo
+            </label>
+
+            <div class="flex flex-col lg:flex-row gap-6">
+              <!-- Current Image Preview -->
+              <div class="flex-shrink-0">
+                <div
+                  class="w-32 h-32 bg-[var(--color-background-medium)] rounded-lg overflow-hidden border-2 border-dashed border-[var(--color-border)] flex items-center justify-center"
+                >
+                  <img
+                    *ngIf="imagePreview"
+                    [src]="imagePreview"
+                    alt="Author preview"
+                    class="w-full h-full object-cover"
+                  />
+                  <div *ngIf="!imagePreview" class="text-center">
+                    <lucide-icon
+                      [img]="User"
+                      class="h-8 w-8 text-[var(--color-text-muted)] mx-auto mb-2"
+                    ></lucide-icon>
+                    <p class="text-xs text-[var(--color-text-muted)]">
+                      No photo
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Upload Controls -->
+              <div class="flex-1 space-y-3">
+                <div class="flex gap-3">
+                  <label
+                    class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-brand-primary)] text-[var(--color-on-dark)] rounded-lg hover:bg-[var(--color-background-medium)] hover:text-[var(--color-brand-primary)] border border-transparent hover:border-[var(--color-brand-primary)] transition-all duration-200"
+                  >
+                    <lucide-icon [img]="Upload" class="h-4 w-4"></lucide-icon>
+                    Choose Photo
+                    <input
+                      id="photo"
+                      type="file"
+                      accept="image/*"
+                      (change)="onImageSelected($event)"
+                      class="hidden"
+                    />
+                  </label>
+
+                  <button
+                    *ngIf="imagePreview"
+                    type="button"
+                    (click)="removeImage()"
+                    class="inline-flex items-center gap-2 px-4 py-2 text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+                  >
+                    <lucide-icon [img]="Trash2" class="h-4 w-4"></lucide-icon>
+                    Remove
+                  </button>
+                </div>
+                <p class="text-xs text-[var(--color-text-muted)]">
+                  Upload a photo for the author. Maximum file size: 10MB.
+                  Supported formats: JPG, PNG, GIF.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Basic Information -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Name -->
+            <div class="md:col-span-2">
+              <label
+                for="name"
+                class="block text-sm font-semibold text-[var(--color-text-heading)] mb-2"
+              >
+                Name *
+              </label>
+              <input
+                id="name"
+                type="text"
+                formControlName="name"
+                placeholder="Enter author's full name"
+                class="w-full px-4 py-2.5 border rounded-lg bg-[var(--color-background-light)] text-[var(--color-text-default)] placeholder-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:border-transparent transition-colors"
+                [class.border-red-500]="hasError('name')"
+                [class.border-[var(--color-border)]]="!hasError('name')"
+              />
+              <div
+                *ngIf="hasError('name')"
+                class="mt-1 text-sm text-red-600 flex items-center gap-1"
+              >
+                <lucide-icon [img]="AlertCircle" class="h-4 w-4"></lucide-icon>
+                {{ getError("name") }}
+              </div>
+            </div>
+
+            <!-- Nationality -->
+            <div>
+              <label
+                for="nationality"
+                class="block text-sm font-semibold text-[var(--color-text-heading)] mb-2"
+              >
+                Nationality
+              </label>
+              <input
+                id="nationality"
+                type="text"
+                formControlName="nationality"
+                placeholder="e.g., American, British"
+                class="w-full px-4 py-2.5 border rounded-lg bg-[var(--color-background-light)] text-[var(--color-text-default)] placeholder-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:border-transparent transition-colors"
+                [class.border-red-500]="hasError('nationality')"
+                [class.border-[var(--color-border)]]="!hasError('nationality')"
+              />
+              <div
+                *ngIf="hasError('nationality')"
+                class="mt-1 text-sm text-red-600 flex items-center gap-1"
+              >
+                <lucide-icon [img]="AlertCircle" class="h-4 w-4"></lucide-icon>
+                {{ getError("nationality") }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Genres -->
+          <div>
+            <label
+              class="block text-sm font-semibold text-[var(--color-text-heading)] mb-2"
+            >
+              Genres
+            </label>
+            <div class="space-y-2" formArrayName="genres">
+              <div
+                *ngFor="let genre of genres.controls; let i = index"
+                class="flex gap-2"
+              >
+                <input
+                  type="text"
+                  [formControlName]="i"
+                  placeholder="Enter a genre"
+                  class="flex-1 px-4 py-2.5 border rounded-lg bg-[var(--color-background-light)] text-[var(--color-text-default)] placeholder-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:border-transparent transition-colors"
+                  [class.border-red-500]="
+                    genre.invalid && (genre.dirty || genre.touched)
+                  "
+                  [class.border-[var(--color-border)]]="
+                    !(genre.invalid && (genre.dirty || genre.touched))
+                  "
+                />
+                <button
+                  *ngIf="genres.length > 1"
+                  type="button"
+                  (click)="removeGenre(i)"
+                  class="px-3 py-2.5 text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+                >
+                  <lucide-icon [img]="Trash2" class="h-4 w-4"></lucide-icon>
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              (click)="addGenre()"
+              class="mt-2 inline-flex items-center gap-2 px-3 py-2 text-sm text-[var(--color-brand-primary)] bg-[var(--color-background-medium)] border border-[var(--color-brand-primary)] rounded-lg hover:bg-[var(--color-brand-primary)] hover:text-[var(--color-on-dark)] transition-colors"
+            >
+              <lucide-icon [img]="Plus" class="h-4 w-4"></lucide-icon>
+              Add Genre
+            </button>
+          </div>
+
+          <!-- Bio -->
+          <div>
+            <label
+              for="bio"
+              class="block text-sm font-semibold text-[var(--color-text-heading)] mb-2"
+            >
+              Biography
+            </label>
+            <textarea
+              id="bio"
+              formControlName="bio"
+              rows="6"
+              placeholder="Enter author's biography and background information..."
+              class="w-full px-4 py-2.5 border rounded-lg bg-[var(--color-background-light)] text-[var(--color-text-default)] placeholder-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:border-transparent transition-colors resize-vertical"
+              [class.border-red-500]="hasError('bio')"
+              [class.border-[var(--color-border)]]="!hasError('bio')"
+            ></textarea>
+            <div
+              *ngIf="hasError('bio')"
+              class="mt-1 text-sm text-red-600 flex items-center gap-1"
+            >
+              <lucide-icon [img]="AlertCircle" class="h-4 w-4"></lucide-icon>
+              {{ getError("bio") }}
+            </div>
+            <div class="mt-1 text-xs text-[var(--color-text-muted)]">
+              Maximum 2000 characters
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div
+          class="px-6 py-4 bg-[var(--color-background-medium)] border-t border-[var(--color-border)]"
+        >
+          <div class="flex justify-end gap-3">
+            <button
+              type="button"
+              (click)="onCancel()"
+              class="px-6 py-2.5 text-[var(--color-text-default)] bg-[var(--color-background-light)] border border-[var(--color-border)] rounded-lg hover:bg-[var(--color-background-medium)] transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              [disabled]="authorForm.invalid || submitting"
+              class="inline-flex items-center gap-2 px-6 py-2.5 bg-[var(--color-brand-primary)] text-[var(--color-on-dark)] font-semibold rounded-lg hover:bg-[var(--color-background-medium)] hover:text-[var(--color-brand-primary)] border border-transparent hover:border-[var(--color-brand-primary)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[var(--color-brand-primary)] disabled:hover:text-[var(--color-on-dark)]"
+            >
+              <lucide-icon
+                [img]="submitting ? AlertCircle : Save"
+                class="h-4 w-4"
+                [class.animate-spin]="submitting"
+              ></lucide-icon>
+              {{
+                submitting
+                  ? "Saving..."
+                  : isEditMode
+                  ? "Update Author"
+                  : "Create Author"
+              }}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Error Modal -->
+    <app-error-modal
+      *ngIf="showErrorModal"
+      [isVisible]="showErrorModal"
+      [title]="errorModalTitle"
+      [message]="errorModalMessage"
+      [showActionButton]="errorModalShowAction"
+      [actionButtonText]="errorModalActionText"
+      (action)="onErrorModalAction()"
+      (close)="onErrorModalClose()"
+    ></app-error-modal>
+  </div>
+</div>

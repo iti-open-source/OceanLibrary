@@ -6,11 +6,13 @@ import {
   updateAuthorById,
   deleteAuthorById,
 } from "../controllers/authorController.js";
-import ZodValidator from "../middlewares/zodValidator.js";
 import {
   createAuthorSchema,
   updateAuthorSchema,
 } from "../utils/validation/authorValidation.js";
+import { uploadImage } from "../middlewares/fileUpload.js";
+import { validateFormData } from "../middlewares/formDataValidator.js";
+import { processImageFile } from "../middlewares/imageProcessor.js";
 import { verifyAdmin, verifyToken } from "../middlewares/auth.js";
 
 const router = Router();
@@ -19,14 +21,18 @@ router.get("/", getAllAuthors);
 router.get("/:id", getAuthorById);
 router.post(
   "/",
-  ZodValidator(createAuthorSchema),
+  uploadImage.single("photo"),
+  validateFormData(createAuthorSchema),
+  processImageFile("uploads/authors/", "photo"),
   verifyToken,
   verifyAdmin,
   createAuthor
 );
 router.patch(
   "/:id",
-  ZodValidator(updateAuthorSchema),
+  uploadImage.single("photo"),
+  validateFormData(updateAuthorSchema),
+  processImageFile("uploads/authors/", "photo"),
   verifyToken,
   verifyAdmin,
   updateAuthorById

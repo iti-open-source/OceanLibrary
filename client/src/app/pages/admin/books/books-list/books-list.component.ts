@@ -196,7 +196,9 @@ export class BooksListComponent implements OnInit, OnDestroy {
 
   getSortLabel(): string {
     const sortLabel =
-      this.sortBy === SortBy.PRICE
+      this.sortBy === SortBy.STOCK
+        ? "Stock"
+        : this.sortBy === SortBy.PRICE
         ? "Price"
         : this.sortBy === SortBy.TITLE
         ? "Title"
@@ -208,6 +210,54 @@ export class BooksListComponent implements OnInit, OnDestroy {
 
     const orderLabel = this.sortOrder === "desc" ? "↓" : "↑";
     return `${sortLabel} ${orderLabel}`;
+  }
+
+  // Pagination helper method
+  getPaginationArray(): number[] {
+    const maxPagesToShow = 5;
+    const pages: number[] = [];
+
+    if (this.totalPages <= maxPagesToShow) {
+      // Show all pages if total is less than or equal to maxPagesToShow
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Calculate start and end pages to show
+      let startPage = Math.max(
+        1,
+        this.currentPage - Math.floor(maxPagesToShow / 2)
+      );
+      let endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
+
+      // Adjust if we're near the end
+      if (endPage - startPage < maxPagesToShow - 1) {
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+      }
+
+      // Add ellipsis and first page if needed
+      if (startPage > 1) {
+        pages.push(1);
+        if (startPage > 2) {
+          pages.push(-1); // -1 represents ellipsis
+        }
+      }
+
+      // Add the visible page range
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+
+      // Add ellipsis and last page if needed
+      if (endPage < this.totalPages) {
+        if (endPage < this.totalPages - 1) {
+          pages.push(-1); // -1 represents ellipsis
+        }
+        pages.push(this.totalPages);
+      }
+    }
+
+    return pages;
   }
 
   onPageChange(page: number) {

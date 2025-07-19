@@ -6,6 +6,7 @@ import {
   Home,
   BookOpen,
   Users,
+  User,
   ShoppingCart,
   Menu,
   X,
@@ -30,6 +31,7 @@ export class AdminSidebarComponent {
   readonly Home = Home;
   readonly BookOpen = BookOpen;
   readonly Users = Users;
+  readonly User = User;
   readonly ShoppingCart = ShoppingCart;
   readonly Menu = Menu;
   readonly X = X;

@@ -24,4 +24,7 @@ export enum SortBy {
   AVERAGE_RATING = "ratingAverage",
   RATING_QUANTITY = "ratingQuantity",
   STOCK = "stock",
+  NAME = "name", // For authors
+  NATIONALITY = "nationality", // For authors
+  CREATED_AT = "createdAt", // For authors and books
 }

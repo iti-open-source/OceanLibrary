@@ -18,6 +18,8 @@ export const getAllAuthors = async (
     nationality,
     match = "any",
     fields,
+    sortBy = "name",
+    sortOrder = "asc",
   } = req.query;
 
   const genres = req.query.genres
@@ -51,9 +53,18 @@ export const getAllAuthors = async (
   }
 
   try {
+    // Create sort object
+    const sortObject: Record<string, 1 | -1> = {};
+    const validSortFields = ["name", "nationality", "createdAt"];
+    const sortField = validSortFields.includes(sortBy as string)
+      ? sortBy
+      : "name";
+    const order = sortOrder === "desc" ? -1 : 1;
+    sortObject[sortField as string] = order;
+
     const authors = await Author.find(filter)
       .select(fields ? (fields as string).replaceAll(",", " ") : "-__v")
-      .sort({ name: 1 })
+      .sort(sortObject)
       .skip(skip)
       .limit(parseInt(limit as string));
     const total = await Author.countDocuments(filter);

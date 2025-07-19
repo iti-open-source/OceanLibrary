@@ -267,18 +267,26 @@
         </button>
 
         <div class="flex gap-1">
-          <button
-            *ngFor="let page of [].constructor(totalPages); let i = index"
-            (click)="onPageChange(i + 1)"
-            [class]="
-              i + 1 === currentPage
-                ? 'bg-[var(--color-brand-primary)] text-[var(--color-on-dark)]'
-                : 'bg-[var(--color-background-medium)] text-[var(--color-text-default)] hover:bg-[var(--color-brand-primary)] hover:text-[var(--color-on-dark)]'
-            "
-            class="w-10 h-10 rounded-lg border border-[var(--color-border)] transition-colors font-semibold"
-          >
-            {{ i + 1 }}
-          </button>
+          <ng-container *ngFor="let page of getPaginationArray()">
+            <button
+              *ngIf="page > 0"
+              (click)="onPageChange(page)"
+              [class]="
+                page === currentPage
+                  ? 'bg-[var(--color-brand-primary)] text-[var(--color-on-dark)]'
+                  : 'bg-[var(--color-background-medium)] text-[var(--color-text-default)] hover:bg-[var(--color-brand-primary)] hover:text-[var(--color-on-dark)]'
+              "
+              class="w-10 h-10 rounded-lg border border-[var(--color-border)] transition-colors font-semibold"
+            >
+              {{ page }}
+            </button>
+            <span
+              *ngIf="page === -1"
+              class="w-10 h-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-background-medium)] text-[var(--color-text-muted)] flex items-center justify-center font-semibold"
+            >
+              ...
+            </span>
+          </ng-container>
         </div>
 
         <button

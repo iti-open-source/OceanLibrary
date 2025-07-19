@@ -6,7 +6,10 @@ import crypto from "crypto";
  * Middleware to process and save uploaded images to disk
  * Should be used after validation to ensure the image is only saved if data is valid
  */
-export const processImageFile = (uploadDir: string = "uploads/books/") => {
+export const processImageFile = (
+  uploadDir: string = "uploads/books/",
+  fieldName: string = "image"
+) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       // If validation passed and we have a file, save it to disk
@@ -25,7 +28,7 @@ export const processImageFile = (uploadDir: string = "uploads/books/") => {
         const imageUrl = `${req.protocol}://${req.get(
           "host"
         )}/${cleanUploadDir}/${uniqueName}`;
-        req.body.image = imageUrl;
+        req.body[fieldName] = imageUrl;
       }
 
       next();

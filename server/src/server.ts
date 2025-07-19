@@ -19,7 +19,11 @@ const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  })
+);
 app.use(hpp());
 app.use(logger);
 app.use(
@@ -30,8 +34,21 @@ app.use(
 );
 app.use(limiter);
 
-// Serve static files from uploads directory
-app.use("/uploads", express.static("uploads"));
+// Serve static files from uploads directory with CORS headers
+app.use(
+  "/uploads",
+  (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "http://localhost:4200");
+    res.header("Access-Control-Allow-Methods", "GET");
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    );
+    res.header("Access-Control-Allow-Credentials", "false");
+    next();
+  },
+  express.static("uploads")
+);
 
 // Routes
 app.use("/api/v1/authors", authorRouter);

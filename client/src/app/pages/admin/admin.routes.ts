@@ -21,6 +21,11 @@ export const adminRoutes: Routes = [
         loadChildren: () =>
           import("./books/books.routes").then((m) => m.booksRoutes),
       },
+      {
+        path: "authors",
+        loadChildren: () =>
+          import("./authors/authors.routes").then((m) => m.authorsRoutes),
+      },
     ],
   },
 ];
