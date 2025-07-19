@@ -63,7 +63,7 @@ export const registerUser = async (
   try {
     // set first user as admin by default
     const count = await userModel.countDocuments();
-    const role = count === 0 ? "admin" : "user";
+    const role = count === 0 ? "superAdmin" : "user";
 
     const user = await userModel.create({
       username,
@@ -102,6 +102,7 @@ export const updateUser = async (
 ): Promise<void> => {
   const allowed = ["username", "email", "phone", "address"];
   const updates: Record<string, string> = {};
+
   // Filter out only the allowed fields
   for (const field of allowed) {
     if (req.body[field]) {
@@ -160,6 +161,7 @@ export const changePassword = async (
   next: NextFunction
 ): Promise<void> => {
   const { password, newPassword } = req.body;
+
   try {
     const user = await userModel.findById(req.userId);
     if (!user) {
@@ -369,6 +371,7 @@ export const promoteUser = async (
   next: NextFunction
 ): Promise<void> => {
   const { id } = req.params;
+
   try {
     const user = await userModel.findById(id);
     if (!user || user.role === "admin") {
@@ -378,6 +381,32 @@ export const promoteUser = async (
     res
       .status(200)
       .json({ status: "success", message: "user promoted to admin" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @route PATCH /api/v1/users/demote/:id
+ * @desc superAdmin demotes user from admin to user
+ * @access Private
+ */
+export const demoteUser = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const { id } = req.params;
+
+  try {
+    const user = await userModel.findById(id);
+    if (!user || user.role === "user") {
+      return next(new AppError("demotion failed", 400));
+    }
+    await user.updateOne({ role: "user" });
+    res
+      .status(200)
+      .json({ status: "success", message: "user demoted to default role" });
   } catch (error) {
     next(error);
   }
@@ -394,10 +423,19 @@ export const banUser = async (
   next: NextFunction
 ): Promise<void> => {
   const { id } = req.params;
+
   try {
     const user = await userModel.findById(id);
     if (!user) {
       return next(new AppError("user not found", 404));
+    }
+    if (user.role === "admin" && req.userRole === "admin") {
+      return next(
+        new AppError("you do not have the privileges for this process", 401)
+      );
+    }
+    if (user.role === "superAdmin") {
+      return next(new AppError("cannot ban a super-admin", 401));
     }
     await user.updateOne({ active: false });
     res

@@ -43,8 +43,8 @@ export const verifySuperAdmin = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    if (req.userRole !== "superadmin") {
-      return next(new AppError("requires superadmin privileges", 401));
+    if (req.userRole !== "superAdmin") {
+      return next(new AppError("requires super-admin privileges", 401));
     }
     next();
   } catch (error) {

@@ -12,6 +12,7 @@ import {
   confirmVerification,
   promoteUser,
   banUser,
+  demoteUser,
 } from "../controllers/userController.js";
 import {
   loginUserSchema,
@@ -70,7 +71,11 @@ router.patch(
 
 // admin api
 router.get("/", verifyToken, verifyAdmin, getUsers);
+router.patch("/admin/ban/:id", verifyToken, verifyAdmin, banUser);
+
+// super-admin api
 router.patch("/promote/:id", verifyToken, verifySuperAdmin, promoteUser);
-router.patch("/ban/:id", verifyToken, verifyAdmin, banUser);
+router.patch("/demote/:id", verifyToken, verifySuperAdmin, demoteUser);
+router.patch("/superAdmin/ban/:id", verifyToken, verifySuperAdmin, banUser);
 
 export default router;
