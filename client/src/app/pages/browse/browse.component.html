@@ -1,1 +1,348 @@
-<p>browse works!</p>
+<div class="min-h-screen bg-[var(--color-background-light)]">
+  <!-- Main Container -->
+  <div class="flex flex-col lg:flex-row w-full">
+    <!-- Filter Sidebar -->
+    <app-filter-sidebar
+      [isOpen]="isSidebarOpen"
+      (isOpenChange)="onSidebarToggle($event)"
+      (filtersChange)="onFiltersChange($event)"
+    ></app-filter-sidebar>
+
+    <!-- Main Content -->
+    <div class="flex-1 w-full min-w-0">
+      <!-- Mobile Header -->
+      <div
+        class="lg:hidden bg-[var(--color-background-light)] border-b border-[var(--color-border)] p-3 sm:p-4"
+      >
+        <div class="flex items-center justify-center">
+          <h1
+            class="text-lg sm:text-xl font-brand font-semibold text-[var(--color-text-heading)]"
+          >
+            Browse Books
+          </h1>
+        </div>
+      </div>
+
+      <!-- Content Area -->
+      <div class="p-3 sm:p-4 md:p-6 lg:p-8 w-full">
+        <!-- Enhanced Search and Controls Bar -->
+        <div class="mb-8">
+          <!-- Main Search Section -->
+          <div
+            class="bg-[var(--color-background-light)] border-2 border-[var(--color-border)] rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-md transition-all duration-300"
+          >
+            <!-- Search Header -->
+            <div class="mb-6">
+              <h2
+                class="text-xl md:text-2xl font-brand font-semibold text-[var(--color-text-heading)] mb-2"
+              >
+                Find your next great read
+              </h2>
+              <p class="text-sm text-[var(--color-text-muted)]">
+                Discover books by title, author, genre, or explore our curated
+                collections
+              </p>
+            </div>
+
+            <!-- Search Bar Container -->
+            <div class="flex flex-col lg:flex-row gap-4 lg:gap-6 mb-6">
+              <!-- Search Bar Container -->
+              <div class="flex-1">
+                <app-search-bar
+                  (searchChange)="onSearchChange($event)"
+                ></app-search-bar>
+              </div>
+            </div>
+
+            <!-- Quick Filters and Mobile Filter Button -->
+            <div
+              class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4"
+            >
+              <!-- Quick Filter Tags -->
+              <div class="flex-1">
+                <div class="mb-3">
+                  <span
+                    class="text-sm font-medium text-[var(--color-text-default)]"
+                  >
+                    Quick filters:
+                  </span>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                  <button
+                    *ngFor="let tag of quickFilterTags"
+                    (click)="applyQuickFilter(tag.value)"
+                    class="px-4 py-2 text-sm font-medium rounded-xl border-2 transition-all duration-300 hover:scale-105 hover:shadow-md"
+                    [class]="
+                      activeQuickFilter === tag.value
+                        ? 'bg-[var(--color-brand-primary)] text-white border-[var(--color-brand-primary)] shadow-lg'
+                        : 'bg-[var(--color-background-light)] text-[var(--color-text-default)] border-[var(--color-border)] hover:border-[var(--color-brand-primary)]'
+                    "
+                  >
+                    {{ tag.label }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Mobile Filter Toggle Button (Hidden on Desktop) -->
+              <div class="lg:hidden">
+                <button
+                  (click)="toggleSidebar()"
+                  class="flex items-center justify-center gap-3 w-full px-6 py-3 bg-[var(--color-brand-primary)] text-white rounded-xl hover:bg-[var(--color-brand-primary)]/90 transition-all duration-300 font-medium shadow-lg hover:shadow-xl"
+                >
+                  <lucide-icon [img]="Filter" class="w-5 h-5"></lucide-icon>
+                  <span> {{ isSidebarOpen ? "Hide" : "Show" }} Filters </span>
+                  <span
+                    *ngIf="activeFiltersCount > 0"
+                    class="bg-white text-[var(--color-brand-primary)] text-xs px-2 py-1 rounded-full min-w-[24px] text-center font-semibold"
+                  >
+                    {{ activeFiltersCount }}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Header -->
+        <div
+          class="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0"
+        >
+          <div
+            class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4"
+          >
+            <h2
+              class="text-lg lg:text-xl font-semibold text-[var(--color-text-heading)]"
+            >
+              {{ isLoading ? "Loading..." : totalItems + " Books Found" }}
+            </h2>
+            <div *ngIf="searchQuery" class="flex items-center space-x-2">
+              <span class="text-sm text-[var(--color-text-muted)]">for</span>
+              <span
+                class="bg-[var(--color-brand-primary)] text-white px-2 py-1 rounded-full text-xs font-medium"
+              >
+                "{{ searchQuery }}"
+              </span>
+            </div>
+          </div>
+
+          <div
+            class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4"
+          >
+            <!-- Debug info -->
+            <div
+              class="text-xs text-[var(--color-text-muted)] order-2 sm:order-1"
+            >
+              Books: {{ books.length }}, Filtered: {{ filteredBooks.length }}
+            </div>
+
+            <!-- View Toggle (Future enhancement) -->
+            <div
+              class="hidden lg:flex items-center space-x-2 order-1 sm:order-2"
+            >
+              <button
+                class="p-2 bg-[var(--color-brand-primary)] text-white rounded-md"
+              >
+                <lucide-icon [img]="LayoutGrid" class="w-4 h-4"></lucide-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+          <div class="text-center">
+            <div
+              class="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-brand-primary)] mx-auto mb-4"
+            ></div>
+            <p class="text-[var(--color-text-muted)]">Loading books...</p>
+          </div>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="error && !isLoading" class="text-center py-20">
+          <div class="max-w-md mx-auto">
+            <div
+              class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+              <span class="text-red-600 text-2xl">!</span>
+            </div>
+            <h3
+              class="text-lg font-semibold text-[var(--color-text-heading)] mb-2"
+            >
+              Oops! Something went wrong
+            </h3>
+            <p class="text-[var(--color-text-muted)] mb-4">{{ error }}</p>
+            <button
+              (click)="loadBooks()"
+              class="bg-[var(--color-brand-primary)] text-white px-6 py-2 rounded-lg hover:bg-[var(--color-brand-primary)]/90 transition-colors duration-200"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+
+        <!-- Books Grid -->
+        <div *ngIf="!isLoading && !error">
+          <!-- No results -->
+          <div *ngIf="filteredBooks.length === 0" class="text-center py-20">
+            <div class="max-w-md mx-auto">
+              <lucide-icon
+                [img]="SearchIcon"
+                class="w-16 h-16 text-[var(--color-text-muted)] mx-auto mb-4"
+              ></lucide-icon>
+              <h3
+                class="text-lg font-semibold text-[var(--color-text-heading)] mb-2"
+              >
+                No books found
+              </h3>
+              <p class="text-[var(--color-text-muted)] mb-4">
+                Try adjusting your search or filters to find what you're looking
+                for.
+              </p>
+              <button
+                (click)="
+                  onFiltersChange({
+                    genres: [],
+                    priceRange: { min: 0, max: 100 },
+                    pagesRange: { min: 0, max: 1000 },
+                    minRating: 0,
+                    inStockOnly: false
+                  });
+                  onSearchChange('')
+                "
+                class="text-[var(--color-brand-primary)] hover:text-[var(--color-brand-primary)]/80 font-medium"
+              >
+                Clear all filters
+              </button>
+            </div>
+          </div>
+
+          <!-- Books Grid - Mobile First Responsive -->
+          <div *ngIf="filteredBooks.length > 0" class="w-full">
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 mx-auto"
+            >
+              <app-browse-book-card
+                *ngFor="let book of filteredBooks; trackBy: trackByBookId"
+                [book]="book"
+                (addToCart)="onAddToCart($event)"
+                (addToWishlist)="onAddToWishlist($event)"
+                (viewDetails)="onViewBookDetails($event)"
+                class="w-full max-w-full"
+              ></app-browse-book-card>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div *ngIf="totalPages > 1" class="mt-8 sm:mt-10 md:mt-12 w-full">
+            <!-- Mobile Pagination -->
+            <div class="sm:hidden flex items-center justify-between gap-2 px-2">
+              <!-- Previous Button -->
+              <button
+                [disabled]="currentPage === 1"
+                (click)="onPageChange(currentPage - 1)"
+                class="flex items-center justify-center gap-1 px-2.5 py-2.5 rounded-lg bg-[var(--color-background-medium)] text-[var(--color-text-default)] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 min-w-[60px] shadow-sm border border-[var(--color-border)] text-sm font-medium active:scale-95"
+                [class.hover:bg-[var(--color-brand-primary)]]="
+                  currentPage !== 1
+                "
+                [class.hover:text-white]="currentPage !== 1"
+              >
+                <span class="text-lg">‹</span>
+                <span>Prev</span>
+              </button>
+
+              <!-- Page Info - Enhanced visibility -->
+              <div
+                class="flex flex-col items-center px-3 py-2.5 bg-gradient-to-br from-[var(--color-brand-primary)]/5 to-[var(--color-brand-primary)]/10 rounded-lg border-2 border-[var(--color-brand-primary)]/20 shadow-md min-w-[90px]"
+              >
+                <span class="text-xs text-[var(--color-text-muted)] font-medium"
+                  >Page</span
+                >
+                <span
+                  class="text-lg font-bold text-[var(--color-brand-primary)]"
+                  >{{ currentPage }}</span
+                >
+                <span class="text-xs text-[var(--color-text-muted)]"
+                  >of {{ totalPages }}</span
+                >
+              </div>
+
+              <!-- Next Button -->
+              <button
+                [disabled]="currentPage === totalPages"
+                (click)="onPageChange(currentPage + 1)"
+                class="flex items-center justify-center gap-1 px-2.5 py-2.5 rounded-lg bg-[var(--color-background-medium)] text-[var(--color-text-default)] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 min-w-[60px] shadow-sm border border-[var(--color-border)] text-sm font-medium active:scale-95"
+                [class.hover:bg-[var(--color-brand-primary)]]="
+                  currentPage !== totalPages
+                "
+                [class.hover:text-white]="currentPage !== totalPages"
+              >
+                <span>Next</span>
+                <span class="text-lg">›</span>
+              </button>
+            </div>
+
+            <!-- Desktop Pagination -->
+            <div class="hidden sm:flex items-center justify-center gap-1 px-2">
+              <!-- Previous Button -->
+              <button
+                [disabled]="currentPage === 1"
+                (click)="onPageChange(currentPage - 1)"
+                class="flex items-center justify-center gap-1 px-2.5 py-2 rounded-lg border border-[var(--color-border)] text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm font-medium hover:border-[var(--color-brand-primary)] hover:text-[var(--color-brand-primary)] min-w-[60px]"
+              >
+                <span class="text-lg">‹</span>
+                <span>Prev</span>
+              </button>
+
+              <!-- Page Numbers -->
+              <div class="flex items-center gap-1 mx-4">
+                <button
+                  *ngFor="let page of getPaginationArray()"
+                  (click)="onPageChange(page)"
+                  class="min-w-[44px] h-[44px] flex items-center justify-center rounded-lg border transition-all duration-200 font-semibold text-sm hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/50 focus:ring-offset-2"
+                  [class.bg-[var(--color-brand-primary)]]="page === currentPage"
+                  [class.text-white]="page === currentPage"
+                  [class.border-[var(--color-brand-primary)]]="
+                    page === currentPage
+                  "
+                  [class.shadow-lg]="page === currentPage"
+                  [class.scale-110]="page === currentPage"
+                  [class.border-[var(--color-border)]]="page !== currentPage"
+                  [class.text-[var(--color-text-default)]]="
+                    page !== currentPage
+                  "
+                  [class.bg-[var(--color-background-light)]]="
+                    page !== currentPage
+                  "
+                  [class.hover:bg-[var(--color-background-medium)]]="
+                    page !== currentPage
+                  "
+                  [class.hover:border-[var(--color-brand-primary)]]="
+                    page !== currentPage
+                  "
+                  [class.hover:text-[var(--color-brand-primary)]]="
+                    page !== currentPage
+                  "
+                  [class.hover:scale-105]="page !== currentPage"
+                  [class.hover:shadow-md]="page !== currentPage"
+                >
+                  {{ page }}
+                </button>
+              </div>
+
+              <!-- Next Button -->
+              <button
+                [disabled]="currentPage === totalPages"
+                (click)="onPageChange(currentPage + 1)"
+                class="flex items-center justify-center gap-1 px-2.5 py-2 rounded-lg border border-[var(--color-border)] text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm font-medium hover:border-[var(--color-brand-primary)] hover:text-[var(--color-brand-primary)] min-w-[60px]"
+              >
+                <span>Next</span>
+                <span class="text-lg">›</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
