@@ -1,22 +1,35 @@
-<app-book-hero></app-book-hero>
+<div *ngIf="loading" class="flex justify-center items-center min-h-screen">
+  <div class="text-center">
+    <div
+      class="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-brand-primary)] mx-auto"
+    ></div>
+    <p class="mt-4 text-gray-600">Loading book details...</p>
+  </div>
+</div>
 
-<nav class="tab-nav">
-  <a routerLink="details" routerLinkActive="active" class="tab-link">
-    <lucide-icon name="book" class="h-5 w-5"></lucide-icon>
-    <span>Details</span>
-  </a>
-  <a routerLink="schedule" routerLinkActive="active" class="tab-link">
-    <lucide-icon name="CalendarCheck" class="h-5 w-5"></lucide-icon>
-    <span>Schedule</span>
-  </a>
-  <a routerLink="reviews" routerLinkActive="active" class="tab-link">
-    <lucide-icon name="MessagesSquare" class="h-5 w-5"></lucide-icon>
-    <span>Reviews</span>
-  </a>
-  <a routerLink="preview" routerLinkActive="active" class="tab-link">
-    <lucide-icon name="Eye" class="h-5 w-5"></lucide-icon>
-    <span>Preview</span>
-  </a>
-</nav>
+<div
+  *ngIf="error && !loading"
+  class="flex justify-center items-center min-h-screen"
+>
+  <div class="text-center">
+    <h2 class="text-2xl font-bold text-red-600 mb-2">Error</h2>
+    <p class="text-gray-600">{{ error }}</p>
+  </div>
+</div>
 
-<router-outlet></router-outlet>
+<div *ngIf="book && !loading">
+  <app-book-hero [book]="book"></app-book-hero>
+
+  <nav class="tab-nav">
+    <a routerLink="details" routerLinkActive="active" class="tab-link">
+      <lucide-icon name="book" class="h-5 w-5"></lucide-icon>
+      <span>Details</span>
+    </a>
+    <a routerLink="reviews" routerLinkActive="active" class="tab-link">
+      <lucide-icon name="MessagesSquare" class="h-5 w-5"></lucide-icon>
+      <span>Reviews ({{ book.ratingQuantity }})</span>
+    </a>
+  </nav>
+
+  <router-outlet></router-outlet>
+</div>

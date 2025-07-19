@@ -1,103 +1,79 @@
-<div class="max-w-6xl mx-auto px-4 py-8 space-y-12">
+<div *ngIf="book" class="max-w-6xl mx-auto px-4 py-8 space-y-12">
   <!-- Book Details Header -->
   <div>
     <h1 class="text-3xl font-semibold text-center mb-2">Book Details</h1>
     <hr class="border-t border-gray-300 w-24 mx-auto" />
   </div>
 
-  <!-- About the Author -->
-  <section class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-    <div class="md:col-span-1">
-      <img
-        src="https://variety.com/wp-content/uploads/2017/07/j-rr-tolkein.jpg?w=1000&h=562&crop=1"
-        alt="Author"
-        class="rounded shadow-lg object-cover w-full h-full"
-      />
-    </div>
-    <div class="md:col-span-2 space-y-4">
-      <h2 class="text-2xl font-semibold">About the Author</h2>
-      <p class="text-gray-700">
-        John Ronald Reuel Tolkien was an English writer, academic, and
-        philologist. He is best known as the author of the high fantasy works
-        The Hobbit and The Lord of the Rings. He was appointed a Commander of
-        the Order of the British Empire by Queen Elizabeth II on 28 March 1972.
-      </p>
-      <p class="text-gray-700">
-        Tolkien was fascinated with language and mythology, which influenced his
-        fictional Middle-earth. His work has inspired countless adaptations and
-        remains influential in the fantasy genre.
-      </p>
-    </div>
-  </section>
-
   <!-- About the Book -->
   <section>
-    <h2 class="text-2xl font-semibold mb-4">About the Book</h2>
-    <div class="grid grid-cols-1 gap-6">
-      <!-- First Edition -->
-      <div class="space-y-2">
-        <h3 class="text-lg font-medium">First Edition</h3>
-        <ul class="text-gray-700 space-y-1">
-          <li><strong>Pages:</strong> 432 pages, Kindle Edition</li>
-          <li><strong>Publication:</strong> July 29, 1954</li>
-          <li>
-            <strong>Literary Awards:</strong> Audie Award Nominee for Audiobook
-            Fiction (2022)
-          </li>
-          <li><strong>Original Title:</strong> The Lord of the Rings</li>
-          <li>
-            <strong>Tags:</strong>
-            <span class="flex flex-wrap gap-2 mt-1">
-              <span class="bg-gray-100 px-2 py-0.5 rounded text-sm"
-                >Fantasy</span
+    <h2 class="text-2xl font-semibold mb-4">About "{{ book.title }}"</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Book Information -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-medium">Book Information</h3>
+        <div class="bg-[var(--color-background-light)] p-4 rounded-lg border">
+          <ul class="text-gray-700 space-y-2">
+            <li class="flex justify-between">
+              <strong>Author:</strong>
+              <span>{{ book.authorName }}</span>
+            </li>
+            <li class="flex justify-between">
+              <strong>Pages:</strong>
+              <span>{{ book.pages }} pages</span>
+            </li>
+            <li class="flex justify-between">
+              <strong>Price:</strong>
+              <span class="text-[var(--color-brand-primary)] font-semibold"
+                >${{ book.price }}</span
               >
-              <span class="bg-gray-100 px-2 py-0.5 rounded text-sm"
-                >Adventure</span
+            </li>
+            <li class="flex justify-between">
+              <strong>Stock:</strong>
+              <span
+                [ngClass]="{
+                  'text-red-600': book.stock < 10,
+                  'text-green-600': book.stock >= 10
+                }"
               >
-              <span class="bg-gray-100 px-2 py-0.5 rounded text-sm">Epic</span>
-            </span>
-          </li>
-        </ul>
-      </div>
-      <!-- This Edition -->
-      <div class="space-y-2 mt-4">
-        <h3 class="text-lg font-medium">This Edition</h3>
-        <ul class="text-gray-700 space-y-1">
-          <li><strong>Pages:</strong> 1184 pages, Paperback</li>
-          <li><strong>Published on:</strong> October 15, 2005</li>
-          <li><strong>Language:</strong> English</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- More Editions -->
-  <section>
-    <h2 class="text-2xl font-semibold mb-4">More Editions</h2>
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
-      <ng-container *ngFor="let edition of moreEditions">
-        <div
-          class="flex flex-col items-center bg-[var(--color-background-light)] p-3 rounded shadow hover:shadow-lg transition"
-        >
-          <div class="relative">
-            <img
-              [src]="edition.cover"
-              [alt]="edition.title"
-              class="w-36 h-52 object-cover rounded"
-            />
-            <svg
-              class="w-5 h-5 text-gray-700 absolute bottom-1 right-1"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M5 3a2 2 0 00-2 2v12l7-4 7 4V5a2 2 0 00-2-2H5z" />
-            </svg>
-          </div>
-          <p class="mt-3 text-sm font-medium">{{ edition.title }}</p>
-          <p class="text-xs text-gray-500">Houghton Mifflin Harcourt</p>
-          <p class="text-xs text-gray-500">{{ edition.year }}</p>
+                {{ book.stock }} copies available
+              </span>
+            </li>
+            <li class="flex justify-between">
+              <strong>Rating:</strong>
+              <span class="flex items-center gap-1">
+                <span class="text-yellow-500">★</span>
+                {{ book.ratingAverage }}/5 ({{ book.ratingQuantity }} reviews)
+              </span>
+            </li>
+            <li class="flex justify-between">
+              <strong>Published:</strong>
+              <span>{{ book.createdAt | date : "mediumDate" }}</span>
+            </li>
+          </ul>
         </div>
-      </ng-container>
+
+        <!-- Genres -->
+        <div>
+          <strong class="text-gray-700 block mb-2">Genres:</strong>
+          <div class="flex flex-wrap gap-2">
+            <span
+              *ngFor="let genre of book.genres"
+              class="bg-[var(--color-brand-primary)] text-white px-3 py-1 rounded-full text-sm font-medium"
+            >
+              {{ genre }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-medium">Description</h3>
+        <div class="bg-[var(--color-background-light)] p-4 rounded-lg border">
+          <p class="text-gray-700 leading-relaxed">{{ book.description }}</p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -107,11 +83,12 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
       <ng-container *ngFor="let book of similarBooks">
         <div
-          class="flex flex-col items-center bg-[var(--color-background-light)] p-3 rounded shadow hover:shadow-lg transition"
+          class="flex flex-col items-center bg-[var(--color-background-light)] p-3 rounded shadow hover:shadow-lg transition cursor-pointer hover:bg-gray-50 hover:scale-105"
+          (click)="navigateToSimilarBook(book)"
         >
           <div class="relative">
             <img
-              [src]="book.cover"
+              [src]="book.image"
               [alt]="book.title"
               class="w-36 h-52 object-cover rounded"
             />
@@ -127,15 +104,15 @@
             {{ book.title }}
           </p>
           <p class="text-xs text-yellow-700 font-semibold">
-            {{ book.author || "Unknown Author" }}
+            {{ book.authorName || "Unknown Author" }}
           </p>
           <div class="flex mt-1">
             <ng-container *ngFor="let star of [1, 2, 3, 4, 5]; let i = index">
               <svg
                 class="w-4 h-4"
                 [ngClass]="{
-                  'text-yellow-400': i < book.rating,
-                  'text-gray-300': i >= book.rating
+                  'text-yellow-400': i < book.ratingAverage,
+                  'text-gray-300': i >= book.ratingAverage
                 }"
                 fill="currentColor"
                 viewBox="0 0 20 20"

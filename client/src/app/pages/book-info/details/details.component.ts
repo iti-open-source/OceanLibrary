@@ -1,71 +1,70 @@
-import { NgClass, NgFor } from "@angular/common";
-import { Component } from "@angular/core";
+import { NgClass, NgFor, NgIf, CommonModule } from "@angular/common";
+import { Component, OnInit, OnChanges, OnDestroy } from "@angular/core";
+import { Book } from "../../../types/book.interface";
+import { BooksService } from "../../../services/books.service";
+import { BookDataService } from "../../../services/book-data.service";
+import { Subscription } from "rxjs";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-details",
-  imports: [NgClass, NgFor],
+  imports: [NgClass, NgFor, NgIf, CommonModule],
   templateUrl: "./details.component.html",
   styleUrl: "./details.component.css",
 })
-export class DetailsComponent {
-  moreEditions = [
-    {
-      cover: "https://covers.openlibrary.org/b/id/8231856-L.jpg",
-      title: "Kindle Edition",
-      year: "2019",
-    },
-    {
-      cover: "https://covers.openlibrary.org/b/id/8235116-L.jpg",
-      title: "Paperback",
-      year: "2004",
-    },
-    {
-      cover: "https://covers.openlibrary.org/b/id/8231845-L.jpg",
-      title: "Hardcover",
-      year: "2002",
-    },
-    {
-      cover: "https://covers.openlibrary.org/b/id/8235091-L.jpg",
-      title: "Deluxe Edition",
-      year: "2021",
-    },
-    {
-      cover: "https://covers.openlibrary.org/b/id/8235113-L.jpg",
-      title: "Boxed Set",
-      year: "2022",
-    },
-  ];
+export class DetailsComponent implements OnInit, OnDestroy {
+  book: Book | null = null;
+  private subscription: Subscription = new Subscription();
+  similarBooks: Book[] = [];
 
-  similarBooks = [
-    {
-      cover: "https://covers.openlibrary.org/b/id/8228691-L.jpg",
-      title: "The Martian",
-      author: "Andy Weir",
-      rating: 4,
-    },
-    {
-      cover: "https://covers.openlibrary.org/b/id/7984916-L.jpg",
-      title: "Harry Potter",
-      author: "J.K. Rowling",
-      rating: 5,
-    },
-    {
-      cover: "https://covers.openlibrary.org/b/id/8235091-L.jpg",
-      title: "The Fellowship of the Ring",
-      author: "J.R.R. Tolkien",
-      rating: 5,
-    },
-    {
-      cover: "https://covers.openlibrary.org/b/id/8101341-L.jpg",
-      title: "Dune",
-      author: "Frank Herbert",
-      rating: 4,
-    },
-    {
-      cover: "https://covers.openlibrary.org/b/id/7222246-L.jpg",
-      title: "The Great Gatsby",
-      author: "F. Scott Fitzgerald",
-      rating: 4,
-    },
-  ];
+  constructor(
+    private booksService: BooksService,
+    private bookDataService: BookDataService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.subscription.add(
+      this.bookDataService.currentBook$.subscribe((book) => {
+        this.book = book;
+        if (this.book) {
+          this.fetchSimilarBooks();
+        }
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  navigateToSimilarBook(book: Book): void {
+    this.bookDataService.setCurrentBook(book);
+    this.router.navigateByUrl(`book-info/${book._id}`);
+  }
+
+  private fetchSimilarBooks(): void {
+    if (!this.book || !this.book.genres.length) return;
+
+    // Fetch books with similar genres
+    this.booksService
+      .getAllBooks({
+        genres: this.book.genres.slice(0, 2), // Use first 2 genres
+        limit: 5,
+      })
+      .subscribe({
+        next: (response) => {
+          if (response.status === "Success" && response.data?.books) {
+            // Filter out the current book
+            this.similarBooks = response.data.books
+              .filter((book: Book) => book._id !== this.book?._id)
+              .slice(0, 5);
+          }
+        },
+        error: (error) => {
+          console.error("Error fetching similar books:", error);
+          // Keep the default empty array
+        },
+      });
+  }
 }
