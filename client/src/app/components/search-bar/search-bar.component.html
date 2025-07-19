@@ -1,0 +1,62 @@
+<div class="relative w-full search-bar-container">
+  <div class="relative group">
+    <div
+      class="absolute inset-0 bg-gradient-to-r from-[var(--color-brand-primary)]/20 via-[var(--color-brand-primary)]/10 to-[var(--color-brand-primary)]/20 rounded-xl blur-sm opacity-0 group-focus-within:opacity-100 transition-opacity duration-300"
+    ></div>
+    <div class="relative">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (input)="onSearchChange()"
+        (focus)="onFocus()"
+        (blur)="onBlur()"
+        placeholder="Search books, authors, or genres..."
+        class="w-full pl-12 pr-12 py-4 rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-background-light)] text-[var(--color-text-default)] placeholder-[var(--color-text-muted)] focus:outline-none focus:ring-4 focus:ring-[var(--color-brand-primary)]/20 focus:border-[var(--color-brand-primary)] hover:border-[var(--color-brand-primary)]/60 transition-all duration-300 text-sm md:text-base shadow-sm hover:shadow-md focus:shadow-lg"
+      />
+
+      <!-- Search Icon -->
+      <div
+        class="absolute left-4 top-1/2 transform -translate-y-1/2 transition-colors duration-200"
+        [class.text-[var(--color-brand-primary)]]="isFocused || searchQuery"
+        [class.text-[var(--color-text-muted)]]="!isFocused && !searchQuery"
+      >
+        <lucide-icon [img]="Search" class="w-5 h-5"></lucide-icon>
+      </div>
+
+      <!-- Clear Button -->
+      <button
+        *ngIf="searchQuery"
+        (click)="onSearchClear()"
+        class="absolute right-4 top-1/2 transform -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-default)] focus:text-[var(--color-brand-primary)] transition-all duration-200 p-1 rounded-full hover:bg-[var(--color-background-medium)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/30"
+        title="Clear search"
+      >
+        <lucide-icon [img]="X" class="w-4 h-4"></lucide-icon>
+      </button>
+
+      <!-- Search Suggestions/Loading Indicator -->
+      <div
+        *ngIf="isSearching"
+        class="absolute right-12 top-1/2 transform -translate-y-1/2"
+      >
+        <div
+          class="animate-spin w-4 h-4 border-2 border-[var(--color-brand-primary)] border-t-transparent rounded-full"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Quick Search Tips -->
+    <div
+      *ngIf="isFocused && !searchQuery"
+      class="absolute top-full left-0 right-0 mt-2 p-3 bg-[var(--color-background-light)] border border-[var(--color-border)] rounded-lg shadow-lg z-10 animate-fadeIn"
+    >
+      <div class="text-xs text-[var(--color-text-muted)] space-y-1">
+        <div class="font-medium text-[var(--color-text-default)] mb-2">
+          Quick tips:
+        </div>
+        <div>• Search by book title, author name, or genre</div>
+        <div>• Use quotes for exact phrases: "science fiction"</div>
+        <div>• Try popular searches: "bestsellers", "new releases"</div>
+      </div>
+    </div>
+  </div>
+</div>

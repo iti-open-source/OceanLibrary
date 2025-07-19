@@ -1,0 +1,100 @@
+/* Enhanced search bar styles */
+.search-bar-container {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-bar-container:focus-within {
+  transform: translateY(-1px);
+}
+
+/* Focus ring enhancement */
+.search-bar-container input:focus {
+  box-shadow: 0 0 0 4px rgba(var(--color-brand-primary-rgb), 0.1),
+    0 4px 12px rgba(var(--color-brand-primary-rgb), 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Hover effects */
+.search-bar-container:hover input:not(:focus) {
+  border-color: rgba(var(--color-brand-primary-rgb), 0.6);
+  box-shadow: 0 2px 8px rgba(var(--color-brand-primary-rgb), 0.08);
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Fade in animation for suggestions */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Clear button hover effect */
+.search-bar-container button:hover {
+  transform: scale(1.1);
+}
+
+/* Input placeholder animation */
+.search-bar-container input::placeholder {
+  transition: color 0.3s ease;
+}
+
+.search-bar-container input:focus::placeholder {
+  color: rgba(var(--color-brand-primary-rgb), 0.6);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .search-bar-container input {
+    padding: 12px 12px 12px 40px;
+    font-size: 14px;
+  }
+
+  .search-bar-container .absolute.left-4 {
+    left: 12px;
+  }
+
+  .search-bar-container .absolute.right-4 {
+    right: 12px;
+  }
+}
+
+/* Accessibility improvements */
+.search-bar-container button:focus {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+/* Enhanced backdrop blur for suggestions */
+.search-bar-container .absolute.top-full {
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(var(--color-border), 0.8);
+  background-color: rgba(var(--color-background-light-rgb), 0.95);
+}
+
+/* Dark mode specific adjustments */
+.dark-mode .search-bar-container .absolute.top-full {
+  background-color: rgba(var(--color-background-light-rgb), 0.98);
+  border-color: rgba(var(--color-border), 0.6);
+}
