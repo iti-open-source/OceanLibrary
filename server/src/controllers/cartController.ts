@@ -5,6 +5,7 @@ import AppError from "../utils/appError.js";
 import { CustomRequest } from "../middlewares/auth.js";
 import { ICart, ICartItem, IRefBook } from "../types/entities/cart.js";
 import mongoose from "mongoose";
+import redisClient from "../utils/redisClient.js";
 
 /**
  * TODO
@@ -220,6 +221,7 @@ export const addToCart = async (
     await session.commitTransaction();
     session.endSession();
 
+    await redisClient.flushAll();
     res.status(200).json({ message: "Book added! View cart to proceed." });
   } catch (error) {
     await session.abortTransaction();
@@ -317,7 +319,7 @@ export const updateCart = async (
     await cart.save({ session });
     await session.commitTransaction();
     session.endSession();
-
+    await redisClient.flushAll();
     res.status(200).json({ message: "Your cart has been updated" });
   } catch (error) {
     await session.abortTransaction();
@@ -385,6 +387,7 @@ export const removeFromCart = async (
     await session.commitTransaction();
     session.endSession();
 
+    await redisClient.flushAll();
     res
       .status(200)
       .json({ message: "Item successfully deleted from your cart." });
@@ -431,6 +434,7 @@ export const deleteCart = async (
     await session.commitTransaction();
     session.endSession();
 
+    await redisClient.flushAll();
     res.status(200).json({ message: "Your cart has been deleted!" });
   } catch (error) {
     await session.abortTransaction();
@@ -507,6 +511,7 @@ export const mergeCart = async (
     await session.commitTransaction();
     session.endSession();
 
+    await redisClient.flushAll();
     res.status(200).json({ message: "Your cart has merged!" });
   } catch (error) {
     await session.abortTransaction();

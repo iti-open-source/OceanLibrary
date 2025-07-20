@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Order } from "../types/entities/order.js";
 
 const itemSchema = new mongoose.Schema(
   {
@@ -27,7 +28,7 @@ const itemSchema = new mongoose.Schema(
   { _id: false }
 );
 
-const orderSchema = new mongoose.Schema(
+const orderSchema = new mongoose.Schema<Order>(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -44,12 +45,7 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: [
-        "pending",
-        "shipped",
-        "delivered",
-        "canceled",
-      ],
+      enum: ["pending", "shipped", "delivered", "canceled"],
       default: "pending",
     },
     paymentMethod: {
