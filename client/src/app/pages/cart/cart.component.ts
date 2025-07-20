@@ -1,10 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import { CartService } from "../../services/cart.service";
 import { CommonModule } from "@angular/common";
-import { RouterLink } from "@angular/router";
+import { Route, Router, RouterLink } from "@angular/router";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { OrdersService } from "../../services/orders.service";
 import { FormsModule } from "@angular/forms";
+import { AuthService } from "../../services/auth.service";
 
 @Component({
   selector: "app-cart",
@@ -20,7 +21,7 @@ export class CartComponent implements OnInit {
   errorMessage: string = "";
   selectedPaymentMethod: string = 'cash'; 
 
-  constructor(private cart: CartService, private order: OrdersService) {}
+  constructor(private cart: CartService, private order: OrdersService, public auth: AuthService, public router: Router) {}
 
   ngOnInit(): void {
     this.loadCart();

@@ -95,7 +95,7 @@
           <span>{{ totalAmount | currency }}</span>
         </div>
       </div>
-
+      @if (this.auth.isLoggedIn()){
       <h4 class="font-bold mb-3">Payment Method</h4>
       <div class="space-y-3 mb-6">
         <div class="payment-method-container">
@@ -153,6 +153,14 @@
       <div class="mt-4 text-sm text-muted text-center">
         <i class="fas fa-lock mr-1"></i> Secure checkout
       </div>
+      }@else {
+      <button
+        class="checkout-btn btn-primary w-full py-3 rounded-lg font-bold cursor-pointer"
+        (click)="router.navigate(['/login'])"
+      >
+        Login to Checkout
+      </button>
+      }
     </div>
   </div>
 </div>
