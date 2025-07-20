@@ -91,14 +91,14 @@
         <div class="flex items-center gap-2 lg:gap-3 ml-4" *ngIf="!isLoggedIn">
           <a
             routerLink="/login"
-            class="px-3 py-2 lg:px-4 lg:py-2 rounded-lg font-semibold text-sm border border-[var(--color-brand-primary)] text-[var(--color-brand-primary)] bg-transparent hover:bg-[var(--color-brand-primary)] hover:text-[var(--color-on-dark)] transition-all duration-200"
+            class="px-3 py-2 lg:px-4 lg:py-2 rounded-lg font-semibold text-sm text-[var(--color-text-default)] bg-[var(--color-background-light)] border border-[var(--color-border)] hover:bg-[var(--color-background-medium)] hover:border-[var(--color-brand-primary)] transition-all duration-200 shadow-sm"
             (click)="closeMobileMenu()"
           >
             Login
           </a>
           <a
             routerLink="/register"
-            class="px-3 py-2 lg:px-4 lg:py-2 rounded-lg font-semibold text-sm bg-[var(--color-brand-primary)] text-[var(--color-on-dark)] border border-[var(--color-brand-primary)] hover:opacity-90 transition-opacity duration-200"
+            class="px-3 py-2 lg:px-4 lg:py-2 rounded-lg font-semibold text-sm bg-[var(--color-background-dark)] text-[var(--color-text-default)] hover:bg-[var(--color-border)] hover:shadow-md transition-all duration-200 shadow-sm"
             (click)="closeMobileMenu()"
           >
             Register
@@ -212,7 +212,7 @@
         <div *ngIf="!isLoggedIn" class="space-y-3">
           <a
             routerLink="/login"
-            class="w-full flex items-center justify-center px-4 py-3 rounded-lg font-semibold text-lg border border-[var(--color-brand-primary)] text-[var(--color-brand-primary)] bg-transparent hover:bg-[var(--color-brand-primary)] hover:text-[var(--color-on-dark)] transition-all duration-200"
+            class="w-full flex items-center justify-center px-4 py-3 rounded-lg font-semibold text-lg text-[var(--color-text-default)] bg-[var(--color-background-light)] border-2 border-[var(--color-border)] hover:bg-[var(--color-background-medium)] hover:border-[var(--color-brand-primary)] transition-all duration-200 shadow-sm"
             (click)="closeMobileMenu()"
           >
             <lucide-icon name="log-in" class="h-5 w-5 mr-2"></lucide-icon>
@@ -220,7 +220,7 @@
           </a>
           <a
             routerLink="/register"
-            class="w-full flex items-center justify-center px-4 py-3 rounded-lg font-semibold text-lg bg-[var(--color-brand-primary)] text-[var(--color-on-dark)] border border-[var(--color-brand-primary)] hover:opacity-90 transition-opacity duration-200"
+            class="w-full flex items-center justify-center px-4 py-3 rounded-lg font-semibold text-lg bg-[var(--color-background-dark)] text-[var(--color-text-default)] hover:bg-[var(--color-border)] hover:shadow-md transition-all duration-200 shadow-sm"
             (click)="closeMobileMenu()"
           >
             <lucide-icon name="user-plus" class="h-5 w-5 mr-2"></lucide-icon>
