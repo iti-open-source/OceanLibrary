@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import { generatePaymobPaymentLink, isOrderPaid } from "../utils/payments/paymobSDK.js";
 import redisClient from "../utils/redisClient.js";
 import { io } from "../server.js";
+import bookModel from "../models/bookModel.js";
 
 /**
  * Place a new order
@@ -386,7 +387,7 @@ export const checkPaymobOrder = async (
     if (isPaid && order.paymentStatus !== "paid") {
       order.paymentStatus = "paid";
       await order.save();
-      redisClient.flushAll(); // Invalidate cache if you're using it
+      redisClient.flushAll();
     }
 
     res.status(200).json({
@@ -396,5 +397,40 @@ export const checkPaymobOrder = async (
     });
   } catch (error) {
     next(error);
+  }
+};
+
+export const deletePendingPaymobOrders = async (): Promise<void> => {
+  try {
+    const filter = {
+      paymentMethod: "paymob",
+      paymentStatus: "pending",
+    };
+
+    // Get all matching orders (with items)
+    const orders = await orderModel.find(filter).select("items");
+
+    for (const order of orders) {
+      for (const item of order.items) {
+        const { bookId, quantity } = item;
+
+        // Restore book stock
+        await bookModel.findByIdAndUpdate(
+          bookId,
+          { $inc: { stock: quantity } },
+          { new: true }
+        );
+      }
+    }
+
+    // After stock is restored, delete the orders
+    await orderModel.deleteMany(filter);
+
+    // Flush
+    redisClient.flushAll();
+
+    console.log(`[${new Date().toISOString()}] Deleted ${orders.length} Paymob pending orders and restored book stock.`);
+  } catch (error) {
+    console.error("Failed to clean up Paymob pending orders:", error);
   }
 };

@@ -16,7 +16,9 @@ import analyticsRouter from "./routes/analyticsRoutes.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import logger from "./middlewares/logger.js";
 import { limiter } from "./middlewares/limiter.js";
+import cron from "node-cron";
 import AppError from "./utils/appError.js";
+import { deletePendingPaymobOrders } from "./controllers/orderController.js";
 
 const app = express();
 
@@ -83,6 +85,7 @@ mongoose
   .connect(DB_URI)
   .then(() => {
     console.log("Connected to database");
+    initCron();
   })
   .catch((error) => {
     console.error("Connection to database failed", error);
@@ -95,7 +98,7 @@ io.on("connection", (socket) => {
     console.log("client disconnected", socket.id);
   });
 });
-
+ 
 // export io for controllers
 export { io };
 
@@ -142,3 +145,11 @@ process.on(
     gracefulShutdown();
   }
 );
+
+
+function initCron() {
+  cron.schedule("0 * * * *", async () => {
+    console.log(`[${new Date().toISOString()}] Running hourly Paymob order cleanup job...`);
+    await deletePendingPaymobOrders();
+  });
+}

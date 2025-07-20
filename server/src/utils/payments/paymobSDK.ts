@@ -20,7 +20,6 @@ export async function generatePaymobPaymentLink(amountInEGP: number): Promise<Ob
         api_key: API_KEY,
       });
       const token: string = authRes.data.token;
-      log("Paymob Auth Token:", token);
   
       // 2. Create Order
       const orderRes = await axios.post("https://accept.paymob.com/api/ecommerce/orders", {
@@ -31,7 +30,6 @@ export async function generatePaymobPaymentLink(amountInEGP: number): Promise<Ob
         items: [],
       });
       const orderId: number = orderRes.data.id;
-      
   
       // 3. Get Payment Key
       const paymentKeyRes = await axios.post(
@@ -43,12 +41,12 @@ export async function generatePaymobPaymentLink(amountInEGP: number): Promise<Ob
           order_id: orderId,
           billing_data: {
             apartment: "NA",
-            email:  "user@example.com",
+            email:  "NA",
             floor: "NA",
             first_name:  "NA",
             street: "NA",
             building: "NA",
-            phone_number: "+201000000000",
+            phone_number: "NA",
             shipping_method: "NA",
             postal_code: "NA",
             city: "NA",
