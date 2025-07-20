@@ -19,13 +19,6 @@ export class OrdersComponent {
   errorMessage: string = '';
 
   constructor(private ordersService: OrdersService) {
-    this.ordersService.adminViewAllOrders().subscribe({
-      next: (response: any) => {
-        console.log(response);
-      },
-      error: (error: any) => {
-      }
-    });
   }
 
   ngOnInit(): void {
