@@ -13,6 +13,7 @@ export class BookHeroComponent {
   @Input() book: Book | null = null;
   isAddingToCart: boolean = false;
   addToCartSuccess: boolean = false;
+  errorMessage: string = "";
 
   constructor(private cartService: CartService) {}
 
@@ -36,7 +37,7 @@ export class BookHeroComponent {
       error: (error) => {
         this.isAddingToCart = false;
         console.error("Error adding to cart:", error);
-
+        this.errorMessage = error.error?.message || "Failed to add to cart";
         // You could add error handling here, such as showing an error message
         // For now, we'll just log the error
       },

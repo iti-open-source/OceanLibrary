@@ -224,4 +224,42 @@
       </div>
     </div>
   </div>
+  @if (errorMessage){
+  <div
+    class="fixed inset-0 bg-[rgba(var(--color-background-light-rgb),0.9)] flex items-center justify-center z-50"
+  >
+    <div
+      class="bg-medium p-6 rounded-lg max-w-md w-full mx-4 border border-custom shadow-lg animate-fade-in"
+    >
+      <!-- Error icon -->
+      <div class="flex justify-center mb-4">
+        <div class="relative w-16 h-16">
+          <div
+            class="absolute inset-0 rounded-full bg-brand-primary opacity-20"
+          ></div>
+          <div
+            class="absolute inset-4 flex items-center justify-center text-brand-primary"
+          >
+            <i class="fas fa-exclamation text-2xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error message (optional) -->
+      <p class="text-center text-brand-primary mb-6">
+        {{ errorMessage }}
+      </p>
+
+      <!-- Action buttons -->
+      <div class="text-end">
+        <button
+          (click)="errorMessage = ''"
+          class="py-2 px-4 bg-brand-primary text-on-dark rounded hover:opacity-90 transition-opacity cursor-pointer"
+        >
+          Continue
+        </button>
+      </div>
+    </div>
+  </div>
+  }
 </section>

@@ -1,0 +1,100 @@
+.border-custom {
+  border-color: var(--color-border);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.bg-medium {
+  background-color: var(--color-background-medium);
+}
+
+.bg-dark {
+  background-color: var(--color-background-dark);
+}
+
+.btn-primary {
+  background-color: var(--color-brand-primary);
+  color: var(--color-on-dark);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Keyframe animations */
+@keyframes pulse {
+  0% {
+    transform: translateY(-2px) rotateY(5deg) scale(1);
+  }
+  50% {
+    transform: translateY(-2px) rotateY(5deg) scale(1.02);
+  }
+  100% {
+    transform: translateY(-2px) rotateY(5deg) scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cart items fade in animation */
+.cart-item {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes spin-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes spin-slow-reverse {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+.animate-spin-slow {
+  animation: spin-slow 2s linear infinite;
+}
+.animate-spin-slow-reverse {
+  animation: spin-slow-reverse 3s linear infinite;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
