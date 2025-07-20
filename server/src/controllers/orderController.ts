@@ -193,6 +193,14 @@ export const viewOrder = async (
         latestOrder.paymentStatus = "paid";
         await latestOrder.save();
         redisClient.flushAll();
+
+         // Update the latest order inside orders array if it's included in the page
+        const index = orders.findIndex(
+          (order) => order._id.toString() === latestOrder._id.toString()
+        );
+        if (index !== -1) {
+          orders[index].paymentStatus = "paid";
+        }
       }
     }
 
