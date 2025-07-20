@@ -320,37 +320,40 @@ export class ChangePasswordModalComponent {
       this.errorMessage = "";
       this.successMessage = "";
 
-      const { password, newPassword, confirmPassword } = this.passwordForm.value;
+      const { password, newPassword, confirmPassword } =
+        this.passwordForm.value;
 
-      this.profileService.changePassword({ 
-        password, 
-        newPassword,
-        confirmNewPassword: confirmPassword 
-      }).subscribe({
-        next: (response) => {
-          this.successMessage = "Password changed successfully!";
-          this.isSubmitting = false;
-          setTimeout(() => {
-            this.success.emit();
-            this.onClose();
-          }, 1500);
-        },
-        error: (error) => {
-          console.error("Change password failed:", error);
-          if (error.status === 400) {
-            this.errorMessage =
-              error.error?.message || "Incorrect current password";
-          } else if (error.status === 0) {
-            this.errorMessage =
-              "Cannot connect to server. Please check your connection.";
-          } else {
-            this.errorMessage =
-              error.error?.message ||
-              "Failed to change password. Please try again.";
-          }
-          this.isSubmitting = false;
-        },
-      });
+      this.profileService
+        .changePassword({
+          password,
+          newPassword,
+          confirmNewPassword: confirmPassword,
+        })
+        .subscribe({
+          next: (response) => {
+            this.successMessage = "Password changed successfully!";
+            this.isSubmitting = false;
+            setTimeout(() => {
+              this.success.emit();
+              this.onClose();
+            }, 1500);
+          },
+          error: (error) => {
+            console.error("Change password failed:", error);
+            if (error.status === 400) {
+              this.errorMessage =
+                error.error?.message || "Incorrect current password";
+            } else if (error.status === 0) {
+              this.errorMessage =
+                "Cannot connect to server. Please check your connection.";
+            } else {
+              this.errorMessage =
+                error.error?.message ||
+                "Failed to change password. Please try again.";
+            }
+            this.isSubmitting = false;
+          },
+        });
     } else {
       this.passwordForm.markAllAsTouched();
     }
