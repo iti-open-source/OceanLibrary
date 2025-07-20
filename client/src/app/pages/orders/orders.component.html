@@ -87,11 +87,35 @@
           >
             {{ order.paymentStatus | titlecase }}
           </span>
+          @if( order.paymentStatus === "pending" && order.paymentMethod ===
+          "paymob") {
+          <div
+            class="text-xs font-medium px-2 py-1 rounded bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+          >
+            You have an unpaid invoice. Please complete the payment now to avoid
+            order cancellation.
+          </div>
+          }
         </div>
+
         <div class="mt-2 md:mt-0">
           <span class="font-bold">Total: {{ order.total | currency }}</span>
         </div>
       </div>
+
+      @if( order.paymentStatus === "pending" && order.paymentMethod === "paymob"
+      && order.paymentLink) {
+
+      <div class="flex justify-end mt-4">
+        <button
+          (click)="showPaymentModal(order.paymentLink)"
+          class="pay-now-btn cursor-pointer px-4 py-2 bg-brand-primary text-on-dark rounded font-medium hover:bg-brand-primary-dark transition-colors flex items-center gap-2"
+        >
+          <i class="fas fa-credit-card"></i>
+          Pay Now
+        </button>
+      </div>
+      }
     </div>
     }
   </div>
@@ -129,12 +153,6 @@
     <div>Looks like you haven't placed any orders yet.</div>
     <div>Start shopping to discover amazing books!</div>
   </div>
-  <a
-    routerLink="/browse"
-    class="btn-primary px-6 py-3 rounded-lg font-bold transition-all hover:transform hover:scale-105"
-  >
-    Browse Books
-  </a>
 </div>
 } @if (isLoading) {
 <app-loading-spinner

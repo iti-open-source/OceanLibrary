@@ -37,6 +37,21 @@ export async function generatePaymobPaymentLink(amountInEGP: number): Promise<st
       order_id: orderId,
       currency: "EGP",
       integration_id: INTEGRATION_ID,
+      billing_data: {
+        apartment:  "NA",
+        email: "user@example.com",
+        floor: "NA",
+        first_name: "NA",
+        street: "NA",
+        building:"NA",
+        phone_number:"NA",
+        shipping_method: "PKG",
+        postal_code: "NA",
+        city: "NA",
+        country: "NA",
+        last_name: "NA",
+        state: "NA",
+      },
     });
     const paymentToken: string = paymentKeyRes.data.token;
 

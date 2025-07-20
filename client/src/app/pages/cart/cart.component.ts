@@ -90,7 +90,7 @@ export class CartComponent implements OnInit {
       next: (data: any) => {
         if (data.paymentLink) {
           //window.location.href = data.paymentLink;
-          this.showPaymentModal(data.paymentLink);
+          //this.showPaymentModal(data.paymentLink);
         } else {
           this.router.navigate(["/orders"]);
         }
@@ -105,82 +105,6 @@ export class CartComponent implements OnInit {
     });
   }
 
-  showPaymentModal(paymentLink: string) {
-    // Create modal container
-    const modal = document.createElement('div');
-    modal.style.position = 'fixed';
-    modal.style.top = '0';
-    modal.style.left = '0';
-    modal.style.width = '100%';
-    modal.style.height = '100%';
-    modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
-    modal.style.display = 'flex';
-    modal.style.justifyContent = 'center';
-    modal.style.alignItems = 'center';
-    modal.style.zIndex = '1000';
-    
-    // Create iframe container
-    const iframeContainer = document.createElement('div');
-    iframeContainer.style.position = 'relative';
-    iframeContainer.style.width = '80%';
-    iframeContainer.style.maxWidth = '600px';
-    iframeContainer.style.height = '70%';
-    iframeContainer.style.backgroundColor = 'white';
-    iframeContainer.style.borderRadius = '8px';
-    iframeContainer.style.padding = '20px';
-    
-    // Create close button
-    const closeButton = document.createElement('button');
-    closeButton.textContent = '×';
-    closeButton.style.position = 'absolute';
-    closeButton.style.top = '10px';
-    closeButton.style.right = '10px';
-    closeButton.style.background = 'none';
-    closeButton.style.border = 'none';
-    closeButton.style.fontSize = '20px';
-    closeButton.style.cursor = 'pointer';
-    
-    // Create iframe
-    const iframe = document.createElement('iframe');
-    iframe.src = paymentLink;
-    iframe.style.width = '100%';
-    iframe.style.height = 'calc(100% - 30px)';
-    iframe.style.border = 'none';
-    iframe.style.marginTop = '30px';
-    
-    // Append elements
-    iframeContainer.appendChild(iframe);
-    modal.appendChild(iframeContainer);
-    document.body.appendChild(modal);
-    
-    // Close modal handler
-    const closeModal = () => {
-      document.body.removeChild(modal);
-      // Check payment status after iframe closes
-      // this.checkPaymentStatus();
-    };
-    
-    closeButton.addEventListener('click', closeModal);
-    
-    // Listen for messages from the iframe (if Paymob supports postMessage)
-    window.addEventListener('message', (event) => {
-      // Verify the origin is from Paymob's domain for security
-      if (event.origin === 'https://accept.paymob.com') {
-        if (event.data.paymentStatus === 'success') {
-          closeModal();
-          this.router.navigate(['/orders']);
-        } else if (event.data.paymentStatus === 'failed') {
-          closeModal();
-          this.errorMessage = 'Payment failed. Please try again.';
-        }
-      }
-    });
-    
-    // Alternatively, poll for payment status if postMessage isn't available
-    // this.paymentStatusInterval = setInterval(() => {
-    //   this.checkPaymentStatus();
-    // }, 5000);
-  }
 }
 
 interface item {

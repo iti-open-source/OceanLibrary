@@ -53,7 +53,7 @@ export class OrdersService {
    */
   adminViewAllOrders(page = 1, limit = 10): Observable<any> {
     return this.http.get(
-      `${this.endPoint}/admin/orders?page=${page}&limit=${limit}`
+      `${this.endPoint}/admin?page=${page}&limit=${limit}`
     );
   }
 
@@ -64,7 +64,7 @@ export class OrdersService {
    */
   adminUpdateOrder(orderId: string, updates: any): Observable<any> {
     return this.http.patch(
-      `${this.endPoint}/admin/orders/${orderId}`,
+      `${this.endPoint}/admin/${orderId}`,
       updates
     );
   }
@@ -75,7 +75,7 @@ export class OrdersService {
    */
   adminDeleteOrder(orderId: string): Observable<any> {
     return this.http.delete(
-      `${this.endPoint}/admin/orders/${orderId}`
+      `${this.endPoint}/admin/${orderId}`
     );
   }
 }
