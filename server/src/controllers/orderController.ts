@@ -5,6 +5,7 @@ import AppError from "../utils/appError.js";
 import { CustomRequest } from "../middlewares/auth.js";
 import mongoose from "mongoose";
 import { generatePaymobPaymentLink } from "../utils/payments/paymobSDK.js";
+import redisClient from "../utils/redisClient.js";
 
 /**
  * Place a new order
@@ -34,7 +35,6 @@ export const placeOrder = async (
       // Abort transaction
       throw Error("Order failed, payment method is not allowed");
     }
-
 
     // Get the current user's cart and fetch Books info from DB
     const cart: any = await cartModel
@@ -83,7 +83,9 @@ export const placeOrder = async (
       paymentLink = await generatePaymobPaymentLink(total);
       if (!paymentLink) {
         // Abort transaction
-        throw Error("Order failed, unable to generate payment link. Please try again later.");
+        throw Error(
+          "Order failed, unable to generate payment link. Please try again later."
+        );
       }
     }
 
@@ -97,7 +99,7 @@ export const placeOrder = async (
           status: "pending",
           paymentMethod,
           paymentStatus,
-          paymentLink
+          paymentLink,
         },
       ],
       { session }
@@ -118,6 +120,7 @@ export const placeOrder = async (
     await session.commitTransaction();
     session.endSession();
 
+    redisClient.flushAll();
     res.status(201).json({
       message: "Order placed successfully",
       orderId: order._id,
@@ -206,8 +209,6 @@ export const viewOrderById = async (
   }
 };
 
-
-
 /**
  * Admin endpoints
  * Get all orders placed by all users
@@ -233,7 +234,7 @@ export const viewAllOrders = async (
     // Get orders list based on page limit
     const [orders, totalOrders] = await Promise.all([
       orderModel
-        .find({  })
+        .find({})
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -273,13 +274,12 @@ export const updateOrderStatus = async (
     if (paymentStatus) order.paymentStatus = paymentStatus;
 
     await order.save();
-
+    redisClient.flushAll();
     res.status(200).json({ message: "Order updated successfully", order });
   } catch (error) {
     next(error);
   }
 };
-
 
 export const deleteOrder = async (
   req: CustomRequest,
@@ -295,7 +295,7 @@ export const deleteOrder = async (
       res.status(404).json({ message: "Order not found" });
       return;
     }
-
+    redisClient.flushAll();
     res.status(200).json({ message: "Order deleted successfully" });
   } catch (error) {
     next(error);

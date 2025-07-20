@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import helmet from "helmet";
 import hpp from "hpp";
 import cors from "cors";
+import { Server } from "socket.io";
 import "dotenv/config";
 import bookRouter from "./routes/bookRoutes.js";
 import cartRouter from "./routes/cartRoutes.js";
@@ -16,6 +17,9 @@ import { limiter } from "./middlewares/limiter.js";
 import AppError from "./utils/appError.js";
 
 const app = express();
+
+// socket.io 
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
