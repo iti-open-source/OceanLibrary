@@ -51,18 +51,25 @@ export class CartService {
    */
   addToCart(bookId: string, quantity: number): Observable<any> {
     const client: string[] = this.getClient();
-    return this.http.post(
-      this.endPoint,
-      {
-        bookId,
-        quantity,
-      },
-      {
-        headers: {
-          [client[0]]: client[1],
+    return this.http
+      .post(
+        this.endPoint,
+        {
+          bookId,
+          quantity,
         },
-      }
-    );
+        {
+          headers: {
+            [client[0]]: client[1],
+          },
+        }
+      )
+      .pipe(
+        tap(() => {
+          // Update cart count after successful addition
+          this.cartCount += quantity;
+        })
+      );
   }
 
   /**

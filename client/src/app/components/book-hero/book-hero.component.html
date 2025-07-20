@@ -95,11 +95,79 @@
       class="flex flex-col sm:flex-row gap-4 items-center sm:items-center mb-2 w-full justify-center md:justify-start"
     >
       <button
-        class="cursor-pointer flex items-center gap-2 bg-[var(--color-brand-primary)] text-[var(--color-on-dark)] font-semibold px-6 py-2 rounded-lg shadow hover:bg-[var(--color-background-medium)] hover:text-[var(--color-brand-primary)] transition-colors w-full sm:w-auto justify-center"
+        (click)="onAddToCart()"
+        [disabled]="isAddingToCart || (book && book.stock === 0)"
+        [ngClass]="{
+          'bg-[var(--color-brand-primary)] text-[var(--color-on-dark)] hover:bg-[var(--color-background-medium)] hover:text-[var(--color-brand-primary)] hover:-translate-y-1 hover:shadow-lg active:translate-y-0 active:shadow-md':
+            !isAddingToCart && !addToCartSuccess && book && book.stock > 0,
+          'bg-[var(--color-background-medium)] text-[var(--color-brand-primary)] cursor-wait':
+            isAddingToCart,
+          'bg-[var(--color-brand-primary)] text-[var(--color-on-dark)] shadow-xl scale-105':
+            addToCartSuccess,
+          'bg-[var(--color-background-dark)] text-[var(--color-text-muted)] cursor-not-allowed opacity-60':
+            book && book.stock === 0
+        }"
+        class="relative overflow-hidden cursor-pointer flex items-center gap-2 font-semibold px-6 py-2 rounded-lg shadow-md transition-all duration-500 ease-out w-full sm:w-auto justify-center transform focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2 disabled:cursor-not-allowed"
       >
-        Add to Cart - ${{ book.price }}
+        <!-- Shimmer effect overlay -->
+        <div
+          [ngClass]="{ 'animate-pulse': addToCartSuccess }"
+          class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full transition-transform duration-700"
+          [class.translate-x-full]="addToCartSuccess"
+        ></div>
+
+        <span
+          [ngClass]="{
+            'opacity-0': isAddingToCart || addToCartSuccess,
+            'opacity-100': !isAddingToCart && !addToCartSuccess
+          }"
+          class="transition-opacity duration-300 relative z-10"
+        >
+          <span *ngIf="book && book.stock > 0"
+            >Add to Cart - ${{ book.price }}</span
+          >
+          <span *ngIf="book && book.stock === 0">Out of Stock</span>
+        </span>
+
+        <!-- Loading state -->
+        <div
+          [ngClass]="{
+            'opacity-100': isAddingToCart,
+            'opacity-0': !isAddingToCart
+          }"
+          class="absolute flex items-center gap-2 transition-opacity duration-300 z-10"
+        >
+          <div
+            class="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full"
+          ></div>
+          <span class="animate-pulse">Adding to Cart...</span>
+        </div>
+
+        <!-- Success state -->
+        <div
+          [ngClass]="{
+            'opacity-100': addToCartSuccess,
+            'opacity-0': !addToCartSuccess
+          }"
+          class="absolute flex items-center gap-2 transition-opacity duration-500 z-10"
+        >
+          <svg
+            class="w-5 h-5 animate-bounce"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="font-bold animate-pulse">Added to Cart!</span>
+        </div>
+
+        <!-- Default cart icon -->
         <svg
-          class="w-5 h-5"
+          [ngClass]="{
+            'opacity-0': isAddingToCart || addToCartSuccess,
+            'opacity-100': !isAddingToCart && !addToCartSuccess
+          }"
+          class="w-5 h-5 transition-opacity duration-300 relative z-10"
           fill="none"
           stroke="currentColor"
           stroke-width="2"
