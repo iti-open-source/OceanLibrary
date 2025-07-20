@@ -27,7 +27,7 @@ import { User as UserInterface } from "../../types/user.interface";
   template: `
     <div
       *ngIf="isVisible"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      class="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4"
       (click)="onBackdropClick()"
     >
       <div
