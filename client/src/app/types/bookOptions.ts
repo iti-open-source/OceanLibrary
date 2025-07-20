@@ -9,6 +9,7 @@ export interface GetBooksOptions {
   genres?: string[];
   priceMin?: number;
   priceMax?: number;
+  inStockOnly?: boolean;
   match?: Match;
   sortBy?: SortBy;
   fields?: Fields[];

@@ -58,6 +58,7 @@ export class BooksService {
       author,
       priceMin,
       priceMax,
+      inStockOnly,
       genres,
       match,
       sortBy,
@@ -73,6 +74,8 @@ export class BooksService {
     if (author) params["author"] = author;
     if (priceMin !== undefined) params["priceMin"] = priceMin.toString();
     if (priceMax !== undefined) params["priceMax"] = priceMax.toString();
+    if (inStockOnly !== undefined)
+      params["inStockOnly"] = inStockOnly.toString();
     if (genres) params["genres"] = genres.join(",");
     if (match) params["match"] = match;
     if (sortBy) params["sortBy"] = sortBy;

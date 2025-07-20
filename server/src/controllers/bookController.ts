@@ -57,6 +57,7 @@ export const getAllBooks = async (
     match = "any",
     sortBy = "-ratingAverage",
     priceMax,
+    inStockOnly,
     fields,
   } = req.query;
 
@@ -77,7 +78,8 @@ export const getAllBooks = async (
       genres,
       match as string,
       priceMin as string,
-      priceMax as string
+      priceMax as string,
+      inStockOnly as string
     );
 
     // Build and execute aggregation pipeline
@@ -89,6 +91,7 @@ export const getAllBooks = async (
       match as string,
       priceMin as string,
       priceMax as string,
+      inStockOnly as string,
       sortBy as string,
       fields as string,
       skip,

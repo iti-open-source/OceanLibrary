@@ -56,6 +56,7 @@ export const buildMatchStage = (
   match?: string,
   priceMin?: string,
   priceMax?: string,
+  inStockOnly?: string,
   isSearchQuery?: boolean
 ) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -84,6 +85,11 @@ export const buildMatchStage = (
     matchStage.price = {};
     if (priceMin) matchStage.price.$gte = parseFloat(priceMin);
     if (priceMax) matchStage.price.$lte = parseFloat(priceMax);
+  }
+
+  // Stock filtering
+  if (inStockOnly === "true") {
+    matchStage.stock = { $gt: 0 };
   }
 
   return matchStage;
@@ -152,6 +158,7 @@ export const buildAggregationPipeline = (
   match?: string,
   priceMin?: string,
   priceMax?: string,
+  inStockOnly?: string,
   sortBy: string = "-ratingAverage",
   fields?: string,
   skip: number = 0,
@@ -174,6 +181,7 @@ export const buildAggregationPipeline = (
     match,
     priceMin,
     priceMax,
+    inStockOnly,
     isSearchQuery
   );
   if (Object.keys(matchStage).length > 0) {
@@ -213,7 +221,8 @@ export const countDocuments = async (
   genres?: string[],
   match?: string,
   priceMin?: string,
-  priceMax?: string
+  priceMax?: string,
+  inStockOnly?: string
 ) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const countPipeline: any[] = [];
@@ -232,6 +241,7 @@ export const countDocuments = async (
     match,
     priceMin,
     priceMax,
+    inStockOnly,
     isSearchQuery
   );
   if (Object.keys(matchStage).length > 0) {

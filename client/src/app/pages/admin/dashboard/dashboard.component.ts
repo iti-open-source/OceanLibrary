@@ -175,7 +175,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
           y: {
             beginAtZero: true,
             ticks: {
-              callback: function (value) {
+              callback: function (value: any) {
                 return "$" + value;
               },
             },

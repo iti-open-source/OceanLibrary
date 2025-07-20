@@ -73,13 +73,7 @@ export class BrowseComponent implements OnInit, OnDestroy {
   activeQuickFilter: string | null = null;
   quickFilterTags: QuickFilterTag[] = [
     {
-      label: "🔥 Bestsellers",
-      value: "bestsellers",
-      searchQuery: "bestseller",
-    },
-    { label: "⭐ Top Rated", value: "top-rated", filters: { minRating: 4.5 } },
-    {
-      label: "💰 Under $20",
+      label: " Under $20",
       value: "budget",
       filters: { priceRange: { min: 0, max: 20 } },
     },
@@ -88,7 +82,7 @@ export class BrowseComponent implements OnInit, OnDestroy {
     {
       label: "🚀 Sci-Fi",
       value: "scifi",
-      filters: { genres: ["science-fiction"] },
+      filters: { genres: ["science"] },
     },
     { label: "💕 Romance", value: "romance", filters: { genres: ["romance"] } },
   ];
@@ -152,8 +146,14 @@ export class BrowseComponent implements OnInit, OnDestroy {
       ...(this.currentFilters.priceRange.max < 100 && {
         priceMax: this.currentFilters.priceRange.max,
       }),
+      ...(this.currentFilters.inStockOnly && {
+        inStockOnly: this.currentFilters.inStockOnly,
+      }),
       sortBy: this.getSortQuery(),
     };
+
+    console.log("Loading books with options:", options);
+    console.log("Current filters:", this.currentFilters);
 
     this.booksService.getAllBooks(options).subscribe({
       next: (response) => {
@@ -205,6 +205,27 @@ export class BrowseComponent implements OnInit, OnDestroy {
   private applyClientSideFilters() {
     let filtered = [...this.books];
 
+    // Apply search query filter (for mock data when API search is not available)
+    if (this.searchQuery) {
+      const searchLower = this.searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (book) =>
+          book.title.toLowerCase().includes(searchLower) ||
+          book.authorName.toLowerCase().includes(searchLower) ||
+          book.description.toLowerCase().includes(searchLower) ||
+          book.genres.some((genre) => genre.toLowerCase().includes(searchLower))
+      );
+    }
+
+    // Apply genre filter
+    if (this.currentFilters.genres.length > 0) {
+      filtered = filtered.filter((book) =>
+        this.currentFilters.genres.some((genre) =>
+          book.genres.map((g) => g.toLowerCase()).includes(genre.toLowerCase())
+        )
+      );
+    }
+
     // Apply price range filter
     if (
       this.currentFilters.priceRange.min > 0 ||
@@ -229,7 +250,25 @@ export class BrowseComponent implements OnInit, OnDestroy {
       );
     }
 
+    // Apply stock filter
+    if (this.currentFilters.inStockOnly) {
+      filtered = filtered.filter((book) => book.stock > 0);
+    }
+
+    // Apply minimum rating filter
+    if (this.currentFilters.minRating > 0) {
+      filtered = filtered.filter(
+        (book) => book.ratingAverage >= this.currentFilters.minRating
+      );
+    }
+
     this.filteredBooks = filtered;
+    console.log(
+      "Client-side filtering applied. Filtered books:",
+      this.filteredBooks.length,
+      "of",
+      this.books.length
+    );
   }
 
   onSearchChange(query: string) {
@@ -251,11 +290,18 @@ export class BrowseComponent implements OnInit, OnDestroy {
   }
 
   applyQuickFilter(filterValue: string) {
+    console.log("Applying quick filter:", filterValue);
     const tag = this.quickFilterTags.find((t) => t.value === filterValue);
-    if (!tag) return;
+    if (!tag) {
+      console.log("Tag not found for value:", filterValue);
+      return;
+    }
+
+    console.log("Found tag:", tag);
 
     // Toggle filter if already active
     if (this.activeQuickFilter === filterValue) {
+      console.log("Toggling off active filter");
       this.activeQuickFilter = null;
       this.searchQuery = "";
       this.currentFilters = {
@@ -266,21 +312,27 @@ export class BrowseComponent implements OnInit, OnDestroy {
         inStockOnly: false,
       };
     } else {
+      console.log("Applying new filter");
       this.activeQuickFilter = filterValue;
 
       // Apply search query if specified
       if (tag.searchQuery) {
+        console.log("Setting search query:", tag.searchQuery);
         this.searchQuery = tag.searchQuery;
       }
 
       // Apply filters if specified
       if (tag.filters) {
+        console.log("Applying filters:", tag.filters);
         this.currentFilters = {
           ...this.currentFilters,
           ...tag.filters,
         };
       }
     }
+
+    console.log("Current filters after quick filter:", this.currentFilters);
+    console.log("Search query after quick filter:", this.searchQuery);
 
     this.currentPage = 1;
     this.loadBooks();
@@ -376,7 +428,7 @@ export class BrowseComponent implements OnInit, OnDestroy {
         genres: ["mystery", "thriller"],
         price: 19.99,
         description: "A thrilling mystery",
-        stock: 8,
+        stock: 0,
         ratingAverage: 4.2,
         ratingQuantity: 85,
         image: "https://picsum.photos/seed/book2/300/400",
@@ -414,6 +466,22 @@ export class BrowseComponent implements OnInit, OnDestroy {
         image: "https://picsum.photos/seed/book4/300/400",
         createdAt: "2024-01-04T00:00:00Z",
         updatedAt: "2024-01-04T00:00:00Z",
+      },
+      {
+        _id: "5",
+        title: "Out of Stock Book",
+        authorName: "No Stock Author",
+        authorID: "author5",
+        pages: 200,
+        genres: ["fiction"],
+        price: 12.99,
+        description: "This book is currently out of stock",
+        stock: 0,
+        ratingAverage: 3.8,
+        ratingQuantity: 45,
+        image: "https://picsum.photos/seed/book5/300/400",
+        createdAt: "2024-01-05T00:00:00Z",
+        updatedAt: "2024-01-05T00:00:00Z",
       },
     ];
 
