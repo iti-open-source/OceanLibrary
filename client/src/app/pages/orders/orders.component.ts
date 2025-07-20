@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { OrdersService } from '../../services/orders.service';
 import { CommonModule } from '@angular/common';
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-orders',
@@ -19,7 +19,7 @@ export class OrdersComponent {
   loading: boolean = true;
   errorMessage: string = '';
 
-  constructor(private ordersService: OrdersService, private route: ActivatedRoute) {
+  constructor(private ordersService: OrdersService, private route: ActivatedRoute, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -79,7 +79,12 @@ export class OrdersComponent {
     }
   }
 
-    showPaymentModal(paymentLink: string) {
+  showPaymentModal(paymentLink: string) {   
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { paymentLink: null },
+        queryParamsHandling: 'merge'
+      });
       // Create modal container
       const modal = document.createElement('div');
       modal.style.position = 'fixed';

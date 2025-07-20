@@ -59,9 +59,12 @@ export async function generatePaymobPaymentLink(amountInEGP: number): Promise<Ob
       }
     );
     const paymentToken: string = paymentKeyRes.data.token;
+    
+    const redirectURL = encodeURIComponent("https://yourdomain.com/orders/success");
+
 
     // 4. Construct iframe URL
-    const iframeURL = `https://accept.paymob.com/api/acceptance/iframes/${IFREAME_ID}?payment_token=${paymentToken}`;
+    const iframeURL = `https://accept.paymob.com/api/acceptance/iframes/${IFREAME_ID}?payment_token=${paymentToken}&redirect_url=${redirectURL}`;
 
     return {orderId, iframeURL};
 }
