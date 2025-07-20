@@ -41,7 +41,7 @@ router.patch(
 );
 router.patch("/disable", verifyToken, disableUser);
 router.patch(
-  "/changePassword",
+  "/change-password",
   verifyToken,
   zodValidator(changePasswordSchema),
   changePassword
@@ -58,13 +58,13 @@ router.patch("/verify/confirm/:token", confirmVerification);
 
 // forgot password feature
 router.post(
-  "/forgotPassword",
+  "/forgot-password",
   verifyToken,
   emailRequestsLimiter,
   forgetPassword
 );
 router.patch(
-  "/resetPassword/:token",
+  "/reset-password/:token",
   zodValidator(resetPasswordSchema),
   resetPassword
 );
@@ -76,6 +76,6 @@ router.patch("/admin/ban/:id", verifyToken, verifyAdmin, banUser);
 // super-admin api
 router.patch("/promote/:id", verifyToken, verifySuperAdmin, promoteUser);
 router.patch("/demote/:id", verifyToken, verifySuperAdmin, demoteUser);
-router.patch("/superAdmin/ban/:id", verifyToken, verifySuperAdmin, banUser);
+router.patch("/super-admin/ban/:id", verifyToken, verifySuperAdmin, banUser);
 
 export default router;

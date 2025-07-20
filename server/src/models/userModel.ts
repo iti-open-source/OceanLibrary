@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["superAdmin", "admin", "user"],
+      enum: ["super-admin", "admin", "user"],
       default: "user",
     },
     active: {
@@ -94,28 +94,24 @@ userSchema.methods.comparePassword = async function (
   return await bcrypt.compare(password, user.password).catch(() => false);
 };
 
-userSchema.methods.createVerificationToken = async function (
-  this: UserDocument
+// verification token for email verification and password reset
+userSchema.methods.generateEmailToken = async function (
+  this: UserDocument,
+  mode: string
 ): Promise<string> {
   const user = this as UserDocument;
   const token = crypto.randomBytes(32).toString("hex");
   // store hashed token in database
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
-  user.verificationToken = hashedToken;
-  // token expires in 10 minutes
-  user.verificationExpiry = new Date(Date.now() + 1000 * 60 * 10);
-  await user.save();
-  return token;
-};
-
-userSchema.methods.createPasswordResetToken = async function (
-  this: UserDocument
-): Promise<string> {
-  const user = this as UserDocument;
-  const token = crypto.randomBytes(32).toString("hex");
-  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
-  user.passwordResetToken = hashedToken;
-  user.passwordResetExpiry = new Date(Date.now() + 1000 * 60 * 10);
+  // generate token based on case required
+  if (mode === "verification") {
+    // token expires in 10 minutes
+    user.verificationExpiry = new Date(Date.now() + 1000 * 60 * 10);
+    user.verificationToken = hashedToken;
+  } else if (mode === "password-reset") {
+    user.passwordResetExpiry = new Date(Date.now() + 1000 * 60 * 10);
+    user.passwordResetToken = hashedToken;
+  }
   await user.save();
   return token;
 };

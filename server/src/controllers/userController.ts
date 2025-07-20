@@ -66,7 +66,7 @@ export const registerUser = async (
   try {
     // set first user as admin by default
     const count = await userModel.countDocuments();
-    const role = count === 0 ? "superAdmin" : "user";
+    const role = count === 0 ? "super-admin" : "user";
 
     const user = await userModel.create({
       username,
@@ -207,7 +207,7 @@ export const requestVerification = async (
       return next(new AppError("user already verified", 400));
     }
     // send email with generated token
-    const token = await user.createVerificationToken();
+    const token = await user.generateEmailToken("verification");
     const URL = `${req.protocol}://${req.get(
       "host"
     )}/api/v1/users/verify/confirm/${token}`;
@@ -277,10 +277,10 @@ export const forgetPassword = async (
       return next(new AppError("user not found", 404));
     }
     // send email with generated token
-    const token = await user.createPasswordResetToken();
+    const token = await user.generateEmailToken("password-reset");
     const URL = `${req.protocol}://${req.get(
       "host"
-    )}/api/v1/users/resetPassword/${token}`;
+    )}/api/v1/users/reset-password/${token}`;
 
     sendResetPasswordEmail(user, URL);
     res.status(200).json({ status: "success", data: token });
@@ -387,7 +387,7 @@ export const promoteUser = async (
 
 /**
  * @route PATCH /api/v1/users/demote/:id
- * @desc superAdmin demotes user from admin to user
+ * @desc super-admin demotes user from admin to user
  * @access Private
  */
 export const demoteUser = async (
@@ -433,7 +433,7 @@ export const banUser = async (
         new AppError("you do not have the privileges for this process", 401)
       );
     }
-    if (user.role === "superAdmin") {
+    if (user.role === "super-admin") {
       return next(new AppError("cannot ban a super-admin", 401));
     }
     await user.updateOne({ active: false });
