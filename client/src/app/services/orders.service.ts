@@ -36,6 +36,16 @@ export class OrdersService {
     );
   }
 
+
+  getUserOrders(page: number = 1): Observable<OrdersResponse> {
+    const client: string[] = this.getClient();
+    return this.http.get<OrdersResponse>(`${this.endPoint}/view?page=${page}`, {
+      headers: {
+        [client[0]]: client[1],
+      },
+    });
+  }
+
   /**
    * Admin: View all orders
    * @param page number
@@ -68,4 +78,33 @@ export class OrdersService {
       `${this.endPoint}/admin/orders/${orderId}`
     );
   }
+}
+
+
+interface OrderItem {
+  bookId: string;
+  title: string;
+  image: string;
+  quantity: number;
+  price: number;
+}
+
+ interface Order {
+  _id: string;
+  userId: string;
+  items: OrderItem[];
+  total: number;
+  status: string;
+  paymentMethod: string;
+  paymentStatus: string;
+  paymentLink: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+ interface OrdersResponse {
+  orders: Order[];
+  currentPage: number;
+  totalPages: number;
+  totalOrders: number;
 }

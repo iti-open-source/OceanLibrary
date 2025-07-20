@@ -13,6 +13,7 @@ import { AuthGuard } from "./guards/auth.guard";
 import { HomeComponent } from "./pages/home/home.component";
 import { CartComponent } from "./pages/cart/cart.component";
 import { BrowseComponent } from "./pages/browse/browse.component";
+import { OrdersComponent } from "./pages/orders/orders.component";
 
 export const routes: Routes = [
   {
@@ -36,6 +37,10 @@ export const routes: Routes = [
   {
     path: "cart",
     component: CartComponent,
+  },
+  {
+    path: "orders",
+    component: OrdersComponent,
   },
   {
     path: "profile",

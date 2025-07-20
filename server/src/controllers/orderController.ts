@@ -79,7 +79,7 @@ export const placeOrder = async (
 
     // Verify paymob payment is successful
     if (paymentMethod === "paymob") {
-      paymentStatus = "pendingPayment";
+      paymentStatus = "pending";
       paymentLink = await generatePaymobPaymentLink(total);
       if (!paymentLink) {
         // Abort transaction

@@ -1,0 +1,83 @@
+@import "theme.css";
+
+/* Custom classes using your theme variables */
+.bg-light {
+  background-color: var(--color-background-light);
+}
+
+.bg-medium {
+  background-color: var(--color-background-medium);
+}
+
+.bg-dark {
+  background-color: var(--color-background-dark);
+}
+
+.bg-brand-primary {
+  background-color: var(--color-brand-primary);
+}
+
+.bg-brand-primary-dark {
+  background-color: color-mix(in srgb, var(--color-brand-primary) 90%, black);
+}
+
+.text-default {
+  color: var(--color-text-default);
+}
+
+.text-heading {
+  color: var(--color-text-heading);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.text-on-dark {
+  color: var(--color-on-dark);
+}
+
+.border-border {
+  border-color: var(--color-border);
+}
+
+.font-serif {
+  font-family: var(--font-primary);
+}
+
+.font-sans {
+  font-family: var(--font-secondary);
+}
+
+/* Dark mode overrides */
+.dark .bg-light {
+  background-color: var(--color-background-light);
+}
+
+.dark .bg-medium {
+  background-color: var(--color-background-medium);
+}
+
+.dark .bg-dark {
+  background-color: var(--color-background-dark);
+}
+
+.dark .text-default {
+  color: var(--color-text-default);
+}
+
+.dark .text-heading {
+  color: var(--color-text-heading);
+}
+
+.dark .text-muted {
+  color: var(--color-text-muted);
+}
+
+.dark .text-on-dark {
+  color: var(--color-on-dark);
+}
+
+.dark .border-border {
+  border-color: var(--color-border);
+}
