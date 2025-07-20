@@ -5,9 +5,11 @@ import { NotFoundComponent } from "./pages/not-found/not-found.component";
 import { BookInfoComponent } from "./pages/book-info/book-info.component";
 import { DetailsComponent } from "./pages/book-info/details/details.component";
 import { ReviewsComponent } from "./pages/book-info/reviews/reviews.component";
+import { ProfileComponent } from "./pages/profile/profile.component";
 import { adminRoutes } from "./pages/admin/admin.routes";
 import { AdminGuard } from "./guards/admin.guard";
 import { GuestGuard } from "./guards/guest.guard";
+import { AuthGuard } from "./guards/auth.guard";
 import { HomeComponent } from "./pages/home/home.component";
 import { CartComponent } from "./pages/cart/cart.component";
 import { BrowseComponent } from "./pages/browse/browse.component";
@@ -34,6 +36,11 @@ export const routes: Routes = [
   {
     path: "cart",
     component: CartComponent,
+  },
+  {
+    path: "profile",
+    component: ProfileComponent,
+    canActivate: [AuthGuard],
   },
   {
     path: "book-info/:bookID",

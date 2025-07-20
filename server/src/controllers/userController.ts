@@ -10,6 +10,34 @@ import {
 import AppError from "../utils/appError.js";
 
 /**
+ * @route GET /api/v1/users/profile
+ * @desc get current user's profile
+ * @access Private
+ */
+export const getCurrentUser = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const user = await userModel
+      .findById(req.userId)
+      .select("-password -passwordResetToken -verificationToken");
+
+    if (!user) {
+      return next(new AppError("user not found", 404));
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * @route POST /api/v1/users/login
  * @desc user login to account and generates a token
  * @access Public
@@ -438,12 +466,10 @@ export const promoteUser = async (
     // Super-admin can promote users to admin, but cannot promote admins to super-admin
     if (user.role === "user") {
       await user.updateOne({ role: "admin" });
-      res
-        .status(200)
-        .json({
-          status: "success",
-          message: "user promoted to admin successfully",
-        });
+      res.status(200).json({
+        status: "success",
+        message: "user promoted to admin successfully",
+      });
     } else if (user.role === "admin") {
       return next(new AppError("user is already an admin", 400));
     } else {
@@ -480,12 +506,10 @@ export const demoteUser = async (
     // Super-admin can demote admins to user, but cannot demote users further
     if (user.role === "admin") {
       await user.updateOne({ role: "user" });
-      res
-        .status(200)
-        .json({
-          status: "success",
-          message: "admin demoted to user successfully",
-        });
+      res.status(200).json({
+        status: "success",
+        message: "admin demoted to user successfully",
+      });
     } else if (user.role === "user") {
       return next(new AppError("user is already a regular user", 400));
     } else {

@@ -1,0 +1,278 @@
+<div class="min-h-screen bg-[var(--color-background-light)] py-8">
+  <div class="container mx-auto px-4 max-w-4xl">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center py-12">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="text-center py-12">
+      <div
+        class="bg-red-50 border border-red-200 text-red-700 rounded-lg p-6 max-w-md mx-auto"
+      >
+        <lucide-icon
+          [img]="XCircle"
+          class="h-8 w-8 mx-auto mb-4 text-red-500"
+        ></lucide-icon>
+        <h3 class="text-lg font-semibold mb-2">Failed to Load Profile</h3>
+        <p class="text-sm mb-4">{{ error }}</p>
+        <button
+          (click)="retry()"
+          class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+
+    <!-- Profile Content -->
+    <div *ngIf="user && !loading" class="space-y-6">
+      <!-- Header -->
+      <div
+        class="bg-[var(--color-background-light)] border border-[var(--color-border)] rounded-xl shadow-sm overflow-hidden"
+      >
+        <div class="p-6 border-b border-[var(--color-border)]">
+          <div
+            class="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-16 h-16 bg-[var(--color-background-medium)] rounded-full flex items-center justify-center"
+              >
+                <lucide-icon
+                  [img]="User"
+                  class="h-8 w-8 text-[var(--color-brand-primary)]"
+                ></lucide-icon>
+              </div>
+              <div>
+                <h1 class="text-2xl font-bold text-[var(--color-text-heading)]">
+                  {{ user.username }}
+                </h1>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="role-badge" [ngClass]="getRoleBadgeClass()">
+                    <lucide-icon
+                      [img]="getRoleIcon()"
+                      class="h-4 w-4"
+                    ></lucide-icon>
+                    {{ getRoleDisplayText() }}
+                  </span>
+                  <span
+                    class="status-badge"
+                    [ngClass]="user.active ? 'active' : 'inactive'"
+                  >
+                    <lucide-icon
+                      [img]="user.active ? CheckCircle : XCircle"
+                      class="h-4 w-4"
+                    ></lucide-icon>
+                    {{ user.active ? "Active" : "Inactive" }}
+                  </span>
+                  <span
+                    class="verified-badge"
+                    [ngClass]="user.verified ? 'verified' : 'unverified'"
+                  >
+                    <lucide-icon
+                      [img]="user.verified ? CheckCircle : XCircle"
+                      class="h-4 w-4"
+                    ></lucide-icon>
+                    {{ user.verified ? "Verified" : "Unverified" }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <button
+                (click)="openEditProfileModal()"
+                class="cursor-pointer px-4 py-2 bg-[var(--color-brand-primary)] text-[var(--color-on-dark)] rounded-lg hover:opacity-90 transition-colors flex items-center gap-2"
+              >
+                <lucide-icon [img]="Edit" class="h-4 w-4"></lucide-icon>
+                Edit Profile
+              </button>
+              <button
+                (click)="openChangePasswordModal()"
+                class="cursor-pointer px-4 py-2 text-[var(--color-text-default)] border border-[var(--color-border)] rounded-lg hover:bg-[var(--color-background-medium)] transition-colors flex items-center gap-2"
+              >
+                <lucide-icon [img]="Lock" class="h-4 w-4"></lucide-icon>
+                Change Password
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Information Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Personal Information -->
+        <div
+          class="bg-[var(--color-background-light)] border border-[var(--color-border)] rounded-xl shadow-sm p-6"
+        >
+          <h2
+            class="text-lg font-semibold text-[var(--color-text-heading)] mb-4 flex items-center gap-2"
+          >
+            <lucide-icon [img]="User" class="h-5 w-5"></lucide-icon>
+            Personal Information
+          </h2>
+          <div class="space-y-4">
+            <div class="flex items-start gap-3">
+              <lucide-icon
+                [img]="User"
+                class="h-5 w-5 text-[var(--color-text-muted)] mt-0.5"
+              ></lucide-icon>
+              <div class="flex-1">
+                <p class="text-sm text-[var(--color-text-muted)] mb-1">
+                  Username
+                </p>
+                <p class="text-[var(--color-text-default)] font-medium">
+                  {{ user.username }}
+                </p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <lucide-icon
+                [img]="Mail"
+                class="h-5 w-5 text-[var(--color-text-muted)] mt-0.5"
+              ></lucide-icon>
+              <div class="flex-1">
+                <p class="text-sm text-[var(--color-text-muted)] mb-1">Email</p>
+                <p class="text-[var(--color-text-default)] font-medium">
+                  {{ user.email }}
+                </p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <lucide-icon
+                [img]="Phone"
+                class="h-5 w-5 text-[var(--color-text-muted)] mt-0.5"
+              ></lucide-icon>
+              <div class="flex-1">
+                <p class="text-sm text-[var(--color-text-muted)] mb-1">Phone</p>
+                <p class="text-[var(--color-text-default)] font-medium">
+                  {{ user.phone }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Address Information -->
+        <div
+          class="bg-[var(--color-background-light)] border border-[var(--color-border)] rounded-xl shadow-sm p-6"
+        >
+          <h2
+            class="text-lg font-semibold text-[var(--color-text-heading)] mb-4 flex items-center gap-2"
+          >
+            <lucide-icon [img]="MapPin" class="h-5 w-5"></lucide-icon>
+            Address Information
+          </h2>
+          <div class="space-y-4">
+            <div class="flex items-start gap-3">
+              <lucide-icon
+                [img]="MapPin"
+                class="h-5 w-5 text-[var(--color-text-muted)] mt-0.5"
+              ></lucide-icon>
+              <div class="flex-1">
+                <p class="text-sm text-[var(--color-text-muted)] mb-1">
+                  Street Address
+                </p>
+                <p class="text-[var(--color-text-default)] font-medium">
+                  {{ user.address?.street || "Not provided" }}
+                </p>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-sm text-[var(--color-text-muted)] mb-1">City</p>
+                <p class="text-[var(--color-text-default)] font-medium">
+                  {{ user.address?.city || "Not provided" }}
+                </p>
+              </div>
+              <div>
+                <p class="text-sm text-[var(--color-text-muted)] mb-1">
+                  ZIP Code
+                </p>
+                <p class="text-[var(--color-text-default)] font-medium">
+                  {{ user.address?.zip || "Not provided" }}
+                </p>
+              </div>
+            </div>
+            <div>
+              <p class="text-sm text-[var(--color-text-muted)] mb-1">Country</p>
+              <p class="text-[var(--color-text-default)] font-medium">
+                {{ user.address?.country || "Not provided" }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Account Information -->
+        <div
+          class="bg-[var(--color-background-light)] border border-[var(--color-border)] rounded-xl shadow-sm p-6 lg:col-span-2"
+        >
+          <h2
+            class="text-lg font-semibold text-[var(--color-text-heading)] mb-4 flex items-center gap-2"
+          >
+            <lucide-icon [img]="Calendar" class="h-5 w-5"></lucide-icon>
+            Account Information
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="flex items-start gap-3">
+              <lucide-icon
+                [img]="Calendar"
+                class="h-5 w-5 text-[var(--color-text-muted)] mt-0.5"
+              ></lucide-icon>
+              <div class="flex-1">
+                <p class="text-sm text-[var(--color-text-muted)] mb-1">
+                  Member Since
+                </p>
+                <p class="text-[var(--color-text-default)] font-medium">
+                  {{ formatDate(user.createdAt) }}
+                </p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <lucide-icon
+                [img]="Calendar"
+                class="h-5 w-5 text-[var(--color-text-muted)] mt-0.5"
+              ></lucide-icon>
+              <div class="flex-1">
+                <p class="text-sm text-[var(--color-text-muted)] mb-1">
+                  Last Updated
+                </p>
+                <p class="text-[var(--color-text-default)] font-medium">
+                  {{ formatDate(user.updatedAt) }}
+                </p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <lucide-icon
+                [img]="Lock"
+                class="h-5 w-5 text-[var(--color-text-muted)] mt-0.5"
+              ></lucide-icon>
+              <div class="flex-1">
+                <p class="text-sm text-[var(--color-text-muted)] mb-1">
+                  Password Last Changed
+                </p>
+                <p class="text-[var(--color-text-default)] font-medium">
+                  {{ formatDate(user.passwordChangeAt?.toString()) }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modals -->
+    <app-edit-profile-modal
+      [isVisible]="showEditProfileModal"
+      [user]="user"
+      (close)="closeEditProfileModal()"
+      (success)="onProfileUpdated($event)"
+    ></app-edit-profile-modal>
+
+    <app-change-password-modal
+      [isVisible]="showChangePasswordModal"
+      (close)="closeChangePasswordModal()"
+      (success)="onPasswordChanged()"
+    ></app-change-password-modal>
+  </div>
+</div>

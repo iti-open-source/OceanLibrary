@@ -14,6 +14,7 @@ import {
   banUser,
   demoteUser,
   unbanUser,
+  getCurrentUser,
 } from "../controllers/userController.js";
 import {
   loginUserSchema,
@@ -34,6 +35,7 @@ const router = Router();
 
 router.post("/login", zodValidator(loginUserSchema), loginLimiter, loginUser);
 router.post("/register", zodValidator(registerUserSchema), registerUser);
+router.get("/profile", verifyToken, getCurrentUser);
 router.patch(
   "/profile",
   zodValidator(updateUserSchema),
