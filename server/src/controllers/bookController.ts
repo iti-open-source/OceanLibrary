@@ -6,6 +6,7 @@ import {
   buildAggregationPipeline,
   countDocuments,
 } from "../utils/searchHelpers.js";
+import redisClient from "../utils/redisClient.js";
 
 /**
  * Retrieves all books with pagination, filtering, and full-text search support.
@@ -193,6 +194,7 @@ export const createBook = async (
       req.body.authorID = newAuthor._id;
     }
     const book = await Book.insertOne(req.body);
+    await redisClient.flushAll();
     res.status(201).json({
       status: "Success",
       message: "Book created successfully",
@@ -236,6 +238,7 @@ export const updateBookById = async (
     if (!updatedBook) {
       return next(new AppError("Book not found", 404));
     }
+    await redisClient.flushAll();
     // otherwise, the book was updated successfully
     res.status(200).json({
       status: "Success",
@@ -279,7 +282,7 @@ export const deleteBookById = async (
     if (!deletedBook) {
       return next(new AppError("Book not found", 404));
     }
-
+    await redisClient.flushAll();
     // otherwise, the book was deleted successfully
     res.status(204).send();
   } catch (error) {

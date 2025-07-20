@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import Author from "../models/authorModel.js";
 import AppError from "../utils/appError.js";
 import { AuthorFilter } from "../types/filters/authorFilter.js";
+import redisClient from "../utils/redisClient.js";
 
 /**
  * Get all authors with pagination and filtering
@@ -152,6 +153,7 @@ export const updateAuthorById = async (
     if (!updatedAuthor) {
       return next(new AppError("Author not found", 404));
     }
+    await redisClient.flushAll();
     res.status(200).json({
       status: "Success",
       message: "Author updated successfully",
@@ -179,7 +181,7 @@ export const deleteAuthorById = async (
     if (!deletedAuthor) {
       return next(new AppError("Author not found", 404));
     }
-
+    await redisClient.flushAll();
     res.status(204).send();
   } catch (error) {
     next(error);
