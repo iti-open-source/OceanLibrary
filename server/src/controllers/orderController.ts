@@ -157,20 +157,14 @@ export const viewOrder = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    // Get userID
     const userId = req.userId;
     let { page, limit }: any = req.query;
 
-    // Get number of page to display
     page = parseInt(page) || 1;
-
-    // Limit of orders per page
     limit = parseInt(limit) || 10;
-
-    // Offset skipper
     const skip = (page - 1) * limit;
 
-    // Get orders list based on page limit
+    // Fetch all orders paginated
     const [orders, totalOrders] = await Promise.all([
       orderModel
         .find({ userId })
@@ -181,7 +175,27 @@ export const viewOrder = async (
       orderModel.countDocuments({ userId }),
     ]);
 
-    // Return orders list to client
+    //  heck latest order (not just in current page)
+    const latestOrder = await orderModel
+      .findOne({ userId })
+      .sort({ createdAt: -1 })
+      .select("paymentMethod paymentOrderId paymentStatus");
+
+    if (
+      latestOrder &&
+      latestOrder.paymentMethod === "paymob" &&
+      latestOrder.paymentOrderId &&
+      latestOrder.paymentStatus !== "paid"
+    ) {
+      const isPaid = await isOrderPaid(latestOrder.paymentOrderId);
+
+      if (isPaid) {
+        latestOrder.paymentStatus = "paid";
+        await latestOrder.save();
+        redisClient.flushAll();
+      }
+    }
+
     res.status(200).json({
       orders,
       currentPage: page,
@@ -192,6 +206,7 @@ export const viewOrder = async (
     next(error);
   }
 };
+
 
 /**
  * Get details for specific order
