@@ -46,8 +46,8 @@ export class HomeComponent implements OnInit {
         this.currentBook = allBooks[0] || null;
 
         // Now BOTH sections have 3 books
-        this.recommendationBooks = allBooks.slice(1, 5); // Books 1–3
-        this.trendingSeriesBooks = allBooks.slice(5, 9); // Books 4–6
+        this.recommendationBooks = allBooks.slice(1, 6); // Books 1–3
+        this.trendingSeriesBooks = allBooks.slice(5,10 ); // Books 4–6
 
         this.isLoading = false;
       },
