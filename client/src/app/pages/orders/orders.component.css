@@ -1,6 +1,3 @@
-@import "theme.css";
-
-/* Custom classes using your theme variables */
 .bg-light {
   background-color: var(--color-background-light);
 }
