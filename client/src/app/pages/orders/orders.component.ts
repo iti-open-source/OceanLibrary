@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { OrdersService } from '../../services/orders.service';
 import { CommonModule } from '@angular/common';
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-orders',
@@ -18,11 +19,33 @@ export class OrdersComponent {
   loading: boolean = true;
   errorMessage: string = '';
 
-  constructor(private ordersService: OrdersService) {
+  constructor(private ordersService: OrdersService, private route: ActivatedRoute) {
   }
 
   ngOnInit(): void {
     this.fetchOrders();
+    this.route.queryParams.subscribe(params => {
+      const paymentLink = params['paymentLink'];
+      if (paymentLink) {
+        this.showPaymentModal(paymentLink);
+      }
+    });
+  }
+
+
+  checkOrder(orderId: string): void {
+    this.isLoading = true;
+    this.ordersService.checkOrder(orderId).subscribe({
+      next: (data: any) => {
+              
+        this.isLoading = false;
+        this.fetchOrders();
+      },
+      error: (error) => {
+        this.errorMessage = error?.error?.message || 'Error checking order status.';
+        this.isLoading = false;
+      }
+    });   
   }
 
   fetchOrders(): void {
@@ -183,7 +206,8 @@ interface OrderItem {
   price: number;
 }
 
- interface Order {
+
+interface Order {
   _id: string;
   userId: string;
   items: OrderItem[];
@@ -192,6 +216,7 @@ interface OrderItem {
   paymentMethod: string;
   paymentStatus: string;
   paymentLink: string | null;
+  paymentOrderId?: string;
   createdAt: string;
   updatedAt: string;
 }

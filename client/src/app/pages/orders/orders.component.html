@@ -104,7 +104,7 @@
       </div>
 
       @if( order.paymentStatus === "pending" && order.paymentMethod === "paymob"
-      && order.paymentLink) {
+      && order.paymentLink && order.paymentOrderId) {
 
       <div class="flex justify-end mt-4">
         <button
@@ -113,6 +113,14 @@
         >
           <i class="fas fa-credit-card"></i>
           Pay Now
+        </button>
+
+        <button
+          (click)="checkOrder(order.paymentOrderId)"
+          class="pay-now-btn ms-2 cursor-pointer px-4 py-2 bg-brand-primary text-on-dark rounded font-medium hover:bg-brand-primary-dark transition-colors flex items-center gap-2"
+        >
+          <i class="fas fa-arrow-circle-left"></i>
+          Reload
         </button>
       </div>
       }

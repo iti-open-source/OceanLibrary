@@ -89,8 +89,9 @@ export class CartComponent implements OnInit {
     this.order.placeOrder(method).subscribe({
       next: (data: any) => {
         if (data.paymentLink) {
-          //window.location.href = data.paymentLink;
-          //this.showPaymentModal(data.paymentLink);
+          this.router.navigate(['/orders'], {
+            queryParams: { paymentLink: data.paymentLink }
+          });
         } else {
           this.router.navigate(["/orders"]);
         }

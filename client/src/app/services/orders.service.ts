@@ -45,6 +45,16 @@ export class OrdersService {
     });
   }
 
+
+  checkOrder(orderId:string): Observable<any> {
+    const client: string[] = this.getClient();
+    return this.http.get<any>(`${this.endPoint}/paymobCheck/687d5eb31bfa6c6875a9766a`, {
+      headers: {
+        [client[0]]: client[1],
+      },
+    });
+  }
+
   /**
    * Admin: View all orders
    * @param page number
@@ -119,6 +129,7 @@ interface Order {
   paymentMethod: string;
   paymentStatus: string;
   paymentLink: string | null;
+  paymentOrderId?: string;
   createdAt: string;
   updatedAt: string;
 }
