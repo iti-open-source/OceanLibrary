@@ -290,7 +290,7 @@ export const confirmVerification = async (
 /**
  * @route POST /api/v1/users/forgotPassword
  * @desc user request password reset
- * @access Private
+ * @access Public
  */
 export const forgetPassword = async (
   req: Request,
@@ -326,7 +326,7 @@ export const forgetPassword = async (
 /**
  * @route PATCH /api/v1/users/resetPassword/:token
  * @desc user responds to email and creates a new password
- * @access Private
+ * @access Public
  */
 export const resetPassword = async (
   req: Request,

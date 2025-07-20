@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import helmet from "helmet";
 import hpp from "hpp";
 import cors from "cors";
+import http from "http";
 import { Server } from "socket.io";
 import "dotenv/config";
 import bookRouter from "./routes/bookRoutes.js";
@@ -18,9 +19,11 @@ import AppError from "./utils/appError.js";
 
 const app = express();
 
-// socket.io 
+// socket.io
+const server = http.createServer(app);
+const io = new Server(server);
 
-
+app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
@@ -83,12 +86,20 @@ mongoose
     console.error("Connection to database failed", error);
   });
 
-const server = app.listen(PORT, () => {
+// web sockets for notifications
+io.on("connection", (socket) => {
+  console.log("client connected", socket.id);
+  socket.on("disconnect", () => {
+    console.log("client disconnected", socket.id);
+  });
+});
+
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
 const gracefulShutdown = () => {
-  server.close((err) => {
+  server.close((err: Error | undefined) => {
     if (err) {
       console.error("Error closing HTTP server:", err);
       return process.exit(1);

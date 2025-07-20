@@ -60,12 +60,7 @@ router.post(
 router.patch("/verify/confirm/:token", confirmVerification);
 
 // forgot password feature
-router.post(
-  "/forgot-password",
-  verifyToken,
-  emailRequestsLimiter,
-  forgetPassword
-);
+router.post("/forgot-password", emailRequestsLimiter, forgetPassword);
 router.patch(
   "/reset-password/:token",
   zodValidator(resetPasswordSchema),
