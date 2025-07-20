@@ -1,6 +1,20 @@
 import { Component, OnDestroy, OnInit, ElementRef } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { LucideAngularModule } from "lucide-angular";
+import {
+  LucideAngularModule,
+  Package,
+  Settings,
+  User,
+  LogOut,
+  Home,
+  Compass,
+  ShoppingCart,
+  ChevronDown,
+  Menu,
+  X,
+  LogIn,
+  UserPlus,
+} from "lucide-angular";
 import { RouterLink, Router, NavigationEnd } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
 import {
@@ -25,6 +39,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
   profileMenuOpen = false;
   mobileMenuOpen = false;
   currentRoute = "";
+
+  // Lucide icons
+  readonly Package = Package;
+  readonly Settings = Settings;
+  readonly User = User;
+  readonly LogOut = LogOut;
+  readonly Home = Home;
+  readonly Compass = Compass;
+  readonly ShoppingCart = ShoppingCart;
+  readonly ChevronDown = ChevronDown;
+  readonly Menu = Menu;
+  readonly X = X;
+  readonly LogIn = LogIn;
+  readonly UserPlus = UserPlus;
 
   constructor(
     private authService: AuthService,
@@ -87,6 +115,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   get isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
+  }
+
+  get isAdmin(): boolean {
+    return this.authService.isAdmin();
+  }
+
+  navigateToAdmin() {
+    this.profileMenuOpen = false;
+    this.mobileMenuOpen = false;
+    this.router.navigate(["/admin"]);
+  }
+
+  navigateToOrders() {
+    this.profileMenuOpen = false;
+    this.mobileMenuOpen = false;
+    this.router.navigate(["/orders"]);
   }
 
   onSearchSelected(searchTerm: string) {

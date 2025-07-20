@@ -37,7 +37,7 @@
           <span class="sr-only">Open main menu</span>
           <!-- Hamburger icon -->
           <lucide-icon
-            [name]="mobileMenuOpen ? 'x' : 'menu'"
+            [img]="mobileMenuOpen ? X : Menu"
             class="h-6 w-6"
             [class.rotate-180]="mobileMenuOpen"
             style="transition: transform 0.2s ease-in-out"
@@ -56,7 +56,7 @@
             (click)="closeMobileMenu()"
           >
             <lucide-icon
-              name="home"
+              [img]="Home"
               class="nav-icon h-5 w-5 lg:h-6 lg:w-6 mb-1"
             ></lucide-icon>
             <span class="nav-text text-xs hidden lg:block">Home</span>
@@ -68,7 +68,7 @@
             (click)="closeMobileMenu()"
           >
             <lucide-icon
-              name="compass"
+              [img]="Compass"
               class="nav-icon h-5 w-5 lg:h-6 lg:w-6 mb-1"
             ></lucide-icon>
             <span class="nav-text text-xs hidden lg:block">Browse</span>
@@ -80,10 +80,23 @@
             (click)="closeMobileMenu()"
           >
             <lucide-icon
-              name="shopping-cart"
+              [img]="ShoppingCart"
               class="nav-icon h-5 w-5 lg:h-6 lg:w-6 mb-1"
             ></lucide-icon>
             <span class="nav-text text-xs hidden lg:block">Cart</span>
+          </a>
+          <a
+            routerLink="admin"
+            [class]="getNavLinkClass('admin')"
+            tabindex="0"
+            (click)="closeMobileMenu()"
+            *ngIf="isAdmin"
+          >
+            <lucide-icon
+              [img]="Settings"
+              class="nav-icon h-5 w-5 lg:h-6 lg:w-6 mb-1"
+            ></lucide-icon>
+            <span class="nav-text text-xs hidden lg:block">Admin</span>
           </a>
         </div>
 
@@ -119,7 +132,7 @@
                 alt="profile image"
               />
               <lucide-icon
-                name="chevron-down"
+                [img]="ChevronDown"
                 class="ml-2 h-4 w-4 lg:h-5 lg:w-5 text-[var(--color-text-muted)]"
               ></lucide-icon>
             </span>
@@ -136,17 +149,25 @@
             <a
               routerLink="/profile"
               class="cursor-pointer flex items-center px-5 py-3 text-sm text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] rounded-t-xl"
-              (click)="closeMobileMenu()"
+              (click)="profileMenuOpen = false; closeMobileMenu()"
             >
-              <lucide-icon name="user" class="mr-2 h-5 w-5"></lucide-icon>
+              <lucide-icon [img]="User" class="mr-2 h-5 w-5"></lucide-icon>
               Profile
+            </a>
+            <a
+              routerLink="/orders"
+              class="cursor-pointer flex items-center px-5 py-3 text-sm text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)]"
+              (click)="navigateToOrders()"
+            >
+              <lucide-icon [img]="Package" class="mr-2 h-5 w-5"></lucide-icon>
+              Orders
             </a>
             <button
               type="button"
               class="w-full text-left cursor-pointer flex items-center px-5 py-3 text-sm text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] rounded-b-xl bg-transparent border-0 outline-none"
               (click)="signOut(); profileMenuOpen = false"
             >
-              <lucide-icon name="log-out" class="mr-2 h-5 w-5"></lucide-icon>
+              <lucide-icon [img]="LogOut" class="mr-2 h-5 w-5"></lucide-icon>
               Sign Out
             </button>
           </div>
@@ -186,7 +207,7 @@
           [class]="getMobileNavLinkClass('')"
           (click)="closeMobileMenu()"
         >
-          <lucide-icon name="home" class="h-6 w-6 mr-3"></lucide-icon>
+          <lucide-icon [img]="Home" class="h-6 w-6 mr-3"></lucide-icon>
           <span class="text-lg font-medium">Home</span>
         </a>
         <a
@@ -194,7 +215,7 @@
           [class]="getMobileNavLinkClass('browse')"
           (click)="closeMobileMenu()"
         >
-          <lucide-icon name="compass" class="h-6 w-6 mr-3"></lucide-icon>
+          <lucide-icon [img]="Compass" class="h-6 w-6 mr-3"></lucide-icon>
           <span class="text-lg font-medium">Browse</span>
         </a>
         <a
@@ -202,8 +223,17 @@
           [class]="getMobileNavLinkClass('cart')"
           (click)="closeMobileMenu()"
         >
-          <lucide-icon name="shopping-cart" class="h-6 w-6 mr-3"></lucide-icon>
+          <lucide-icon [img]="ShoppingCart" class="h-6 w-6 mr-3"></lucide-icon>
           <span class="text-lg font-medium">Cart</span>
+        </a>
+        <a
+          routerLink="admin"
+          [class]="getMobileNavLinkClass('admin')"
+          (click)="closeMobileMenu()"
+          *ngIf="isAdmin"
+        >
+          <lucide-icon [img]="Settings" class="h-6 w-6 mr-3"></lucide-icon>
+          <span class="text-lg font-medium">Admin Panel</span>
         </a>
       </div>
 
@@ -215,7 +245,7 @@
             class="w-full flex items-center justify-center px-4 py-3 rounded-lg font-semibold text-lg text-[var(--color-text-default)] bg-[var(--color-background-light)] border-2 border-[var(--color-border)] hover:bg-[var(--color-background-medium)] hover:border-[var(--color-brand-primary)] transition-all duration-200 shadow-sm"
             (click)="closeMobileMenu()"
           >
-            <lucide-icon name="log-in" class="h-5 w-5 mr-2"></lucide-icon>
+            <lucide-icon [img]="LogIn" class="h-5 w-5 mr-2"></lucide-icon>
             Login
           </a>
           <a
@@ -223,7 +253,7 @@
             class="w-full flex items-center justify-center px-4 py-3 rounded-lg font-semibold text-lg bg-[var(--color-background-dark)] text-[var(--color-text-default)] hover:bg-[var(--color-border)] hover:shadow-md transition-all duration-200 shadow-sm"
             (click)="closeMobileMenu()"
           >
-            <lucide-icon name="user-plus" class="h-5 w-5 mr-2"></lucide-icon>
+            <lucide-icon [img]="UserPlus" class="h-5 w-5 mr-2"></lucide-icon>
             Register
           </a>
         </div>
@@ -241,12 +271,20 @@
             />
             <span class="font-medium">Profile</span>
           </a>
+          <a
+            routerLink="/orders"
+            class="w-full flex items-center px-4 py-3 rounded-lg text-lg text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] transition-colors duration-200"
+            (click)="navigateToOrders()"
+          >
+            <lucide-icon [img]="Package" class="h-6 w-6 mr-3"></lucide-icon>
+            <span class="font-medium">Orders</span>
+          </a>
           <button
             type="button"
             class="w-full flex items-center px-4 py-3 rounded-lg text-lg text-[var(--color-text-default)] hover:bg-[var(--color-background-medium)] transition-colors duration-200 bg-transparent border-0 outline-none"
             (click)="signOut()"
           >
-            <lucide-icon name="log-out" class="h-6 w-6 mr-3"></lucide-icon>
+            <lucide-icon [img]="LogOut" class="h-6 w-6 mr-3"></lucide-icon>
             <span class="font-medium">Sign Out</span>
           </button>
         </div>
