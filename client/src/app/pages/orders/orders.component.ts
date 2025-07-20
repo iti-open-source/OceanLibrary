@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { OrdersService } from '../../services/orders.service';
 import { CommonModule } from '@angular/common';
+import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 
 @Component({
   selector: 'app-orders',
-  imports: [CommonModule],
+  imports: [CommonModule, LoadingSpinnerComponent],
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.css'
 })
@@ -14,6 +15,8 @@ export class OrdersComponent {
   totalPages: number = 1;
   totalOrders: number = 0;
   isLoading: boolean = true;
+  loading: boolean = true;
+  errorMessage: string = '';
 
   constructor(private ordersService: OrdersService) {}
 
