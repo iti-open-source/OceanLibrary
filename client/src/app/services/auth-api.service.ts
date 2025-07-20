@@ -30,4 +30,24 @@ export class AuthApiService {
       data
     );
   }
+
+  forgotPassword(
+    email: string
+  ): Observable<{ status: string; message: string }> {
+    return this.http.post<{ status: string; message: string }>(
+      `${this.BASE_URL}/api/v1/users/forgot-password`,
+      { email }
+    );
+  }
+
+  resetPassword(
+    token: string,
+    password: string,
+    confirmPassword: string
+  ): Observable<{ status: string; message: string }> {
+    return this.http.patch<{ status: string; message: string }>(
+      `${this.BASE_URL}/api/v1/users/reset-password/${token}`,
+      { password, confirmPassword }
+    );
+  }
 }

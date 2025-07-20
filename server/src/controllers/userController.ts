@@ -306,9 +306,7 @@ export const forgetPassword = async (
     }
     // send email with generated token
     const token = await user.generateEmailToken("password-reset");
-    const URL = `${req.protocol}://${req.get(
-      "host"
-    )}/api/v1/users/reset-password/${token}`;
+    const URL = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
     sendResetPasswordEmail(user, URL);
     res.status(200).json({ status: "success", data: token });

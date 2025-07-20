@@ -109,7 +109,7 @@ userSchema.methods.generateEmailToken = async function (
     user.verificationExpiry = new Date(Date.now() + 1000 * 60 * 10);
     user.verificationToken = hashedToken;
   } else if (mode === "password-reset") {
-    user.passwordResetExpiry = new Date(Date.now() + 1000 * 60 * 10);
+    user.passwordResetExpiry = new Date(Date.now() + 1000 * 60 * 30); // 30 minutes
     user.passwordResetToken = hashedToken;
   }
   await user.save();

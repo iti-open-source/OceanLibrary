@@ -1,6 +1,8 @@
 import { Routes } from "@angular/router";
 import { LoginComponent } from "./pages/login/login.component";
 import { RegisterComponent } from "./pages/register/register.component";
+import { ForgotPasswordComponent } from "./pages/forgot-password/forgot-password.component";
+import { ResetPasswordComponent } from "./pages/reset-password/reset-password.component";
 import { NotFoundComponent } from "./pages/not-found/not-found.component";
 import { BookInfoComponent } from "./pages/book-info/book-info.component";
 import { DetailsComponent } from "./pages/book-info/details/details.component";
@@ -32,6 +34,21 @@ export const routes: Routes = [
   {
     path: "register",
     component: RegisterComponent,
+    canActivate: [GuestGuard],
+  },
+  {
+    path: "forgot-password",
+    component: ForgotPasswordComponent,
+    canActivate: [GuestGuard],
+  },
+  {
+    path: "reset-password/:token",
+    component: ResetPasswordComponent,
+    canActivate: [GuestGuard],
+  },
+  {
+    path: "reset-password",
+    component: ResetPasswordComponent,
     canActivate: [GuestGuard],
   },
   {

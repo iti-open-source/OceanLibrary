@@ -39,7 +39,7 @@ app.use(
     credentials: true, // Allow cookies
   })
 );
-app.use(limiter);
+// app.use(limiter);
 
 // Serve static files from uploads directory with CORS headers
 app.use(
