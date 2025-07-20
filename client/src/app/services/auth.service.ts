@@ -1,17 +1,31 @@
 import { Injectable } from "@angular/core";
 import { jwtDecode } from "jwt-decode";
 import { DecodedToken } from "../types/decodedToken";
+import { BehaviorSubject, Observable } from "rxjs";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
   private readonly tokenKey = "auth_token";
+  private authStateSubject = new BehaviorSubject<boolean>(this.isLoggedIn());
+  public authState$: Observable<boolean> = this.authStateSubject.asObservable();
+
+  constructor() {
+    // Listen for localStorage changes from other tabs
+    window.addEventListener('storage', (event) => {
+      if (event.key === this.tokenKey) {
+        this.authStateSubject.next(this.isLoggedIn());
+      }
+    });
+  }
 
   login(token: string): void {
-    sessionStorage.setItem(this.tokenKey, token);
+    localStorage.setItem(this.tokenKey, token);
+    this.authStateSubject.next(true);
   }
 
   logout(): void {
-    sessionStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.tokenKey);
+    this.authStateSubject.next(false);
   }
 
   logoutAndRedirect(): void {
@@ -21,7 +35,7 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return sessionStorage.getItem(this.tokenKey);
+    return localStorage.getItem(this.tokenKey);
   }
 
   isLoggedIn(): boolean {

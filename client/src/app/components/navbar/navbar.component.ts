@@ -21,7 +21,7 @@ import {
   AutocompleteSearchComponent,
   AutocompleteOption,
 } from "../autocomplete-search/autocomplete-search.component";
-import { filter } from "rxjs/operators";
+import { filter, Subject, takeUntil } from "rxjs";
 
 @Component({
   selector: "app-navbar",
@@ -39,6 +39,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   profileMenuOpen = false;
   mobileMenuOpen = false;
   currentRoute = "";
+  isLoggedIn = false;
+  isAdmin = false;
+  private destroy$ = new Subject<void>();
 
   // Lucide icons
   readonly Package = Package;
@@ -63,9 +66,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     document.addEventListener("click", this.handleDocumentClick, true);
 
+    // Subscribe to authentication state changes
+    this.authService.authState$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isAuthenticated) => {
+        this.isLoggedIn = isAuthenticated;
+        this.isAdmin = isAuthenticated ? this.authService.isAdmin() : false;
+      });
+
     // Subscribe to router events to track current route
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
       .subscribe((event: NavigationEnd) => {
         this.currentRoute = event.urlAfterRedirects;
       });
@@ -75,6 +89,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
     document.removeEventListener("click", this.handleDocumentClick, true);
     document.body.classList.remove("mobile-menu-open");
   }
@@ -111,14 +127,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.mobileMenuOpen = false;
     this.authService.logout();
     this.router.navigate(["/login"]);
-  }
-
-  get isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
-  }
-
-  get isAdmin(): boolean {
-    return this.authService.isAdmin();
   }
 
   navigateToAdmin() {
