@@ -1,0 +1,159 @@
+/* Dashboard specific styles */
+.dashboard-container {
+  min-height: 100vh;
+}
+
+/* Chart containers */
+canvas {
+  max-width: 100%;
+  height: 100%;
+}
+
+/* Custom scrollbar for activity sections */
+.activity-scroll {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.activity-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.activity-scroll::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.activity-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 2px;
+}
+
+.activity-scroll::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .chart-container {
+    height: 250px;
+  }
+}
+
+/* Loading animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Card hover effects */
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Status badges */
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.status-delivered {
+  background-color: #d1fae5;
+  color: #059669;
+}
+
+.status-shipped {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+
+.status-canceled {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* Enhanced animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Stat card animations */
+.stat-card {
+  animation: slideInLeft 0.6s ease forwards;
+}
+
+.stat-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.stat-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.stat-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.stat-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.stat-card:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.stat-card:nth-child(6) {
+  animation-delay: 0.6s;
+}
+
+/* Icon animations */
+.stat-icon {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover .stat-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Chart fade-in */
+.chart-wrapper {
+  opacity: 0;
+  animation: fadeInUp 1s ease 0.8s forwards;
+}
+
+/* Metric value animations */
+.metric-value {
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.metric-value:hover {
+  color: #3b82f6;
+  transform: scale(1.05);
+}

@@ -1,1 +1,419 @@
-<p>dashboard works!</p>
+<div class="min-h-screen bg-gray-50 p-6">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex justify-center items-center h-64">
+    <div
+      class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"
+    ></div>
+  </div>
+
+  <!-- Error State -->
+  <div
+    *ngIf="error && !loading"
+    class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"
+  >
+    <div class="flex items-center">
+      <lucide-angular
+        [img]="Activity"
+        class="h-5 w-5 text-red-400 mr-3"
+      ></lucide-angular>
+      <p class="text-red-800">{{ error }}</p>
+    </div>
+    <button
+      (click)="loadDashboardData()"
+      class="mt-3 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+    >
+      Try Again
+    </button>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="dashboardStats && !loading" class="space-y-6">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+      <p class="text-gray-600">
+        Welcome back! Here's what's happening with your store.
+      </p>
+    </div>
+
+    <!-- Overview Cards -->
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8"
+    >
+      <!-- Total Books -->
+      <div
+        class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 card-hover stat-card"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Total Books</p>
+            <p class="text-2xl font-bold text-gray-900 metric-value">
+              {{ dashboardStats.overview.totalBooks }}
+            </p>
+          </div>
+          <div
+            class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center stat-icon"
+          >
+            <lucide-angular
+              [img]="BookOpen"
+              class="h-6 w-6 text-blue-600"
+            ></lucide-angular>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Users -->
+      <div
+        class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 card-hover stat-card"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Total Users</p>
+            <p class="text-2xl font-bold text-gray-900 metric-value">
+              {{ dashboardStats.overview.totalUsers }}
+            </p>
+          </div>
+          <div
+            class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center stat-icon"
+          >
+            <lucide-angular
+              [img]="Users"
+              class="h-6 w-6 text-green-600"
+            ></lucide-angular>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Authors -->
+      <div
+        class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 card-hover stat-card"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Authors</p>
+            <p class="text-2xl font-bold text-gray-900 metric-value">
+              {{ dashboardStats.overview.totalAuthors }}
+            </p>
+          </div>
+          <div
+            class="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center stat-icon"
+          >
+            <lucide-angular
+              [img]="PenTool"
+              class="h-6 w-6 text-purple-600"
+            ></lucide-angular>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Orders -->
+      <div
+        class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 card-hover stat-card"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Total Orders</p>
+            <p class="text-2xl font-bold text-gray-900 metric-value">
+              {{ dashboardStats.overview.totalOrders }}
+            </p>
+          </div>
+          <div
+            class="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center stat-icon"
+          >
+            <lucide-angular
+              [img]="ShoppingCart"
+              class="h-6 w-6 text-orange-600"
+            ></lucide-angular>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Revenue -->
+      <div
+        class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 card-hover stat-card"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Total Revenue</p>
+            <p class="text-2xl font-bold text-gray-900 metric-value">
+              {{ formatCurrency(dashboardStats.overview.totalRevenue) }}
+            </p>
+          </div>
+          <div
+            class="h-12 w-12 bg-emerald-100 rounded-lg flex items-center justify-center stat-icon"
+          >
+            <lucide-angular
+              [img]="DollarSign"
+              class="h-6 w-6 text-emerald-600"
+            ></lucide-angular>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pending Orders -->
+      <div
+        class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 card-hover stat-card"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Pending Orders</p>
+            <p class="text-2xl font-bold text-gray-900 metric-value">
+              {{ dashboardStats.overview.pendingOrders }}
+            </p>
+          </div>
+          <div
+            class="h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center stat-icon"
+          >
+            <lucide-angular
+              [img]="Clock"
+              class="h-6 w-6 text-yellow-600"
+            ></lucide-angular>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <!-- Monthly Revenue Chart -->
+      <div
+        class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 card-hover"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">Monthly Revenue</h3>
+          <lucide-angular
+            [img]="TrendingUp"
+            class="h-5 w-5 text-gray-400"
+          ></lucide-angular>
+        </div>
+        <div class="h-80 chart-wrapper">
+          <canvas #revenueChart></canvas>
+        </div>
+      </div>
+
+      <!-- Order Status Distribution -->
+      <div
+        class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 card-hover"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">Order Status</h3>
+          <lucide-angular
+            [img]="PieChart"
+            class="h-5 w-5 text-gray-400"
+          ></lucide-angular>
+        </div>
+        <div class="h-80 chart-wrapper">
+          <canvas #statusChart></canvas>
+        </div>
+      </div>
+
+      <!-- User Growth Chart -->
+      <div
+        class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 card-hover"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">User Growth</h3>
+          <lucide-angular
+            [img]="BarChart3"
+            class="h-5 w-5 text-gray-400"
+          ></lucide-angular>
+        </div>
+        <div class="h-80 chart-wrapper">
+          <canvas #userGrowthChart></canvas>
+        </div>
+      </div>
+
+      <!-- Payment Methods -->
+      <div
+        class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 card-hover"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">Payment Methods</h3>
+          <lucide-angular
+            [img]="DollarSign"
+            class="h-5 w-5 text-gray-400"
+          ></lucide-angular>
+        </div>
+        <div class="h-80 chart-wrapper">
+          <canvas #paymentMethodChart></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Performance Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <!-- Top Books -->
+      <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">Top Books</h3>
+          <lucide-angular
+            [img]="BookOpen"
+            class="h-5 w-5 text-gray-400"
+          ></lucide-angular>
+        </div>
+        <div class="space-y-4">
+          <div
+            *ngFor="let book of dashboardStats.charts.topBooks; let i = index"
+            class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+          >
+            <div class="flex items-center space-x-3">
+              <div
+                class="h-8 w-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium"
+              >
+                {{ i + 1 }}
+              </div>
+              <div>
+                <p class="font-medium text-gray-900">{{ book.title }}</p>
+                <p class="text-sm text-gray-500">{{ book.totalSold }} sold</p>
+              </div>
+            </div>
+            <p class="font-semibold text-gray-900">
+              {{ formatCurrency(book.revenue) }}
+            </p>
+          </div>
+          <div
+            *ngIf="dashboardStats.charts.topBooks.length === 0"
+            class="text-center py-8 text-gray-500"
+          >
+            No sales data available yet
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Authors -->
+      <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">Top Authors</h3>
+          <lucide-angular
+            [img]="PenTool"
+            class="h-5 w-5 text-gray-400"
+          ></lucide-angular>
+        </div>
+        <div class="space-y-4">
+          <div
+            *ngFor="
+              let author of dashboardStats.charts.topAuthors;
+              let i = index
+            "
+            class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+          >
+            <div class="flex items-center space-x-3">
+              <div
+                class="h-8 w-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-medium"
+              >
+                {{ i + 1 }}
+              </div>
+              <div>
+                <p class="font-medium text-gray-900">{{ author.authorName }}</p>
+                <p class="text-sm text-gray-500">
+                  {{ author.booksCount }} books
+                </p>
+              </div>
+            </div>
+            <p class="font-semibold text-gray-900">
+              {{ author.totalSold }} sold
+            </p>
+          </div>
+          <div
+            *ngIf="dashboardStats.charts.topAuthors.length === 0"
+            class="text-center py-8 text-gray-500"
+          >
+            No sales data available yet
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold text-gray-900">Recent Activity</h3>
+        <lucide-angular
+          [img]="Activity"
+          class="h-5 w-5 text-gray-400"
+        ></lucide-angular>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Recent Orders -->
+        <div>
+          <h4 class="font-medium text-gray-900 mb-4">Recent Orders</h4>
+          <div class="space-y-3">
+            <div
+              *ngFor="let order of dashboardStats.recentActivity.recentOrders"
+              class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+            >
+              <div>
+                <p class="font-medium text-gray-900">
+                  {{ formatCurrency(order.total) }}
+                </p>
+                <p class="text-sm text-gray-500">{{ order.status }}</p>
+              </div>
+              <span class="text-xs text-gray-400">{{
+                formatDate(order.createdAt)
+              }}</span>
+            </div>
+            <div
+              *ngIf="dashboardStats.recentActivity.recentOrders.length === 0"
+              class="text-center py-4 text-gray-500"
+            >
+              No recent orders
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Users -->
+        <div>
+          <h4 class="font-medium text-gray-900 mb-4">New Users</h4>
+          <div class="space-y-3">
+            <div
+              *ngFor="let user of dashboardStats.recentActivity.recentUsers"
+              class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+            >
+              <div>
+                <p class="font-medium text-gray-900">{{ user.username }}</p>
+                <p class="text-sm text-gray-500">{{ user.email }}</p>
+              </div>
+              <span class="text-xs text-gray-400">{{
+                formatDate(user.createdAt)
+              }}</span>
+            </div>
+            <div
+              *ngIf="dashboardStats.recentActivity.recentUsers.length === 0"
+              class="text-center py-4 text-gray-500"
+            >
+              No new users
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Books -->
+        <div>
+          <h4 class="font-medium text-gray-900 mb-4">New Books</h4>
+          <div class="space-y-3">
+            <div
+              *ngFor="let book of dashboardStats.recentActivity.recentBooks"
+              class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+            >
+              <div>
+                <p class="font-medium text-gray-900">{{ book.title }}</p>
+                <p class="text-sm text-gray-500">
+                  {{ formatCurrency(book.price) }}
+                </p>
+              </div>
+              <span class="text-xs text-gray-400">{{
+                formatDate(book.createdAt)
+              }}</span>
+            </div>
+            <div
+              *ngIf="dashboardStats.recentActivity.recentBooks.length === 0"
+              class="text-center py-4 text-gray-500"
+            >
+              No new books
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

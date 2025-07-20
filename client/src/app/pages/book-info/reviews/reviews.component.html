@@ -10,7 +10,7 @@
     <div class="text-center space-y-4">
       <div>
         <div class="text-6xl font-bold text-[var(--color-brand-primary)] mb-2">
-          {{ book.ratingAverage }}
+          {{ book.ratingAverage | number : "1.1-1" }}
         </div>
         <div class="flex justify-center items-center gap-1 mb-2">
           <ng-container *ngFor="let star of [1, 2, 3, 4, 5]; let i = index">
