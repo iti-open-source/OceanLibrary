@@ -7,6 +7,7 @@ import { DetailsComponent } from "./pages/book-info/details/details.component";
 import { ReviewsComponent } from "./pages/book-info/reviews/reviews.component";
 import { adminRoutes } from "./pages/admin/admin.routes";
 import { AdminGuard } from "./guards/admin.guard";
+import { GuestGuard } from "./guards/guest.guard";
 import { HomeComponent } from "./pages/home/home.component";
 import { CartComponent } from "./pages/cart/cart.component";
 import { BrowseComponent } from "./pages/browse/browse.component";
@@ -15,6 +16,7 @@ export const routes: Routes = [
   {
     path: "login",
     component: LoginComponent,
+    canActivate: [GuestGuard],
   },
   {
     path: "",
@@ -27,6 +29,7 @@ export const routes: Routes = [
   {
     path: "register",
     component: RegisterComponent,
+    canActivate: [GuestGuard],
   },
   {
     path: "cart",
