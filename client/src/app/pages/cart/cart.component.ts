@@ -2,10 +2,10 @@ import { Component, OnInit } from "@angular/core";
 import { CartService } from "../../services/cart.service";
 import { CommonModule } from "@angular/common";
 import { Route, Router, RouterLink } from "@angular/router";
-import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { OrdersService } from "../../services/orders.service";
 import { FormsModule } from "@angular/forms";
 import { AuthService } from "../../services/auth.service";
+import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 
 @Component({
   selector: "app-cart",
