@@ -11,7 +11,6 @@ const IFREAME_ID = Number(process.env.PAYMOB_IFRAME_ID!);
  * @returns URL to redirect or embed iframe
  */
 export async function generatePaymobPaymentLink(amountInEGP: number): Promise<string> {
-  try {
     const amountCents = (amountInEGP * 100).toString();
 
     // 1. Authentication
@@ -45,9 +44,4 @@ export async function generatePaymobPaymentLink(amountInEGP: number): Promise<st
     const iframeURL = `https://accept.paymob.com/api/acceptance/iframes/${IFREAME_ID}?payment_token=${paymentToken}`;
 
     return iframeURL;
-  } catch (error: any) {
-    const message = error.response?.data || error.message;
-    console.error("Paymob error:", message);
-    throw new Error(`Paymob error: ${JSON.stringify(message)}`);
-  }
 }

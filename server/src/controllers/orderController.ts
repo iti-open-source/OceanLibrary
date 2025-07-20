@@ -4,6 +4,7 @@ import cartModel from "../models/cartModel.js";
 import AppError from "../utils/appError.js";
 import { CustomRequest } from "../middlewares/auth.js";
 import mongoose from "mongoose";
+import { generatePaymobPaymentLink } from "../utils/payments/paymobSDK.js";
 
 /**
  * Place a new order
@@ -20,7 +21,8 @@ export const placeOrder = async (
 
   try {
     const { paymentMethod } = req.body;
-    let paymentStatus = "To be Shipped"; // Current payment status (pending for cod)
+    let paymentStatus = "pending"; // Current payment status (pending for cod)
+    let paymentLink: string | null = null;
     const userId = req.userId;
 
     // Start transaction
@@ -30,17 +32,9 @@ export const placeOrder = async (
     const validPayments = ["cash", "paymob"];
     if (!validPayments.includes(paymentMethod)) {
       // Abort transaction
-      await session.abortTransaction();
-      session.endSession();
-
       throw Error("Order failed, payment method is not allowed");
     }
 
-    // Verify paymob payment is successful
-    if (paymentMethod === "paymob") {
-      paymentStatus = "pendingPayment";
-      // Generate payment link
-    }
 
     // Get the current user's cart and fetch Books info from DB
     const cart: any = await cartModel
@@ -50,10 +44,6 @@ export const placeOrder = async (
 
     // Lets check if there is items in the cart
     if (!cart || cart.items.length === 0) {
-      // Abort transaction
-      await session.abortTransaction();
-      session.endSession();
-
       throw Error("Order failed, Cart is empty");
     }
 
@@ -67,9 +57,6 @@ export const placeOrder = async (
       // Check if book Exists and if stock still available
       if (!book || book.stock < item.quantity) {
         // Abort transaction
-        await session.abortTransaction();
-        session.endSession();
-
         throw Error(
           "We are sorry but 1 or more Book is no longer available, your order will be canceled and refunded"
         );
@@ -90,6 +77,16 @@ export const placeOrder = async (
       });
     }
 
+    // Verify paymob payment is successful
+    if (paymentMethod === "paymob") {
+      paymentStatus = "pendingPayment";
+      paymentLink = await generatePaymobPaymentLink(total);
+      if (!paymentLink) {
+        // Abort transaction
+        throw Error("Order failed, unable to generate payment link. Please try again later.");
+      }
+    }
+
     // Create the order in the database
     const order: any = await orderModel.create(
       [
@@ -100,6 +97,7 @@ export const placeOrder = async (
           status: "pending",
           paymentMethod,
           paymentStatus,
+          paymentLink
         },
       ],
       { session }
@@ -126,6 +124,7 @@ export const placeOrder = async (
       total: order.total,
       items: order.items,
       status: order.status,
+      ...(paymentLink && { paymentLink }),
     });
   } catch (error) {
     await session.abortTransaction();
@@ -202,6 +201,96 @@ export const viewOrderById = async (
       return next(new AppError("order not found", 404));
     }
     res.status(200).json({ order });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+/**
+ * Admin endpoints
+ * Get all orders placed by all users
+ */
+export const viewAllOrders = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    let { page, limit }: any = req.query;
+
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const [orders, totalOrders] = await Promise.all([
+      orderModel
+        .find()
+        .populate("userId", "name email") // populate user info if needed
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .select("-__v"),
+      orderModel.countDocuments(),
+    ]);
+
+    res.status(200).json({
+      orders,
+      currentPage: page,
+      totalPages: Math.ceil(totalOrders / limit),
+      totalOrders,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const updateOrderStatus = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { orderId } = req.params;
+    const { status, paymentStatus } = req.body;
+
+    const order = await orderModel.findById(orderId);
+
+    if (!order) {
+      res.status(404).json({ message: "Order not found" });
+      return;
+    }
+
+    if (status) order.status = status;
+    if (paymentStatus) order.paymentStatus = paymentStatus;
+
+    await order.save();
+
+    res.status(200).json({ message: "Order updated successfully", order });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const deleteOrder = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { orderId } = req.params;
+
+    const order = await orderModel.findByIdAndDelete(orderId);
+
+    if (!order) {
+      res.status(404).json({ message: "Order not found" });
+      return;
+    }
+
+    res.status(200).json({ message: "Order deleted successfully" });
   } catch (error) {
     next(error);
   }
