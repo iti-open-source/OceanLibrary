@@ -322,20 +322,33 @@ export const checkPaymobOrder = async (
     const userId = req.userId;
     const orderId = req.params.id;
 
-    // Get order from DB
+    // 1. Get order from DB
     const order = await orderModel.findOne({ _id: orderId, userId });
 
     if (!order) {
-      return next(new AppError("order not found", 404));
+      return next(new AppError("Order not found", 404));
     }
 
+    // 2. Check if it's a Paymob order with a paymentOrderId
     if (!order.paymentLink || !order.paymentOrderId) {
       return next(new AppError("Payment link not available", 400));
     }
 
-    let orderStatus = await isOrderPaid(order.paymentOrderId);
+    // 3. Check Paymob payment status
+    const isPaid = await isOrderPaid(order.paymentOrderId);
 
-    res.status(200).json({ orderStatus });  
+    // 4. If paid, update DB
+    if (isPaid && order.paymentStatus !== "paid") {
+      order.paymentStatus = "paid";
+      await order.save();
+      redisClient.flushAll(); // Invalidate cache if you're using it
+    }
+
+    res.status(200).json({
+      message: "Order payment status checked",
+      paid: isPaid,
+      paymentStatus: order.paymentStatus,
+    });
   } catch (error) {
     next(error);
   }
