@@ -3,7 +3,10 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 import { CustomRequest } from "../middlewares/auth.js";
-import { userServiceMail } from "../utils/email.js";
+import {
+  sendVerificationMail,
+  sendResetPasswordEmail,
+} from "../utils/email.js";
 import AppError from "../utils/appError.js";
 
 /**
@@ -118,6 +121,9 @@ export const updateUser = async (
     if (!user) {
       return next(new AppError("user not found", 404));
     }
+    if (updates["email"]) {
+      user.verified = false;
+    }
     Object.assign(user, updates);
     await user.save();
     res
@@ -194,21 +200,19 @@ export const requestVerification = async (
   const user = await userModel.findById(req.userId);
 
   try {
-    if (!user || user.verified === true) {
+    if (!user) {
       return next(new AppError("verification request failed", 401));
+    }
+    if (user.verified === true) {
+      return next(new AppError("user already verified", 400));
     }
     // send email with generated token
     const token = await user.createVerificationToken();
     const URL = `${req.protocol}://${req.get(
       "host"
-    )}/api/v1/users/verify/${token}`;
+    )}/api/v1/users/verify/confirm/${token}`;
 
-    await userServiceMail({
-      from: "info@mailtrap.club",
-      to: user.email,
-      subject: "Verify Email",
-      text: `${user.username}, verify your account here:\n${URL}`,
-    });
+    sendVerificationMail(user, URL);
     res.status(200).json({ status: "success", data: token });
   } catch (error) {
     if (user) {
@@ -278,12 +282,7 @@ export const forgetPassword = async (
       "host"
     )}/api/v1/users/resetPassword/${token}`;
 
-    await userServiceMail({
-      from: "info@mailtrap.club",
-      to: email,
-      subject: "Password Reset",
-      text: `${user.username}, reset your password here:\n${URL}`,
-    });
+    sendResetPasswordEmail(user, URL);
     res.status(200).json({ status: "success", data: token });
   } catch (error) {
     // reset user data if any failure occurs in the request
