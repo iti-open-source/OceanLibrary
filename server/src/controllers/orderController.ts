@@ -218,23 +218,30 @@ export const viewAllOrders = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    // Get userID
     let { page, limit }: any = req.query;
 
+    // Get number of page to display
     page = parseInt(page) || 1;
+
+    // Limit of orders per page
     limit = parseInt(limit) || 10;
+
+    // Offset skipper
     const skip = (page - 1) * limit;
 
+    // Get orders list based on page limit
     const [orders, totalOrders] = await Promise.all([
       orderModel
-        .find()
-        .populate("userId", "name email") // populate user info if needed
+        .find({  })
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
         .select("-__v"),
-      orderModel.countDocuments(),
+      orderModel.countDocuments({ _id: { $exists: true } }),
     ]);
 
+    // Return orders list to client
     res.status(200).json({
       orders,
       currentPage: page,
@@ -245,7 +252,6 @@ export const viewAllOrders = async (
     next(error);
   }
 };
-
 
 export const updateOrderStatus = async (
   req: CustomRequest,

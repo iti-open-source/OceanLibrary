@@ -50,7 +50,7 @@ export class OrdersService {
   /**
    * Admin: Update an order (status/paymentStatus)
    * @param orderId string
-   * @param updates object with fields to update
+   * @param updates object with fields to update {status: "shipped"}
    */
   adminUpdateOrder(orderId: string, updates: any): Observable<any> {
     return this.http.patch(

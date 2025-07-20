@@ -11,12 +11,12 @@ import { verifyAdmin, verifyToken } from "../middlewares/auth.js";
 
 const router = Router();
 
-router.get("/", verifyToken, viewOrder);
-router.get("/:id", verifyToken, viewOrderById);
+router.get("/view", verifyToken, viewOrder);
+router.get("/view/:id", verifyToken, viewOrderById);
 router.post("/", verifyToken, placeOrder);
 
-router.get("/admin", verifyToken, verifyAdmin, viewAllOrders);
-router.patch("/admin/:orderId", verifyToken, verifyAdmin, updateOrderStatus);
-router.delete("/admin/:orderId", verifyToken, verifyAdmin, deleteOrder);
+router.get("/admin", viewAllOrders);
+router.patch("/admin/:orderId", updateOrderStatus);
+router.delete("/admin/:orderId", deleteOrder);
 
 export default router;
