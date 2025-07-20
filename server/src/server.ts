@@ -94,6 +94,9 @@ io.on("connection", (socket) => {
   });
 });
 
+// export io for controllers
+export { io };
+
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

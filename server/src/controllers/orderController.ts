@@ -6,6 +6,7 @@ import { CustomRequest } from "../middlewares/auth.js";
 import mongoose from "mongoose";
 import { generatePaymobPaymentLink } from "../utils/payments/paymobSDK.js";
 import redisClient from "../utils/redisClient.js";
+import { io } from "../server.js";
 
 /**
  * Place a new order
@@ -119,6 +120,11 @@ export const placeOrder = async (
     // commit transaction
     await session.commitTransaction();
     session.endSession();
+
+    io.emit("new-order", {
+      orderId: order._id,
+      message: "new order placed",
+    });
 
     redisClient.flushAll();
     res.status(201).json({
