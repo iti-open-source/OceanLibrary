@@ -122,7 +122,7 @@ export class BooksService {
     const params = {
       search: searchTerm,
       limit: "6", // Reduce for better performance
-      fields: "title,authorName",
+      fields: "title,authorName,image",
     };
 
     const urlParams = new URLSearchParams();

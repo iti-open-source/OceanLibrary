@@ -1,30 +1,146 @@
-.search-container {
-  transition: all 0.3s ease-in-out;
+/* Navbar responsive styles */
+.nav-link {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease-in-out;
 }
 
-.search-input {
-  background-color: var(--color-background-medium);
-  transition: width 0.3s ease-in-out;
+.nav-link:focus,
+.nav-link:active {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
-.search-container:focus-within {
-  width: 75%;
-  max-width: 42rem;
+/* Active state indicator for navigation links */
+.nav-link.active {
+  color: var(--color-brand-primary) !important;
 }
 
-@media (max-width: 1024px) {
-  .search-container {
-    width: 100% !important;
-    max-width: 100% !important;
+.nav-link.active .nav-icon {
+  color: var(--color-brand-primary) !important;
+}
+
+.nav-link.active .nav-text {
+  color: var(--color-brand-primary) !important;
+  font-weight: 600;
+}
+
+/* Add a subtle indicator dot for active state */
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background-color: var(--color-brand-primary);
+  border-radius: 50%;
+}
+
+.nav-link {
+  position: relative;
+}
+
+/* Animation for profile menu */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
   }
-  .search-input {
-    font-size: 0.95rem;
-    padding: 0.5rem 0.5rem;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@media (max-width: 400px) {
-  .mobile-search-bar {
-    display: none !important;
+/* Animation for mobile menu slide down */
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out;
+}
+
+/* Improve hover states */
+.nav-link:hover {
+  transform: translateY(-1px);
+}
+
+/* Better focus states for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Hide default browser focus */
+*:focus {
+  outline: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .nav-link.active::after {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Smaller screens adjustments */
+  .nav-link {
+    padding: 0.5rem;
+  }
+}
+
+/* Mobile menu specific styles */
+.mobile-nav-link {
+  transition: all 0.2s ease-in-out;
+}
+
+.mobile-nav-link:hover {
+  transform: translateX(4px);
+}
+
+/* Prevent scroll when mobile menu is open */
+body.mobile-menu-open {
+  overflow: hidden;
+}
+
+/* Dark mode enhancements */
+.dark-mode .nav-link:hover {
+  color: var(--color-brand-primary);
+}
+
+/* Sticky navbar enhancements */
+nav.sticky {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Better focus states for accessibility without borders */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Ensure no default browser focus styles */
+*:focus {
+  outline: none;
 }

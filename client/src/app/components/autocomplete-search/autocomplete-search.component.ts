@@ -7,9 +7,10 @@ import {
   OnDestroy,
   ElementRef,
   ViewChild,
+  HostListener,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { LucideAngularModule, Search, Book, User } from "lucide-angular";
+import { LucideAngularModule, Search, Book } from "lucide-angular";
 import {
   Subject,
   debounceTime,
@@ -25,7 +26,8 @@ export interface AutocompleteOption {
   id: string;
   title: string;
   subtitle?: string;
-  type: "book" | "author";
+  type: "book";
+  image?: string;
 }
 
 @Component({
@@ -36,7 +38,8 @@ export interface AutocompleteOption {
 })
 export class AutocompleteSearchComponent implements OnInit, OnDestroy {
   @Input() placeholder: string =
-    "Search books and authors... (min 3 characters)";
+    "Search books by title or author... (min 3 characters)";
+  @Input() showCtrlKIndicator: boolean = true;
   @Output() searchSelected = new EventEmitter<string>();
   @Output() suggestionSelected = new EventEmitter<AutocompleteOption>();
 
@@ -47,6 +50,7 @@ export class AutocompleteSearchComponent implements OnInit, OnDestroy {
   showSuggestions = false;
   isLoading = false;
   highlightedIndex = -1;
+  isMac = false;
 
   private searchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
@@ -54,18 +58,36 @@ export class AutocompleteSearchComponent implements OnInit, OnDestroy {
   // Icons
   readonly Search = Search;
   readonly Book = Book;
-  readonly User = User;
 
   constructor(private booksService: BooksService) {}
 
   ngOnInit() {
     this.setupAutocomplete();
     this.setupClickOutside();
+
+    // Detect if user is on Mac
+    this.isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  @HostListener("window:keydown", ["$event"])
+  handleGlobalKeydown(event: KeyboardEvent) {
+    // Handle Ctrl+K (Cmd+K on Mac) to focus search
+    if ((event.ctrlKey || event.metaKey) && event.key === "k") {
+      event.preventDefault();
+      this.focusSearch();
+    }
+  }
+
+  focusSearch() {
+    if (this.searchInput) {
+      this.searchInput.nativeElement.focus();
+      this.searchInput.nativeElement.select();
+    }
   }
 
   private setupAutocomplete() {
@@ -98,9 +120,8 @@ export class AutocompleteSearchComponent implements OnInit, OnDestroy {
   private processSuggestions(books: BookInterface[]) {
     const suggestions: AutocompleteOption[] = [];
     const seenTitles = new Set<string>();
-    const seenAuthors = new Set<string>();
 
-    // Prioritize exact matches and popular items
+    // Add all unique books from the search results
     books.forEach((book) => {
       // Add book titles (prioritize unique titles)
       if (!seenTitles.has(book.title.toLowerCase())) {
@@ -109,34 +130,14 @@ export class AutocompleteSearchComponent implements OnInit, OnDestroy {
           title: book.title,
           subtitle: `by ${book.authorName}`,
           type: "book",
+          image: book.image,
         });
         seenTitles.add(book.title.toLowerCase());
       }
-
-      // Add unique authors (but fewer of them)
-      if (
-        book.authorName &&
-        !seenAuthors.has(book.authorName.toLowerCase()) &&
-        seenAuthors.size < 2
-      ) {
-        suggestions.push({
-          id: `author-${book.authorName}`,
-          title: book.authorName,
-          subtitle: "Author",
-          type: "author",
-        });
-        seenAuthors.add(book.authorName.toLowerCase());
-      }
     });
 
-    // Limit and prioritize books over authors
-    this.suggestions = suggestions
-      .sort((a, b) => {
-        if (a.type === "book" && b.type === "author") return -1;
-        if (a.type === "author" && b.type === "book") return 1;
-        return 0;
-      })
-      .slice(0, 5); // Reduced to 5 for cleaner UI
+    // Limit to 6 suggestions for cleaner UI
+    this.suggestions = suggestions.slice(0, 6);
   }
 
   private setupClickOutside() {
@@ -216,8 +217,8 @@ export class AutocompleteSearchComponent implements OnInit, OnDestroy {
     this.showSuggestions = false;
     this.highlightedIndex = -1;
 
+    // Only emit suggestionSelected, not searchSelected to avoid double navigation
     this.suggestionSelected.emit(suggestion);
-    this.searchSelected.emit(suggestion.title);
   }
 
   onSearch() {
@@ -226,13 +227,19 @@ export class AutocompleteSearchComponent implements OnInit, OnDestroy {
   }
 
   getIconForType(type: string) {
-    switch (type) {
-      case "book":
-        return this.Book;
-      case "author":
-        return this.User;
-      default:
-        return this.Search;
+    // Since we only have books now, always return the book icon
+    return this.Book;
+  }
+
+  onImageError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    const container = img.parentElement;
+    if (container) {
+      img.style.display = "none";
+      const fallback = container.querySelector(".fallback-icon") as HTMLElement;
+      if (fallback) {
+        fallback.style.display = "flex";
+      }
     }
   }
 }

@@ -168,16 +168,8 @@ export class BooksListComponent implements OnInit, OnDestroy {
   }
 
   onSuggestionSelected(suggestion: AutocompleteOption) {
-    // Handle different suggestion types
-    switch (suggestion.type) {
-      case "book":
-        // Navigate to book details or keep search term
-        this.searchTerm = suggestion.title;
-        break;
-      case "author":
-        this.searchTerm = suggestion.title;
-        break;
-    }
+    // Since autocomplete now only returns books, handle it accordingly
+    this.searchTerm = suggestion.title;
     this.currentPage = 1;
     this.loadBooks(1);
   }
