@@ -402,12 +402,15 @@ export const checkPaymobOrder = async (
 
 export const deletePendingPaymobOrders = async (): Promise<void> => {
   try {
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+
     const filter = {
       paymentMethod: "paymob",
       paymentStatus: "pending",
+      createdAt: { $lt: oneHourAgo }, // Only older than 1 hour
     };
 
-    // Get all matching orders (with items)
+    // Get all matching orders with items
     const orders = await orderModel.find(filter).select("items");
 
     for (const order of orders) {
@@ -423,13 +426,13 @@ export const deletePendingPaymobOrders = async (): Promise<void> => {
       }
     }
 
-    // After stock is restored, delete the orders
+    // Delete orders after restoring stock
     await orderModel.deleteMany(filter);
 
-    // Flush
+    // Flush redis cache
     redisClient.flushAll();
 
-    console.log(`[${new Date().toISOString()}] Deleted ${orders.length} Paymob pending orders and restored book stock.`);
+    console.log(`[${new Date().toISOString()}] Deleted ${orders.length} Paymob pending orders (older than 1 hour) and restored book stock.`);
   } catch (error) {
     console.error("Failed to clean up Paymob pending orders:", error);
   }
