@@ -1,0 +1,119 @@
+<!-- Order ID -->
+<td class="order-id-cell">
+  <span class="order-id">#{{ order._id.slice(-8).toUpperCase() }}</span>
+</td>
+
+<!-- Customer -->
+<td class="customer-cell">
+  <div class="customer-info">
+    <span class="customer-name">
+      {{ getCustomerName(order) }}
+    </span>
+    <span class="customer-email">{{ getCustomerEmail(order) }}</span>
+  </div>
+</td>
+
+<!-- Items -->
+<td class="items-cell">
+  <div class="items-info">
+    <span class="items-count">{{ getTotalItems(order.items) }} items</span>
+    <div class="items-preview" *ngIf="order.items.length > 0">
+      <span class="first-item">{{ order.items[0].title }}</span>
+      <span *ngIf="order.items.length > 1" class="more-items">
+        +{{ order.items.length - 1 }} more
+      </span>
+    </div>
+  </div>
+</td>
+
+<!-- Total -->
+<td class="total-cell">
+  <span class="order-total">{{ formatCurrency(order.total) }}</span>
+</td>
+
+<!-- Status -->
+<td class="status-cell">
+  <div class="status-dropdown">
+    <select
+      class="status-select"
+      [ngClass]="getStatusColor(order.status)"
+      [value]="order.status"
+      (change)="onStatusChange($event)"
+      [disabled]="actionLoading[order._id]"
+    >
+      <option value="pending">Pending</option>
+      <option value="on-the-way">On The Way</option>
+      <option value="shipped">Shipped</option>
+      <option value="delivered">Delivered</option>
+      <option value="canceled">Canceled</option>
+    </select>
+    <lucide-angular
+      *ngIf="actionLoading[order._id]"
+      [img]="Clock"
+      class="status-loading"
+    >
+    </lucide-angular>
+  </div>
+</td>
+
+<!-- Payment Status -->
+<td class="payment-cell">
+  <div class="payment-dropdown">
+    <select
+      class="payment-select"
+      [ngClass]="getPaymentStatusColor(order.paymentStatus)"
+      [value]="order.paymentStatus"
+      (change)="onPaymentStatusChange($event)"
+      [disabled]="actionLoading[order._id]"
+    >
+      <option value="pending">Pending</option>
+      <option value="paid">Paid</option>
+    </select>
+  </div>
+</td>
+
+<!-- Payment Method -->
+<td class="method-cell">
+  <div class="payment-method">
+    <lucide-angular
+      [img]="order.paymentMethod === 'cash' ? Banknote : CreditCard"
+      class="method-icon"
+    >
+    </lucide-angular>
+    <span class="method-text">
+      {{
+        order.paymentMethod === "cash" ? "Cash on Delivery" : "Online Payment"
+      }}
+    </span>
+  </div>
+</td>
+
+<!-- Date -->
+<td class="date-cell">
+  <span class="order-date">{{ formatDate(order.createdAt) }}</span>
+</td>
+
+<!-- Actions -->
+<td class="actions-cell">
+  <div class="actions-menu">
+    <button
+      class="action-button delete-button"
+      (click)="onDeleteOrder()"
+      [disabled]="actionLoading[order._id]"
+      title="Delete Order"
+    >
+      <lucide-angular
+        *ngIf="!actionLoading[order._id]"
+        [img]="Trash2"
+        class="action-icon"
+      >
+      </lucide-angular>
+      <lucide-angular
+        *ngIf="actionLoading[order._id]"
+        [img]="Clock"
+        class="action-icon loading"
+      >
+      </lucide-angular>
+    </button>
+  </div>
+</td>

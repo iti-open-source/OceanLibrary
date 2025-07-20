@@ -244,27 +244,49 @@ export const viewAllOrders = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    // Get userID
-    let { page, limit }: any = req.query;
+    // Get query parameters
+    const {
+      page: pageParam,
+      limit: limitParam,
+      status,
+      paymentStatus,
+      paymentMethod,
+    } = req.query;
 
     // Get number of page to display
-    page = parseInt(page) || 1;
+    const page = parseInt(pageParam as string) || 1;
 
     // Limit of orders per page
-    limit = parseInt(limit) || 10;
+    const limit = parseInt(limitParam as string) || 10;
 
     // Offset skipper
     const skip = (page - 1) * limit;
 
-    // Get orders list based on page limit
+    // Build filter query
+    const filterQuery: Record<string, string> = {};
+
+    if (status && typeof status === "string") {
+      filterQuery.status = status;
+    }
+
+    if (paymentStatus && typeof paymentStatus === "string") {
+      filterQuery.paymentStatus = paymentStatus;
+    }
+
+    if (paymentMethod && typeof paymentMethod === "string") {
+      filterQuery.paymentMethod = paymentMethod;
+    }
+
+    // Get orders list based on page limit and filters
     const [orders, totalOrders] = await Promise.all([
       orderModel
-        .find({})
+        .find(filterQuery)
+        .populate("userId", "username email")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
         .select("-__v"),
-      orderModel.countDocuments({ _id: { $exists: true } }),
+      orderModel.countDocuments(filterQuery),
     ]);
 
     // Return orders list to client

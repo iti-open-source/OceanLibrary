@@ -19,7 +19,12 @@ export const adminRoutes: Routes = [
         loadChildren: () =>
           import("./users/users.routes").then((m) => m.usersRoutes),
       },
-      // { path: "orders", title: "Admin | Orders", component: OrdersComponent}.
+      {
+        path: "orders",
+        title: "Admin | Orders",
+        loadChildren: () =>
+          import("./orders/orders.routes").then((m) => m.ordersRoutes),
+      },
       {
         path: "books",
         loadChildren: () =>

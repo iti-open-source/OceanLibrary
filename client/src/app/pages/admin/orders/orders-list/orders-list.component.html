@@ -1,0 +1,176 @@
+<div class="orders-container">
+  <!-- Header with filters -->
+  <div class="orders-header">
+    <div class="header-left">
+      <div class="orders-count">
+        <lucide-angular
+          [img]="ShoppingCart"
+          class="count-icon"
+        ></lucide-angular>
+        <span class="count-text">{{ totalOrders }} Total Orders</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="filter-group">
+        <label class="filter-label">Status:</label>
+        <select
+          class="filter-select"
+          [(ngModel)]="statusFilter"
+          (change)="onStatusFilterChange()"
+        >
+          <option value="all">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="on-the-way">On The Way</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="canceled">Canceled</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Payment:</label>
+        <select
+          class="filter-select"
+          [(ngModel)]="paymentStatusFilter"
+          (change)="onPaymentStatusFilterChange()"
+        >
+          <option value="all">All Payments</option>
+          <option value="pending">Pending</option>
+          <option value="paid">Paid</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Method:</label>
+        <select
+          class="filter-select"
+          [(ngModel)]="paymentMethodFilter"
+          (change)="onPaymentMethodFilterChange()"
+        >
+          <option value="all">All Methods</option>
+          <option value="cash">Cash on Delivery</option>
+          <option value="paymob">Online Payment</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Loading orders...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !loading" class="error-container">
+    <lucide-angular [img]="XCircle" class="error-icon"></lucide-angular>
+    <h3 class="error-title">Error Loading Orders</h3>
+    <p class="error-message">{{ error }}</p>
+    <button class="retry-button" (click)="loadOrders()">Try Again</button>
+  </div>
+
+  <!-- Empty state -->
+  <div
+    *ngIf="!loading && !error && orders.length === 0"
+    class="empty-container"
+  >
+    <lucide-angular [img]="ShoppingCart" class="empty-icon"></lucide-angular>
+    <h3 class="empty-title">No Orders Found</h3>
+    <p class="empty-message">No orders match your current filters.</p>
+  </div>
+
+  <!-- Orders table -->
+  <div
+    *ngIf="!loading && !error && orders.length > 0"
+    class="orders-table-container"
+  >
+    <div class="table-wrapper">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th>Method</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let order of orders; trackBy: trackByOrderId"
+            app-order-row
+            [order]="order"
+            [actionLoading]="actionLoading"
+            (statusChange)="onStatusChange($event.orderId, $event.event)"
+            (paymentStatusChange)="
+              onPaymentStatusChange($event.orderId, $event.event)
+            "
+            (deleteOrder)="deleteOrder($event)"
+          ></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container" *ngIf="totalPages > 1">
+      <div class="pagination-info">
+        Showing page {{ currentPage }} of {{ totalPages }} ({{ totalOrders }}
+        total orders)
+      </div>
+
+      <div class="pagination-controls">
+        <button
+          class="pagination-button"
+          (click)="previousPage()"
+          [disabled]="currentPage === 1"
+        >
+          <lucide-angular
+            [img]="ChevronLeft"
+            class="pagination-icon"
+          ></lucide-angular>
+          Previous
+        </button>
+
+        <div class="page-numbers">
+          <ng-container *ngFor="let page of getVisiblePageNumbers()">
+            <button
+              *ngIf="page !== 'ellipsis'"
+              class="page-number"
+              [ngClass]="{ active: currentPage === page }"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+            <span *ngIf="page === 'ellipsis'" class="page-ellipsis"> ... </span>
+          </ng-container>
+        </div>
+
+        <button
+          class="pagination-button"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+        >
+          Next
+          <lucide-angular
+            [img]="ChevronRight"
+            class="pagination-icon"
+          ></lucide-angular>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Error Modal -->
+<app-error-modal
+  *ngIf="showErrorModal"
+  [title]="errorModalTitle"
+  [message]="errorModalMessage"
+  (close)="closeErrorModal()"
+>
+</app-error-modal>

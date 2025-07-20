@@ -1,28 +1,28 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { AuthService } from './auth.service';
-import { Observable } from 'rxjs';
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { AuthService } from "./auth.service";
+import { Observable } from "rxjs";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class OrdersService {
   //API
   private endPoint: string = "http://localhost:3000/api/v1/orders";
 
-  constructor(private http: HttpClient, private auth: AuthService) { }
+  constructor(private http: HttpClient, private auth: AuthService) {}
 
   private getClient(): string[] {
     const JWT_Token = this.auth.isLoggedIn() ? this.auth.getToken() : null;
-    const clientHeader: string[] = ["Authorization", `Bearer ${JWT_Token}`]
+    const clientHeader: string[] = ["Authorization", `Bearer ${JWT_Token}`];
     return clientHeader;
   }
 
   /**
- * Place an order
- * @param paymentMethod 'cash' | 'paymob'
- * @returns Observable with order data
- */
+   * Place an order
+   * @param paymentMethod 'cash' | 'paymob'
+   * @returns Observable with order data
+   */
   placeOrder(paymentMethod: string): Observable<any> {
     const client: string[] = this.getClient();
     return this.http.post(
@@ -35,7 +35,6 @@ export class OrdersService {
       }
     );
   }
-
 
   getUserOrders(page: number = 1): Observable<OrdersResponse> {
     const client: string[] = this.getClient();
@@ -50,11 +49,29 @@ export class OrdersService {
    * Admin: View all orders
    * @param page number
    * @param limit number
+   * @param filters object with filter criteria
    */
-  adminViewAllOrders(page = 1, limit = 10): Observable<any> {
-    return this.http.get(
-      `${this.endPoint}/admin?page=${page}&limit=${limit}`
-    );
+  adminViewAllOrders(page = 1, limit = 10, filters: any = {}): Observable<any> {
+    const client: string[] = this.getClient();
+
+    // Build query parameters
+    let queryParams = `page=${page}&limit=${limit}`;
+
+    if (filters.status) {
+      queryParams += `&status=${filters.status}`;
+    }
+    if (filters.paymentStatus) {
+      queryParams += `&paymentStatus=${filters.paymentStatus}`;
+    }
+    if (filters.paymentMethod) {
+      queryParams += `&paymentMethod=${filters.paymentMethod}`;
+    }
+
+    return this.http.get(`${this.endPoint}/admin?${queryParams}`, {
+      headers: {
+        [client[0]]: client[1],
+      },
+    });
   }
 
   /**
@@ -63,10 +80,12 @@ export class OrdersService {
    * @param updates object with fields to update {status: "shipped"}
    */
   adminUpdateOrder(orderId: string, updates: any): Observable<any> {
-    return this.http.patch(
-      `${this.endPoint}/admin/${orderId}`,
-      updates
-    );
+    const client: string[] = this.getClient();
+    return this.http.patch(`${this.endPoint}/admin/${orderId}`, updates, {
+      headers: {
+        [client[0]]: client[1],
+      },
+    });
   }
 
   /**
@@ -74,12 +93,14 @@ export class OrdersService {
    * @param orderId string
    */
   adminDeleteOrder(orderId: string): Observable<any> {
-    return this.http.delete(
-      `${this.endPoint}/admin/${orderId}`
-    );
+    const client: string[] = this.getClient();
+    return this.http.delete(`${this.endPoint}/admin/${orderId}`, {
+      headers: {
+        [client[0]]: client[1],
+      },
+    });
   }
 }
-
 
 interface OrderItem {
   bookId: string;
@@ -89,7 +110,7 @@ interface OrderItem {
   price: number;
 }
 
- interface Order {
+interface Order {
   _id: string;
   userId: string;
   items: OrderItem[];
@@ -102,7 +123,7 @@ interface OrderItem {
   updatedAt: string;
 }
 
- interface OrdersResponse {
+interface OrdersResponse {
   orders: Order[];
   currentPage: number;
   totalPages: number;
