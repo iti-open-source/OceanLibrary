@@ -4,7 +4,7 @@ import cartModel from "../models/cartModel.js";
 import AppError from "../utils/appError.js";
 import { CustomRequest } from "../middlewares/auth.js";
 import mongoose from "mongoose";
-import { generatePaymobPaymentLink } from "../utils/payments/paymobSDK.js";
+import { generatePaymobPaymentLink, isOrderPaid } from "../utils/payments/paymobSDK.js";
 import redisClient from "../utils/redisClient.js";
 import { io } from "../server.js";
 
@@ -25,6 +25,7 @@ export const placeOrder = async (
     const { paymentMethod } = req.body;
     let paymentStatus = "pending"; // Current payment status (pending for cod)
     let paymentLink: string | null = null;
+    let paymentOrderId: string | null = null;
     const userId = req.userId;
 
     // Start transaction
@@ -81,13 +82,15 @@ export const placeOrder = async (
     // Verify paymob payment is successful
     if (paymentMethod === "paymob") {
       paymentStatus = "pending";
-      paymentLink = await generatePaymobPaymentLink(total);
-      if (!paymentLink) {
+      let paymob: any = await generatePaymobPaymentLink(total);
+      if (!paymob.iframeURL) {
         // Abort transaction
         throw Error(
           "Order failed, unable to generate payment link. Please try again later."
         );
       }
+      paymentOrderId = paymob.orderId;
+      paymentLink = paymob.iframeURL;
     }
 
     // Create the order in the database
@@ -101,6 +104,7 @@ export const placeOrder = async (
           paymentMethod,
           paymentStatus,
           paymentLink,
+          paymentOrderId,
         },
       ],
       { session }
@@ -303,6 +307,35 @@ export const deleteOrder = async (
     }
     redisClient.flushAll();
     res.status(200).json({ message: "Order deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const checkPaymobOrder = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId = req.userId;
+    const orderId = req.params.id;
+
+    // Get order from DB
+    const order = await orderModel.findOne({ _id: orderId, userId });
+
+    if (!order) {
+      return next(new AppError("order not found", 404));
+    }
+
+    if (!order.paymentLink || !order.paymentOrderId) {
+      return next(new AppError("Payment link not available", 400));
+    }
+
+    let orderStatus = await isOrderPaid(order.paymentOrderId);
+
+    res.status(200).json({ orderStatus });  
   } catch (error) {
     next(error);
   }

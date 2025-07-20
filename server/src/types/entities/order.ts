@@ -21,6 +21,7 @@ export interface Order {
   paymentMethod: PaymentMethod;
   paymentStatus?: PaymentStatus;
   paymentLink?: string;
+  paymentOrderId?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

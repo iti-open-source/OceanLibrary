@@ -64,6 +64,11 @@ const orderSchema = new mongoose.Schema<Order>(
       default: "",
       required: false,
     },
+    paymentOrderId: {
+      type: String,
+      default: "",
+      required: false,
+    },
   },
   { timestamps: true }
 );

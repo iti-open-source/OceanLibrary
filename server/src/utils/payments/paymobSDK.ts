@@ -71,7 +71,7 @@ export async function generatePaymobPaymentLink(amountInEGP: number): Promise<Ob
  * @param orderId - The Paymob order ID to check
  * @returns boolean indicating whether the order is paid
  */
-export async function isOrderPaid(orderId: number): Promise<boolean> {
+export async function isOrderPaid(orderId: string): Promise<boolean> {
     // 1. Authenticate and get token
     const authRes = await axios.post("https://accept.paymob.com/api/auth/tokens", {
       api_key: API_KEY,
