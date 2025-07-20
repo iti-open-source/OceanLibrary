@@ -343,17 +343,70 @@ export const getUsers = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const { page = 1, limit = 10 } = req.params;
+  const {
+    page = 1,
+    limit = 10,
+    search = "",
+    role = "all",
+    status = "all",
+  } = req.query;
 
   try {
-    const skip = parseInt(limit as string) * (parseInt(page as string) - 1);
+    const pageNum = parseInt(page as string);
+    const limitNum = parseInt(limit as string);
+    const skip = limitNum * (pageNum - 1);
+
+    // Build query filter
+    const filter: Record<string, unknown> = {};
+
+    // Search filter (username, email, phone)
+    if (search && search !== "") {
+      const searchRegex = new RegExp(search as string, "i");
+      filter.$or = [
+        { username: searchRegex },
+        { email: searchRegex },
+        { phone: searchRegex },
+      ];
+    }
+
+    // Role filter
+    if (role && role !== "all") {
+      filter.role = role;
+    }
+
+    // Status filter
+    if (status && status !== "all") {
+      if (status === "active") {
+        filter.active = true;
+      } else if (status === "banned") {
+        filter.active = false;
+      }
+    }
+
+    // Get total count for pagination (with filters applied)
+    const totalUsers = await userModel.countDocuments(filter);
 
     const users = await userModel
-      .find()
-      .limit(parseInt(limit as string))
-      .skip(skip);
+      .find(filter)
+      .select("-password -passwordResetToken -verificationToken") // Exclude sensitive fields
+      .limit(limitNum)
+      .skip(skip)
+      .sort({ createdAt: -1 }); // Sort by newest first
 
-    res.status(200).json({ status: "success", data: users });
+    const totalPages = Math.ceil(totalUsers / limitNum);
+
+    res.status(200).json({
+      status: "success",
+      data: users,
+      pagination: {
+        currentPage: pageNum,
+        totalPages,
+        totalUsers,
+        usersPerPage: limitNum,
+        hasNextPage: pageNum < totalPages,
+        hasPrevPage: pageNum > 1,
+      },
+    });
   } catch (error) {
     next(error);
   }
@@ -361,7 +414,7 @@ export const getUsers = async (
 
 /**
  * @route PATCH /api/v1/users/promote/:id
- * @desc admin promotes user to admin
+ * @desc super-admin promotes user to admin
  * @access Private
  */
 export const promoteUser = async (
@@ -373,13 +426,29 @@ export const promoteUser = async (
 
   try {
     const user = await userModel.findById(id);
-    if (!user || user.role === "admin") {
-      return next(new AppError("promotion failed", 400));
+    if (!user) {
+      return next(new AppError("user not found", 404));
     }
-    await user.updateOne({ role: "admin" });
-    res
-      .status(200)
-      .json({ status: "success", message: "user promoted to admin" });
+
+    // Prevent self-modification
+    if (user.id === req.userId) {
+      return next(new AppError("cannot modify your own role", 400));
+    }
+
+    // Super-admin can promote users to admin, but cannot promote admins to super-admin
+    if (user.role === "user") {
+      await user.updateOne({ role: "admin" });
+      res
+        .status(200)
+        .json({
+          status: "success",
+          message: "user promoted to admin successfully",
+        });
+    } else if (user.role === "admin") {
+      return next(new AppError("user is already an admin", 400));
+    } else {
+      return next(new AppError("cannot promote super-admin users", 400));
+    }
   } catch (error) {
     next(error);
   }
@@ -387,7 +456,7 @@ export const promoteUser = async (
 
 /**
  * @route PATCH /api/v1/users/demote/:id
- * @desc super-admin demotes user from admin to user
+ * @desc super-admin demotes admin to user
  * @access Private
  */
 export const demoteUser = async (
@@ -399,13 +468,29 @@ export const demoteUser = async (
 
   try {
     const user = await userModel.findById(id);
-    if (!user || user.role === "user") {
-      return next(new AppError("demotion failed", 400));
+    if (!user) {
+      return next(new AppError("user not found", 404));
     }
-    await user.updateOne({ role: "user" });
-    res
-      .status(200)
-      .json({ status: "success", message: "user demoted to default role" });
+
+    // Prevent self-demotion
+    if (user.id === req.userId) {
+      return next(new AppError("cannot modify your own role", 400));
+    }
+
+    // Super-admin can demote admins to user, but cannot demote users further
+    if (user.role === "admin") {
+      await user.updateOne({ role: "user" });
+      res
+        .status(200)
+        .json({
+          status: "success",
+          message: "admin demoted to user successfully",
+        });
+    } else if (user.role === "user") {
+      return next(new AppError("user is already a regular user", 400));
+    } else {
+      return next(new AppError("cannot demote super-admin users", 400));
+    }
   } catch (error) {
     next(error);
   }
@@ -440,6 +525,53 @@ export const banUser = async (
     res
       .status(200)
       .json({ status: "success", message: "user removed successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @route PATCH /api/v1/users/unban/:id
+ * @desc admin unbans specific user
+ * @access Private
+ */
+export const unbanUser = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const { id } = req.params;
+
+  try {
+    const user = await userModel.findById(id);
+    if (!user) {
+      return next(new AppError("user not found", 404));
+    }
+
+    // Check if user is already active
+    if (user.active === true) {
+      return next(new AppError("user is not banned", 400));
+    }
+
+    // Prevent self-modification
+    if (user.id === req.userId) {
+      return next(new AppError("cannot modify your own status", 400));
+    }
+
+    // Check permissions
+    if (user.role === "admin" && req.userRole === "admin") {
+      return next(
+        new AppError("you do not have the privileges for this process", 401)
+      );
+    }
+    if (user.role === "super-admin") {
+      return next(new AppError("cannot unban a super-admin", 401));
+    }
+
+    await user.updateOne({ active: true });
+    res
+      .status(200)
+      .json({ status: "success", message: "user unbanned successfully" });
   } catch (error) {
     next(error);
   }

@@ -1,7 +1,6 @@
 import { Routes } from "@angular/router";
 import { AdminPageComponent } from "./admin-page/admin-page.component";
 import { DashboardComponent } from "./dashboard/dashboard.component";
-import { UsersComponent } from "./users/users.component";
 
 export const adminRoutes: Routes = [
   {
@@ -14,7 +13,12 @@ export const adminRoutes: Routes = [
         title: "Admin | Dashboard",
         component: DashboardComponent,
       },
-      { path: "users", title: "Admin | Users", component: UsersComponent },
+      {
+        path: "users",
+        title: "Admin | Users",
+        loadChildren: () =>
+          import("./users/users.routes").then((m) => m.usersRoutes),
+      },
       // { path: "orders", title: "Admin | Orders", component: OrdersComponent}.
       {
         path: "books",

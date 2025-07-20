@@ -11,8 +11,12 @@ export class AdminGuard implements CanActivate {
     return this.auth.isAdmin();
   }
 
+  private isSuperAdmin() {
+    return this.auth.isSuperAdmin();
+  }
+
   canActivate(): boolean {
-    if (this.isAdmin()) {
+    if (this.isAdmin() || this.isSuperAdmin()) {
       return true;
     }
     this.router.navigate(["/"]);
