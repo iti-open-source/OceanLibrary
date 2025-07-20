@@ -80,3 +80,27 @@ input::placeholder {
 .font-brand {
   font-family: var(--font-primary);
 }
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 12px;
+  background: var(--color-background-light);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-background-dark);
+  border-radius: 8px;
+  border: 2px solid var(--color-background-light);
+  transition: background 0.3s;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-primary);
+}
+::-webkit-scrollbar-corner {
+  background: var(--color-background-light);
+}
+
+/* Firefox */
+html {
+  scrollbar-color: var(--color-background-dark) var(--color-background-light);
+  scrollbar-width: thin;
+}
