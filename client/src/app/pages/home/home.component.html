@@ -301,124 +301,148 @@
   </div>
 </section>
 
-<!-- Recommendation -->
+<!--Recommendations, Trending Series and News Section -->
 <section class="px-8 mb-16">
-  <div class="flex items-center justify-between mb-8">
-    <h3 class="font-primary text-2xl text-heading">Recommendations for you</h3>
-    <a href="#" class="font-secondary text-sm text-link hover:underline"
-      >View all</a
-    >
-  </div>
+  <div class="flex flex-col lg:flex-row gap-8">
+    <!-- Left Column - Recommendations + Trending Series -->
+    <div class="flex-1">
+      <!-- Recommendations Section -->
+      <div class="mb-12">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="font-primary text-2xl text-heading">Recommendations</h3>
+          <a href="#" class="font-secondary text-sm text-link hover:underline"
+            >View all</a
+          >
+        </div>
 
-  <div
-    *ngIf="recommendationBooks?.length"
-    class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8"
-  >
-    <ng-container *ngFor="let book of recommendationBooks">
-      <a
-        [routerLink]="['/book-info', book._id]"
-        class="group text-center cursor-pointer transition-all hover:-translate-y-1"
+        <div
+          *ngIf="recommendationBooks?.length"
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6"
+        >
+          <ng-container
+            *ngFor="let book of recommendationBooks | slice : 0 : 4"
+          >
+            <a
+              [routerLink]="['/book-info', book._id]"
+              class="group text-center cursor-pointer transition-all hover:-translate-y-1"
+            >
+              <div class="relative mb-3 mx-auto w-full">
+                <div
+                  class="aspect-[2/3] overflow-hidden rounded-lg shadow-md group-hover:shadow-lg transition-shadow"
+                >
+                  <img
+                    [src]="book.image"
+                    [alt]="book.title"
+                    class="w-full h-full object-cover transform transition duration-300 group-hover:scale-105"
+                  />
+                </div>
+              </div>
+              <h4
+                class="font-primary text-lg text-heading group-hover:text-link line-clamp-1"
+              >
+                {{ book.title }}
+              </h4>
+              <p class="font-secondary text-sm text-muted mt-1 line-clamp-1">
+                {{ book.authorName }}
+              </p>
+            </a>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Trending Series Section -->
+      <div>
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="font-primary text-2xl text-heading">
+            Trending Series Collection
+          </h3>
+          <a href="#" class="font-secondary text-sm text-link hover:underline"
+            >More</a
+          >
+        </div>
+
+        <div
+          *ngIf="trendingSeriesBooks?.length"
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6"
+        >
+          <ng-container
+            *ngFor="let book of trendingSeriesBooks | slice : 0 : 4"
+          >
+            <a
+              [routerLink]="['/book-info', book._id]"
+              class="group text-center cursor-pointer transition-all hover:-translate-y-1"
+            >
+              <div class="relative mb-3 mx-auto w-full">
+                <div
+                  class="aspect-[2/3] overflow-hidden rounded-lg shadow-md group-hover:shadow-lg transition-shadow"
+                >
+                  <img
+                    [src]="book.image"
+                    [alt]="book.title"
+                    class="w-full h-full object-cover transform transition duration-300 group-hover:scale-105"
+                  />
+                </div>
+              </div>
+              <h4
+                class="font-primary text-lg text-heading group-hover:text-link line-clamp-1"
+              >
+                {{ book.title }}
+              </h4>
+              <p class="font-secondary text-sm text-muted mt-1 line-clamp-1">
+                {{ book.authorName }}
+              </p>
+            </a>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column - News & Interviews -->
+    <div class="lg:w-1/3">
+      <div
+        class="bg-background-medium p-6 rounded-lg border border-border sticky top-4"
       >
-        <div class="relative mb-4 mx-auto w-full max-w-[180px]">
+        <h3 class="font-primary text-2xl text-heading mb-4">
+          News & Interviews
+        </h3>
+
+        <div class="space-y-6">
+          <!-- Featured Articles -->
           <div
-            class="aspect-[2/3] overflow-hidden rounded-lg shadow-md group-hover:shadow-lg transition-shadow duration-300"
+            *ngFor="let book of recommendationBooks | slice : 0 : 1"
+            class="pb-4 border-b border-border last:border-0"
           >
             <img
               [src]="book.image"
               [alt]="book.title"
-              class="w-full h-full object-cover transform transition duration-500 group-hover:scale-105"
+              class="w-fulls object-contain transform transition duration-300 group-hover:scale-105"
             />
+            <h4 class="font-primary text-lg text-heading">{{ book.title }}</h4>
+            <p class="font-secondary text-sm text-muted mt-1">
+              {{ book.authorName }}
+            </p>
           </div>
-          <div
-            class="absolute -top-2 -right-2 bg-brand-primary text-on-dark text-xs font-bold px-2 py-1 rounded-full"
-          >
-            {{ book.ratingAverage | number : "1.1-1" }}
-          </div>
-        </div>
-        <h4
-          class="font-primary text-lg text-heading group-hover:text-link transition-colors"
-        >
-          {{ book.title }}
-        </h4>
-        <p class="font-secondary text-sm text-muted mt-1">
-          {{ book.authorName }}
-        </p>
-        <p class="font-secondary text-base text-brand-primary font-medium mt-2">
-          {{ book.price | currency }}
-        </p>
-        <div class="flex justify-center mt-2 text-yellow-500">
-          <ng-container *ngFor="let star of [].constructor(5); let i = index">
-            <span *ngIf="i < book.ratingAverage">★</span>
-            <span *ngIf="i >= book.ratingAverage" class="text-background-dark"
-              >☆</span
-            >
-          </ng-container>
-        </div>
-        <p class="font-secondary text-xs text-muted mt-1">
-          {{ book.ratingQuantity | number }} ratings
-        </p>
-      </a>
-    </ng-container>
-  </div>
-</section>
 
-<!-- Trending Series Collection -->
-<section class="px-8 mb-16">
-  <div class="flex items-center justify-between mb-8">
-    <h3 class="font-primary text-2xl text-heading">Trending Series</h3>
-    <a href="#" class="font-secondary text-sm text-link hover:underline"
-      >View all collections</a
-    >
-  </div>
-
-  <div
-    *ngIf="trendingSeriesBooks?.length"
-    class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8"
-  >
-    <ng-container *ngFor="let book of trendingSeriesBooks">
-      <a
-        [routerLink]="['/book-info', book._id]"
-        class="group text-center cursor-pointer transition-all hover:-translate-y-1"
-      >
-        <div class="relative mb-4 mx-auto w-full max-w-[180px]">
-          <div
-            class="aspect-[2/3] overflow-hidden rounded-lg shadow-md group-hover:shadow-lg transition-shadow duration-300"
-          >
-            <img
-              [src]="book.image"
-              [alt]="book.title"
-              class="w-full h-full object-cover transform transition duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div
-            class="absolute -top-2 -right-2 bg-brand-primary text-on-dark text-xs font-bold px-2 py-1 rounded-full"
-          >
-            {{ book.ratingAverage | number : "1.1-1" }}
-          </div>
-        </div>
-        <h4
-          class="font-primary text-lg text-heading group-hover:text-link transition-colors"
-        >
-          {{ book.title }}
-        </h4>
-        <p class="font-secondary text-sm text-muted mt-1">
-          {{ book.authorName }}
-        </p>
-        <p class="font-secondary text-base text-brand-primary font-medium mt-2">
-          {{ book.price | currency }}
-        </p>
-        <div class="flex justify-center mt-2 text-yellow-500">
-          <ng-container *ngFor="let star of [].constructor(5); let i = index">
-            <span *ngIf="i < book.ratingAverage">★</span>
-            <span *ngIf="i >= book.ratingAverage" class="text-background-dark"
-              >☆</span
+          <!-- Special Feature -->
+          <div class="mt-4">
+            <h4 class="font-primary text-lg text-heading">
+              How Gourango lost his O
+            </h4>
+            <p class="font-secondary text-sm text-muted mt-1">
+              By Christian Nair
+            </p>
+            <p class="font-secondary text-sm text-default mt-2 line-clamp-3">
+              Home been reading articles of Mr. Sanjay Olaus.Sen Advocated for a
+              while.He usually packs legal development in july associates.
+            </p>
+            <a
+              href="#"
+              class="font-secondary text-sm text-link hover:underline mt-2 inline-block"
+              >Read more</a
             >
-          </ng-container>
+          </div>
         </div>
-        <p class="font-secondary text-xs text-muted mt-1">
-          {{ book.ratingQuantity | number }} ratings
-        </p>
-      </a>
-    </ng-container>
+      </div>
+    </div>
   </div>
 </section>
