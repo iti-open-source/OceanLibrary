@@ -13,6 +13,8 @@ import {
   promoteUser,
   banUser,
   demoteUser,
+  unbanUser,
+  getCurrentUser,
 } from "../controllers/userController.js";
 import {
   loginUserSchema,
@@ -33,6 +35,7 @@ const router = Router();
 
 router.post("/login", zodValidator(loginUserSchema), loginLimiter, loginUser);
 router.post("/register", zodValidator(registerUserSchema), registerUser);
+router.get("/profile", verifyToken, getCurrentUser);
 router.patch(
   "/profile",
   zodValidator(updateUserSchema),
@@ -72,10 +75,17 @@ router.patch(
 // admin api
 router.get("/", verifyToken, verifyAdmin, getUsers);
 router.patch("/admin/ban/:id", verifyToken, verifyAdmin, banUser);
+router.patch("/admin/unban/:id", verifyToken, verifyAdmin, unbanUser);
 
 // super-admin api
 router.patch("/promote/:id", verifyToken, verifySuperAdmin, promoteUser);
 router.patch("/demote/:id", verifyToken, verifySuperAdmin, demoteUser);
 router.patch("/super-admin/ban/:id", verifyToken, verifySuperAdmin, banUser);
+router.patch(
+  "/super-admin/unban/:id",
+  verifyToken,
+  verifySuperAdmin,
+  unbanUser
+);
 
 export default router;

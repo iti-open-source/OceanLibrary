@@ -14,11 +14,12 @@ import { uploadImage } from "../middlewares/fileUpload.js";
 import { validateFormData } from "../middlewares/formDataValidator.js";
 import { processImageFile } from "../middlewares/imageProcessor.js";
 import { verifyAdmin, verifyToken } from "../middlewares/auth.js";
+import { cacheMiddleware } from "../middlewares/cache.js";
 
 const router = Router();
 
-router.get("/", getAllAuthors);
-router.get("/:id", getAuthorById);
+router.get("/", cacheMiddleware(300), getAllAuthors);
+router.get("/:id", cacheMiddleware(600), getAuthorById);
 router.post(
   "/",
   uploadImage.single("photo"),

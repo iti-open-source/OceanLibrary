@@ -1,0 +1,364 @@
+<div class="users-list-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p class="loading-text">Loading users...</p>
+    </div>
+  </div>
+
+  <!-- Filters and Search -->
+  <div class="filters-section">
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <lucide-angular
+          [img]="Search"
+          size="20"
+          class="search-icon"
+        ></lucide-angular>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchInput($event)"
+          placeholder="Search by username, email, or phone..."
+          class="search-input"
+        />
+      </div>
+    </div>
+
+    <div class="filter-controls">
+      <div class="filter-group">
+        <label for="roleFilter" class="filter-label">Role:</label>
+        <select
+          id="roleFilter"
+          [(ngModel)]="roleFilter"
+          (change)="onRoleFilterChange()"
+          class="filter-select"
+        >
+          <option value="all">All Roles</option>
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+          <option value="super-admin">Super Admin</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="statusFilter" class="filter-label">Status:</label>
+        <select
+          id="statusFilter"
+          [(ngModel)]="statusFilter"
+          (change)="onStatusFilterChange()"
+          class="filter-select"
+        >
+          <option value="all">All Status</option>
+          <option value="active">Active</option>
+          <option value="banned">Banned</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Users Table -->
+  <div class="table-container">
+    <div class="table-header">
+      <h2 class="table-title">
+        <lucide-angular
+          [img]="Users"
+          size="24"
+          class="table-icon"
+        ></lucide-angular>
+        Users ({{ totalUsers }})
+      </h2>
+    </div>
+
+    <!-- Desktop Table View -->
+    <div class="table-wrapper desktop-only">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Contact</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Verified</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users" class="user-row">
+            <td class="user-info">
+              <div class="user-details">
+                <h4 class="username">{{ user.username }}</h4>
+                <p class="user-id">ID: {{ user._id }}</p>
+              </div>
+            </td>
+            <td class="contact-info">
+              <div class="contact-details">
+                <p class="email">{{ user.email }}</p>
+                <p class="phone">{{ user.phone }}</p>
+              </div>
+            </td>
+            <td>
+              <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
+                <lucide-angular
+                  [img]="
+                    user.role === 'super-admin'
+                      ? ShieldCheck
+                      : user.role === 'admin'
+                      ? Shield
+                      : UserIcon
+                  "
+                  size="14"
+                ></lucide-angular>
+                {{ user.role }}
+              </span>
+            </td>
+            <td>
+              <span
+                class="status-badge"
+                [ngClass]="getStatusBadgeClass(user.active)"
+              >
+                <lucide-angular
+                  [img]="user.active ? CheckCircle : XCircle"
+                  size="14"
+                ></lucide-angular>
+                {{ user.active ? "Active" : "Banned" }}
+              </span>
+            </td>
+            <td>
+              <span
+                class="verified-badge"
+                [ngClass]="user.verified ? 'verified' : 'unverified'"
+              >
+                <lucide-angular
+                  [img]="user.verified ? CheckCircle : XCircle"
+                  size="14"
+                ></lucide-angular>
+                {{ user.verified ? "Yes" : "No" }}
+              </span>
+            </td>
+            <td class="actions-cell">
+              <div class="action-buttons">
+                <!-- Promote Button (Super Admin only) -->
+                <button
+                  *ngIf="canPromoteUser(user)"
+                  (click)="promoteUser(user._id)"
+                  [disabled]="actionLoading[user._id]"
+                  class="action-btn promote-btn"
+                  title="Promote to Admin"
+                >
+                  <lucide-angular [img]="UserPlus" size="16"></lucide-angular>
+                </button>
+
+                <!-- Demote Button (Super Admin only) -->
+                <button
+                  *ngIf="canDemoteUser(user)"
+                  (click)="demoteUser(user._id)"
+                  [disabled]="actionLoading[user._id]"
+                  class="action-btn demote-btn"
+                  title="Demote to User"
+                >
+                  <lucide-angular [img]="UserMinus" size="16"></lucide-angular>
+                </button>
+
+                <!-- Ban Button -->
+                <button
+                  *ngIf="canBanUser(user)"
+                  (click)="banUser(user._id)"
+                  [disabled]="actionLoading[user._id]"
+                  class="action-btn ban-btn"
+                  title="Ban User"
+                >
+                  <lucide-angular [img]="Ban" size="16"></lucide-angular>
+                </button>
+
+                <!-- Unban Button -->
+                <button
+                  *ngIf="canUnbanUser(user)"
+                  (click)="unbanUser(user._id)"
+                  [disabled]="actionLoading[user._id]"
+                  class="action-btn unban-btn"
+                  title="Unban User"
+                >
+                  <lucide-angular [img]="Unlock" size="16"></lucide-angular>
+                </button>
+
+                <!-- Loading spinner -->
+                <div *ngIf="actionLoading[user._id]" class="action-loading">
+                  <div class="mini-spinner"></div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Mobile Card View -->
+    <div class="mobile-cards mobile-only">
+      <div *ngFor="let user of users" class="user-card">
+        <div class="card-header">
+          <div class="user-main-info">
+            <h4 class="username">{{ user.username }}</h4>
+            <p class="user-id">{{ user._id }}</p>
+          </div>
+          <div class="badges">
+            <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
+              <lucide-angular
+                [img]="
+                  user.role === 'super-admin'
+                    ? ShieldCheck
+                    : user.role === 'admin'
+                    ? Shield
+                    : UserIcon
+                "
+                size="14"
+              ></lucide-angular>
+              {{ user.role }}
+            </span>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <div class="info-row">
+            <span class="label">Email:</span>
+            <span class="value">{{ user.email }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Phone:</span>
+            <span class="value">{{ user.phone }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Status:</span>
+            <span
+              class="status-badge"
+              [ngClass]="getStatusBadgeClass(user.active)"
+            >
+              <lucide-angular
+                [img]="user.active ? CheckCircle : XCircle"
+                size="14"
+              ></lucide-angular>
+              {{ user.active ? "Active" : "Banned" }}
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="label">Verified:</span>
+            <span
+              class="verified-badge"
+              [ngClass]="user.verified ? 'verified' : 'unverified'"
+            >
+              <lucide-angular
+                [img]="user.verified ? CheckCircle : XCircle"
+                size="14"
+              ></lucide-angular>
+              {{ user.verified ? "Yes" : "No" }}
+            </span>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button
+            *ngIf="canPromoteUser(user)"
+            (click)="promoteUser(user._id)"
+            [disabled]="actionLoading[user._id]"
+            class="action-btn promote-btn"
+          >
+            <lucide-angular [img]="UserPlus" size="16"></lucide-angular>
+            Promote
+          </button>
+
+          <button
+            *ngIf="canDemoteUser(user)"
+            (click)="demoteUser(user._id)"
+            [disabled]="actionLoading[user._id]"
+            class="action-btn demote-btn"
+          >
+            <lucide-angular [img]="UserMinus" size="16"></lucide-angular>
+            Demote
+          </button>
+
+          <button
+            *ngIf="canBanUser(user)"
+            (click)="banUser(user._id)"
+            [disabled]="actionLoading[user._id]"
+            class="action-btn ban-btn"
+          >
+            <lucide-angular [img]="Ban" size="16"></lucide-angular>
+            Ban
+          </button>
+
+          <button
+            *ngIf="canUnbanUser(user)"
+            (click)="unbanUser(user._id)"
+            [disabled]="actionLoading[user._id]"
+            class="action-btn unban-btn"
+          >
+            <lucide-angular [img]="Unlock" size="16"></lucide-angular>
+            Unban
+          </button>
+
+          <div *ngIf="actionLoading[user._id]" class="action-loading">
+            <div class="mini-spinner"></div>
+            Processing...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && users.length === 0" class="empty-state">
+      <lucide-angular
+        [img]="Users"
+        size="64"
+        class="empty-icon"
+      ></lucide-angular>
+      <h3>No users found</h3>
+      <p>No users match your current filters.</p>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="totalPages > 1" class="pagination-container">
+    <div class="pagination-info-extended">
+      <span class="users-count">
+        Showing {{ (currentPage - 1) * itemsPerPage + 1 }} -
+        {{ Math.min(currentPage * itemsPerPage, totalUsers) }} of
+        {{ totalUsers }} users
+      </span>
+    </div>
+    <div class="pagination">
+      <button
+        (click)="onPageChange(currentPage - 1)"
+        [disabled]="currentPage === 1"
+        class="pagination-btn"
+      >
+        <lucide-angular [img]="ChevronLeft" size="16"></lucide-angular>
+        Previous
+      </button>
+
+      <span class="pagination-info">
+        Page {{ currentPage }} of {{ totalPages }}
+      </span>
+
+      <button
+        (click)="onPageChange(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+        class="pagination-btn"
+      >
+        Next
+        <lucide-angular [img]="ChevronRight" size="16"></lucide-angular>
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Modal -->
+  <app-error-modal
+    [isVisible]="showErrorModal"
+    [title]="errorModalTitle"
+    [message]="errorModalMessage"
+    [showActionButton]="errorModalShowAction"
+    [actionButtonText]="errorModalActionText"
+    (close)="onErrorModalClose()"
+    (action)="onErrorModalAction()"
+  ></app-error-modal>
+</div>

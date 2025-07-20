@@ -1,12 +1,15 @@
 import { Component, OnInit } from "@angular/core";
 import { CartService } from "../../services/cart.service";
 import { CommonModule } from "@angular/common";
-import { RouterLink } from "@angular/router";
+import { Route, Router, RouterLink } from "@angular/router";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
+import { OrdersService } from "../../services/orders.service";
+import { FormsModule } from "@angular/forms";
+import { AuthService } from "../../services/auth.service";
 
 @Component({
   selector: "app-cart",
-  imports: [CommonModule, RouterLink, LoadingSpinnerComponent],
+  imports: [CommonModule, RouterLink, LoadingSpinnerComponent, FormsModule],
   templateUrl: "./cart.component.html",
   styleUrl: "./cart.component.css",
 })
@@ -16,8 +19,9 @@ export class CartComponent implements OnInit {
   totalAmount: number = 0;
   loading!: boolean;
   errorMessage: string = "";
+  selectedPaymentMethod: string = 'cash'; 
 
-  constructor(private cart: CartService) {}
+  constructor(private cart: CartService, private order: OrdersService, public auth: AuthService, public router: Router) {}
 
   ngOnInit(): void {
     this.loadCart();
@@ -70,6 +74,22 @@ export class CartComponent implements OnInit {
     this.cart.deleteItem(bookId).subscribe({
       next: (data: any) => {
         this.loadCart();
+      },
+      error: (error) => {
+        this.errorMessage =
+          error?.error?.message ??
+          "We're having trouble reaching the server. Please check your internet connection and try again shortly.";
+        this.loading = false;
+      },
+    });
+  }
+
+  placeOrder(method: string) {
+    this.loading = true;
+    this.order.placeOrder(method).subscribe({
+      next: (data: any) => {
+        alert(data.message);
+        this.loading = false;
       },
       error: (error) => {
         this.errorMessage =

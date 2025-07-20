@@ -76,7 +76,7 @@ export class LoginComponent implements OnInit {
 
             const userRole = this.auth.getUserRole();
 
-            if (userRole === "admin") {
+            if (this.auth.isAdmin() || this.auth.isSuperAdmin()) {
               this.router.navigate(["/admin"]);
             } else {
               this.router.navigate(["/"]);

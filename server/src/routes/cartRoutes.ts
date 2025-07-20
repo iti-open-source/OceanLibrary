@@ -15,11 +15,12 @@ import {
   modifyCartSchema,
 } from "../utils/validation/cartValidation.js";
 import { checkGuestId } from "../middlewares/guest.js";
+import { cacheMiddleware } from "../middlewares/cache.js";
 
 const router = Router();
 
 // Retrieve Guest or User cart
-router.get("/", checkGuestId, verifyToken, viewCart);
+router.get("/", checkGuestId, verifyToken, cacheMiddleware(300), viewCart);
 
 // Add new items into Guest or user cart
 router.post(

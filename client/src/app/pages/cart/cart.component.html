@@ -95,7 +95,7 @@
           <span>{{ totalAmount | currency }}</span>
         </div>
       </div>
-
+      @if (this.auth.isLoggedIn()){
       <h4 class="font-bold mb-3">Payment Method</h4>
       <div class="space-y-3 mb-6">
         <div class="payment-method-container">
@@ -103,9 +103,9 @@
             type="radio"
             id="cash"
             name="payment"
+            [(ngModel)]="selectedPaymentMethod"
             value="cash"
             class="payment-radio"
-            checked
           />
           <label for="cash" class="payment-label">
             <div class="checkmark">
@@ -126,6 +126,7 @@
             type="radio"
             id="card"
             name="payment"
+            [(ngModel)]="selectedPaymentMethod"
             value="card"
             class="payment-radio"
           />
@@ -140,77 +141,11 @@
             </div>
           </label>
         </div>
-
-        <!-- PayPal Payment Method -->
-        <div class="payment-method-container">
-          <input
-            type="radio"
-            id="paypal"
-            name="payment"
-            value="paypal"
-            class="payment-radio"
-          />
-          <label for="paypal" class="payment-label">
-            <div class="checkmark">
-              <i class="fas fa-check text-xs"></i>
-            </div>
-            <i class="fab fa-paypal text-2xl mr-3 text-muted"></i>
-            <div>
-              <div class="font-bold">PayPal</div>
-              <div class="text-sm text-muted">Pay with your PayPal account</div>
-            </div>
-          </label>
-        </div>
-
-        <!-- Mobile Wallet Payment Method -->
-        <div class="payment-method-container">
-          <input
-            type="radio"
-            id="mobile-wallet"
-            name="payment"
-            value="mobile-wallet"
-            class="payment-radio"
-          />
-          <label for="mobile-wallet" class="payment-label">
-            <div class="checkmark">
-              <i class="fas fa-check text-xs"></i>
-            </div>
-            <i class="fas fa-mobile-alt text-2xl mr-3 text-muted"></i>
-            <div>
-              <div class="font-bold">Mobile Wallet</div>
-              <div class="text-sm text-muted">
-                Pay with your mobile payment app
-              </div>
-            </div>
-          </label>
-        </div>
-
-        <!-- Kiosk Payment Method -->
-        <div class="payment-method-container">
-          <input
-            type="radio"
-            id="kiosk"
-            name="payment"
-            value="kiosk"
-            class="payment-radio"
-          />
-          <label for="kiosk" class="payment-label">
-            <div class="checkmark">
-              <i class="fas fa-check text-xs"></i>
-            </div>
-            <i class="fas fa-cash-register text-2xl mr-3 text-muted"></i>
-            <div>
-              <div class="font-bold">Kiosk</div>
-              <div class="text-sm text-muted">
-                Pay at a nearby payment kiosk
-              </div>
-            </div>
-          </label>
-        </div>
       </div>
 
       <button
         class="checkout-btn btn-primary w-full py-3 rounded-lg font-bold cursor-pointer"
+        (click)="placeOrder(selectedPaymentMethod)"
       >
         Proceed to Checkout
       </button>
@@ -218,6 +153,14 @@
       <div class="mt-4 text-sm text-muted text-center">
         <i class="fas fa-lock mr-1"></i> Secure checkout
       </div>
+      }@else {
+      <button
+        class="checkout-btn btn-primary w-full py-3 rounded-lg font-bold cursor-pointer"
+        (click)="router.navigate(['/login'])"
+      >
+        Login to Checkout
+      </button>
+      }
     </div>
   </div>
 </div>
