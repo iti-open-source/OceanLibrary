@@ -1,4 +1,12 @@
-import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   ReactiveFormsModule,
@@ -359,7 +367,7 @@ import { User as UserInterface } from "../../types/user.interface";
     `,
   ],
 })
-export class EditProfileModalComponent implements OnInit {
+export class EditProfileModalComponent implements OnInit, OnChanges {
   @Input() isVisible = false;
   @Input() user: UserInterface | null = null;
   @Output() close = new EventEmitter<void>();
@@ -397,6 +405,16 @@ export class EditProfileModalComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.populateForm();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes["user"] && this.user) {
+      this.populateForm();
+    }
+  }
+
+  private populateForm() {
     if (this.user) {
       this.profileForm.patchValue({
         username: this.user.username,
