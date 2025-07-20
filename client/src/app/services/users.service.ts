@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Observable, throwError } from "rxjs";
+import { catchError } from "rxjs/operators";
 import {
   User,
   GetUsersResponse,
@@ -62,6 +63,26 @@ export class UsersService {
   }
 
   /**
+   * Helper method to handle HTTP errors and redirect on authorization failures
+   * @param error - The HTTP error
+   * @returns Observable that throws the error or handles redirect
+   */
+  private handleError(error: any): Observable<never> {
+    // Check for authorization errors (401 Unauthorized, 403 Forbidden)
+    if (error.status === 401 || error.status === 403) {
+      console.warn(
+        "Authorization error detected, redirecting to homepage:",
+        error
+      );
+      // Redirect user to homepage after a short delay
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1000);
+    }
+    return throwError(() => error);
+  }
+
+  /**
    * Get all users with pagination and filtering
    * @param page - Page number (default: 1)
    * @param limit - Number of users per page (default: 10)
@@ -97,12 +118,14 @@ export class UsersService {
         params = params.set("status", status);
       }
 
-      return this.http.get<GetUsersResponse>(`${this.API_URL}`, {
-        headers,
-        params,
-      });
+      return this.http
+        .get<GetUsersResponse>(`${this.API_URL}`, {
+          headers,
+          params,
+        })
+        .pipe(catchError((error) => this.handleError(error)));
     } catch (error) {
-      return throwError(() => error);
+      return this.handleError(error);
     }
   }
 
@@ -122,9 +145,11 @@ export class UsersService {
         ? `${this.API_URL}/super-admin/ban/${userId}`
         : `${this.API_URL}/admin/ban/${userId}`;
 
-      return this.http.patch<UserActionResponse>(endpoint, {}, { headers });
+      return this.http
+        .patch<UserActionResponse>(endpoint, {}, { headers })
+        .pipe(catchError((error) => this.handleError(error)));
     } catch (error) {
-      return throwError(() => error);
+      return this.handleError(error);
     }
   }
 
@@ -144,9 +169,11 @@ export class UsersService {
         ? `${this.API_URL}/super-admin/unban/${userId}`
         : `${this.API_URL}/admin/unban/${userId}`;
 
-      return this.http.patch<UserActionResponse>(endpoint, {}, { headers });
+      return this.http
+        .patch<UserActionResponse>(endpoint, {}, { headers })
+        .pipe(catchError((error) => this.handleError(error)));
     } catch (error) {
-      return throwError(() => error);
+      return this.handleError(error);
     }
   }
 
@@ -160,13 +187,15 @@ export class UsersService {
       this.checkSuperAdminAuthorization();
       const headers = this.createAuthHeaders();
 
-      return this.http.patch<UserActionResponse>(
-        `${this.API_URL}/promote/${userId}`,
-        {},
-        { headers }
-      );
+      return this.http
+        .patch<UserActionResponse>(
+          `${this.API_URL}/promote/${userId}`,
+          {},
+          { headers }
+        )
+        .pipe(catchError((error) => this.handleError(error)));
     } catch (error) {
-      return throwError(() => error);
+      return this.handleError(error);
     }
   }
 
@@ -180,13 +209,15 @@ export class UsersService {
       this.checkSuperAdminAuthorization();
       const headers = this.createAuthHeaders();
 
-      return this.http.patch<UserActionResponse>(
-        `${this.API_URL}/demote/${userId}`,
-        {},
-        { headers }
-      );
+      return this.http
+        .patch<UserActionResponse>(
+          `${this.API_URL}/demote/${userId}`,
+          {},
+          { headers }
+        )
+        .pipe(catchError((error) => this.handleError(error)));
     } catch (error) {
-      return throwError(() => error);
+      return this.handleError(error);
     }
   }
 }

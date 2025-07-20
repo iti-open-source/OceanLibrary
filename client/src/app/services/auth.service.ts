@@ -7,15 +7,21 @@ export class AuthService {
   private readonly tokenKey = "auth_token";
 
   login(token: string): void {
-    localStorage.setItem(this.tokenKey, token);
+    sessionStorage.setItem(this.tokenKey, token);
   }
 
   logout(): void {
-    localStorage.removeItem(this.tokenKey);
+    sessionStorage.removeItem(this.tokenKey);
+  }
+
+  logoutAndRedirect(): void {
+    this.logout();
+    // Use window.location to force a complete page reload and redirect
+    window.location.href = "/";
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    return sessionStorage.getItem(this.tokenKey);
   }
 
   isLoggedIn(): boolean {
