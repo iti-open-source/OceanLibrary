@@ -1,13 +1,13 @@
-import { Component ,OnInit, } from '@angular/core';
-import { BooksService } from '../../services/books.service';
-import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Component, OnInit } from "@angular/core";
+import { BooksService } from "../../services/books.service";
+import { CommonModule, NgFor, NgIf } from "@angular/common";
+import { RouterModule } from "@angular/router";
 
 @Component({
-  selector: 'app-home',
-  imports: [NgFor,NgIf,RouterModule,CommonModule],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  selector: "app-home",
+  imports: [NgFor, NgIf, RouterModule, CommonModule],
+  templateUrl: "./home.component.html",
+  styleUrl: "./home.component.css",
 })
 export class HomeComponent implements OnInit {
   books: any[] = [];
@@ -16,7 +16,7 @@ export class HomeComponent implements OnInit {
   trendingSeriesBooks: any[] = [];
 
   isLoading = false;
-  errorMessage = '';
+  errorMessage = "";
 
   constructor(private booksService: BooksService) {}
 
@@ -36,7 +36,7 @@ export class HomeComponent implements OnInit {
         } else if (data && data.data && Array.isArray(data.data.books)) {
           allBooks = data.data.books;
         } else {
-          console.error('Unexpected API shape:', data);
+          console.error("Unexpected API shape:", data);
           this.books = [];
           this.isLoading = false;
           return;
@@ -46,14 +46,14 @@ export class HomeComponent implements OnInit {
         this.currentBook = allBooks[0] || null;
 
         // Now BOTH sections have 3 books
-        this.recommendationBooks = allBooks.slice(1, 4); // Books 1–3
-        this.trendingSeriesBooks = allBooks.slice(4, 7); // Books 4–6
+        this.recommendationBooks = allBooks.slice(1, 5); // Books 1–3
+        this.trendingSeriesBooks = allBooks.slice(5, 9); // Books 4–6
 
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Error fetching books:', error);
-        this.errorMessage = 'Could not load books.';
+        console.error("Error fetching books:", error);
+        this.errorMessage = "Could not load books.";
         this.isLoading = false;
       },
     });
