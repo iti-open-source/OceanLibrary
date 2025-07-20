@@ -28,7 +28,7 @@ app.use(hpp());
 app.use(logger);
 app.use(
   cors({
-    origin: "http://localhost:4200", // The frontend
+    origin: "*", // The frontend
     credentials: true, // Allow cookies
   })
 );
