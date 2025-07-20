@@ -239,18 +239,11 @@
   </a>
 </div>
 } @if (loading){
-<div
-  class="fixed inset-0 bg-[rgba(var(--color-background-light-rgb),0.8)] flex items-center justify-center z-50"
->
-  <div class="relative w-20 h-20">
-    <div
-      class="absolute inset-0 rounded-full border-4 border-t-transparent border-r-transparent border-brand-primary animate-spin-slow"
-    ></div>
-    <div
-      class="absolute inset-2 rounded-full border-4 border-b-transparent border-l-transparent border-brand-primary animate-spin-slow-reverse opacity-70"
-    ></div>
-  </div>
-</div>
+<app-loading-spinner
+  [show]="loading"
+  [overlay]="true"
+  size="lg"
+></app-loading-spinner>
 } @if (errorMessage){
 <div
   class="fixed inset-0 bg-[rgba(var(--color-background-light-rgb),0.9)] flex items-center justify-center z-50"

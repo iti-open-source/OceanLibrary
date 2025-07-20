@@ -2,10 +2,11 @@ import { Component, OnInit } from "@angular/core";
 import { CartService } from "../../services/cart.service";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
+import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 
 @Component({
   selector: "app-cart",
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, LoadingSpinnerComponent],
   templateUrl: "./cart.component.html",
   styleUrl: "./cart.component.css",
 })

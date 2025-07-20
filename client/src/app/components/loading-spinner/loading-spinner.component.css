@@ -1,0 +1,67 @@
+/* Spinner Animations */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-slow-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 2s linear infinite;
+}
+
+.animate-spin-slow-reverse {
+  animation: spin-slow-reverse 1.5s linear infinite;
+}
+
+/* Size Classes */
+.spinner-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+.spinner-md {
+  width: 5rem;
+  height: 5rem;
+}
+
+.spinner-lg {
+  width: 6rem;
+  height: 6rem;
+}
+
+.spinner-inner-sm {
+  inset: 2px;
+}
+
+.spinner-inner-md {
+  inset: 0.5rem;
+}
+
+.spinner-inner-lg {
+  inset: 0.75rem;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .spinner-lg {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .spinner-md {
+    width: 3rem;
+    height: 3rem;
+  }
+}
