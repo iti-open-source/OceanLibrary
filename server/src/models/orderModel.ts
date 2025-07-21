@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { IOrder } from "../types/entities/order.js";
 
 const itemSchema = new mongoose.Schema(
   {
@@ -73,6 +72,6 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const orderModel = mongoose.model<IOrder>("Order", orderSchema);
+const orderModel = mongoose.model("Order", orderSchema);
 
 export default orderModel;
