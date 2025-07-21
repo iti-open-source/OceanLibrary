@@ -8,7 +8,6 @@ import {
   sendResetPasswordEmail,
 } from "../utils/email.js";
 import AppError from "../utils/appError.js";
-import { io } from "../server.js";
 
 /**
  * @route GET /api/v1/users/profile
@@ -545,10 +544,7 @@ export const banUser = async (
       return next(new AppError("cannot ban a super-admin", 401));
     }
     await user.updateOne({ active: false });
-    io.emit("user-ban", {
-      userId: user._id,
-      message: `${user.username} has been banned`,
-    });
+
     res
       .status(200)
       .json({ status: "success", message: "user removed successfully" });
@@ -596,10 +592,6 @@ export const unbanUser = async (
     }
 
     await user.updateOne({ active: true });
-    io.emit("user-ban", {
-      userId: user._id,
-      message: `${user.username} has been banned`,
-    });
 
     res
       .status(200)

@@ -4,9 +4,11 @@ import cartModel from "../models/cartModel.js";
 import AppError from "../utils/appError.js";
 import { CustomRequest } from "../middlewares/auth.js";
 import mongoose from "mongoose";
-import { generatePaymobPaymentLink, isOrderPaid } from "../utils/payments/paymobSDK.js";
+import {
+  generatePaymobPaymentLink,
+  isOrderPaid,
+} from "../utils/payments/paymobSDK.js";
 import redisClient from "../utils/redisClient.js";
-import { io } from "../server.js";
 import bookModel from "../models/bookModel.js";
 
 /**
@@ -83,7 +85,7 @@ export const placeOrder = async (
     // Verify paymob payment is successful
     if (paymentMethod === "paymob") {
       paymentStatus = "pending";
-      let paymob: any = await generatePaymobPaymentLink(total);
+      const paymob: any = await generatePaymobPaymentLink(total);
       if (!paymob.iframeURL) {
         // Abort transaction
         throw Error(
@@ -125,11 +127,6 @@ export const placeOrder = async (
     // commit transaction
     await session.commitTransaction();
     session.endSession();
-
-    io.emit("new-order", {
-      orderId: order._id,
-      message: "new order placed",
-    });
 
     redisClient.flushAll();
     res.status(201).json({
@@ -195,7 +192,7 @@ export const viewOrder = async (
         await latestOrder.save();
         redisClient.flushAll();
 
-         // Update the latest order inside orders array if it's included in the page
+        // Update the latest order inside orders array if it's included in the page
         const index = orders.findIndex(
           (order) => order._id.toString() === latestOrder._id.toString()
         );
@@ -215,7 +212,6 @@ export const viewOrder = async (
     next(error);
   }
 };
-
 
 /**
  * Get details for specific order
@@ -278,7 +274,6 @@ export const cancelOrderById = async (
     next(error);
   }
 };
-
 
 /**
  * Admin endpoints
@@ -395,7 +390,6 @@ export const deleteOrder = async (
   }
 };
 
-
 export const checkPaymobOrder = async (
   req: CustomRequest,
   res: Response,
@@ -469,7 +463,11 @@ export const deletePendingPaymobOrders = async (): Promise<void> => {
     // Flush redis cache
     redisClient.flushAll();
 
-    console.log(`[${new Date().toISOString()}] Deleted ${orders.length} Paymob pending orders (older than 1 hour) and restored book stock.`);
+    console.log(
+      `[${new Date().toISOString()}] Deleted ${
+        orders.length
+      } Paymob pending orders (older than 1 hour) and restored book stock.`
+    );
   } catch (error) {
     console.error("Failed to clean up Paymob pending orders:", error);
   }
