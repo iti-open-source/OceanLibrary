@@ -29,14 +29,13 @@ export const getGeminiResponse = async (message: string): Promise<any> => {
     .join("\n");
 
     const response = await axios.post(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
       {
         contents: [
           {
             parts: [
               {
-                text: `based on this user prompt "${message}" Recommend a book to the user, and provide id of that book from the list below:\n\n${bookText} use the _id as bookID
-                recommend mutliple books if you can, but make sure to provide the bookID for each book you recommend And title and author name of the book, and if you can provide a short description of the book, but make sure to provide the bookID for each book you recommend`,
+                text: `based on this user prompt "${message}" Recommend mutliple books from the following list:\n\n${bookText}\n\nPlease respond with "based on your prompt here is a book that would fit you, or any friendly message and a list of Book titles one under another.`,
               },
             ],
           },

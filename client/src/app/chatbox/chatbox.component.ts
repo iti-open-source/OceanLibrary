@@ -55,11 +55,6 @@ export class ChatboxComponent {
 
         // Get bot response (replace with your actual function)
         const botResponse = await this.getBotResponse(userMessage);
-        const objectIdRegex = /"([a-f\d]{24})"/g;
-
-        return botResponse.replace(objectIdRegex, (_: any, id: any) => {
-          return `<a href="/book-info/${id}/details">View book</a>`;
-        });
 
         // Remove typing indicator
         this.messages = this.messages.filter(m => !m.isTyping);
