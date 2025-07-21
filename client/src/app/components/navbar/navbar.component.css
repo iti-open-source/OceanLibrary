@@ -48,11 +48,23 @@
 @keyframes fade-in {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-10px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Enhanced slide-in animation for better UX */
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -69,7 +81,11 @@
 }
 
 .animate-fade-in {
-  animation: fade-in 0.2s ease-out;
+  animation: fade-in 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-slide-in {
+  animation: slide-in 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .animate-slide-down {
@@ -79,6 +95,39 @@
 /* Improve hover states */
 .nav-link:hover {
   transform: translateY(-1px);
+}
+
+/* Enhanced dropdown menu styles */
+.dropdown-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.dropdown-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-brand-primary),
+    var(--color-brand-secondary)
+  );
+  opacity: 0.1;
+  transition: width 0.3s ease;
+}
+
+.dropdown-item:hover::before {
+  width: 100%;
+}
+
+/* Enhanced focus states for better accessibility */
+.dropdown-item:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: -2px;
+  border-radius: 8px;
 }
 
 /* Better focus states for accessibility */
@@ -97,6 +146,37 @@
 @media (max-width: 768px) {
   .nav-link.active::after {
     display: none;
+  }
+}
+
+/* Enhanced dropdown positioning for small screens */
+@media (max-width: 640px) {
+  .dropdown-menu-responsive {
+    right: 0;
+    left: auto;
+    width: 280px;
+    max-width: calc(100vw - 2rem);
+  }
+}
+
+/* Smooth transitions for all interactive elements */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* Enhanced shadow for dropdown */
+.dropdown-shadow {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .dropdown-shadow {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25),
+      0 10px 10px -5px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.1);
   }
 }
 

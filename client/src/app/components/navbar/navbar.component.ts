@@ -17,6 +17,8 @@ import {
 } from "lucide-angular";
 import { RouterLink, Router, NavigationEnd } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
+import { ProfileService } from "../../services/profile.service";
+import { User as UserInterface } from "../../types/user.interface";
 import {
   AutocompleteSearchComponent,
   AutocompleteOption,
@@ -41,6 +43,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   currentRoute = "";
   isLoggedIn = false;
   isAdmin = false;
+  currentUser: UserInterface | null = null;
   private destroy$ = new Subject<void>();
 
   // Lucide icons
@@ -59,6 +62,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
+    private profileService: ProfileService,
     private router: Router,
     private elRef: ElementRef
   ) {}
@@ -72,6 +76,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
       .subscribe((isAuthenticated) => {
         this.isLoggedIn = isAuthenticated;
         this.isAdmin = isAuthenticated ? this.authService.isAdmin() : false;
+
+        // Load user profile when authenticated
+        if (isAuthenticated) {
+          this.loadCurrentUser();
+        } else {
+          this.currentUser = null;
+        }
       });
 
     // Subscribe to router events to track current route
@@ -86,6 +97,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     // Set initial route
     this.currentRoute = this.router.url;
+
+    // Load user profile if already authenticated
+    if (this.isLoggedIn) {
+      this.loadCurrentUser();
+    }
   }
 
   ngOnDestroy() {
@@ -105,6 +121,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.mobileMenuOpen = false;
     }
   };
+
+  // Handle keyboard navigation for dropdown
+  onProfileButtonKeydown(event: KeyboardEvent) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      this.profileMenuOpen = !this.profileMenuOpen;
+    } else if (event.key === "Escape") {
+      this.profileMenuOpen = false;
+    }
+  }
 
   toggleMobileMenu() {
     this.mobileMenuOpen = !this.mobileMenuOpen;
@@ -175,5 +201,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
     return this.isRouteActive(route)
       ? `${baseClass} ${activeClass}`
       : baseClass;
+  }
+
+  loadCurrentUser() {
+    if (this.isLoggedIn) {
+      this.profileService
+        .getCurrentUser()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            this.currentUser = response.data;
+          },
+          error: (error) => {
+            console.error("Failed to load user profile:", error);
+            this.currentUser = null;
+          },
+        });
+    }
   }
 }
