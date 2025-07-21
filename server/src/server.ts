@@ -49,7 +49,7 @@ app.use(limiter);
 app.use(
   "/uploads",
   (req: Request, res: Response, next: NextFunction) => {
-    res.header("Access-Control-Allow-Origin", "http://localhost:4200");
+    res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET");
     res.header(
       "Access-Control-Allow-Headers",
