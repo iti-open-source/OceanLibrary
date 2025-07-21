@@ -271,16 +271,17 @@
           <lucide-angular [img]="User" class="section-icon"></lucide-angular>
           <h3 class="section-title">Customer Information</h3>
         </div>
-
         <div class="info-grid">
           <div class="info-item">
             <label class="info-label">Name:</label>
-            <span class="info-value">{{ selectedOrder.userId.username }}</span>
+            <span class="info-value">{{ getCustomerName(selectedOrder) }}</span>
           </div>
 
           <div class="info-item">
             <label class="info-label">Email:</label>
-            <span class="info-value">{{ selectedOrder.userId.email }}</span>
+            <span class="info-value">{{
+              getCustomerEmail(selectedOrder)
+            }}</span>
           </div>
         </div>
       </div>

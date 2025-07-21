@@ -447,4 +447,19 @@ export class OrdersListComponent implements OnInit, OnDestroy {
   getSubtotal(items: OrderItem[]): number {
     return items.reduce((total, item) => total + item.price * item.quantity, 0);
   }
+
+  // Helper methods for user info
+  getCustomerName(order: Order): string {
+    if (typeof order.userId === "object" && order.userId) {
+      return order.userId.username;
+    }
+    return "N/A";
+  }
+
+  getCustomerEmail(order: Order): string {
+    if (typeof order.userId === "object" && order.userId) {
+      return order.userId.email;
+    }
+    return typeof order.userId === "string" ? order.userId : "N/A";
+  }
 }
