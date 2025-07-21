@@ -97,6 +97,13 @@
 <td class="actions-cell">
   <div class="actions-menu">
     <button
+      class="action-button details-button"
+      (click)="onViewDetails()"
+      title="View Order Details"
+    >
+      <lucide-angular [img]="Eye" class="action-icon"> </lucide-angular>
+    </button>
+    <button
       class="action-button delete-button"
       (click)="onDeleteOrder()"
       [disabled]="actionLoading[order._id]"

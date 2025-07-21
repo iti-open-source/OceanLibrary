@@ -2,7 +2,7 @@ import { rateLimit } from "express-rate-limit";
 
 export const limiter = rateLimit({
   windowMs: 10 * 60 * 1000,
-  limit: 100,
+  limit: 10000,
   standardHeaders: "draft-8",
   legacyHeaders: false,
   handler: function (req, res) {
@@ -29,8 +29,8 @@ export const loginLimiter = rateLimit({
 });
 
 export const emailRequestsLimiter = rateLimit({
-  windowMs: 5 * 60 * 1000,
-  limit: 3,
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  limit: 3, // Allow 3 requests per 5 minutes instead of 1
   standardHeaders: "draft-8",
   legacyHeaders: false,
   handler: function (req, res) {

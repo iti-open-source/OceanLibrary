@@ -21,6 +21,8 @@ import {
   DollarSign,
   CreditCard,
   Banknote,
+  User,
+  X,
 } from "lucide-angular";
 
 import { OrdersService } from "../../../../services/orders.service";
@@ -97,6 +99,10 @@ export class OrdersListComponent implements OnInit, OnDestroy {
   errorModalShowAction = false;
   errorModalActionText = "Try Again";
 
+  // Order details modal
+  showOrderDetailsModal = false;
+  selectedOrder: Order | null = null;
+
   // Utility
   Math = Math;
 
@@ -120,6 +126,8 @@ export class OrdersListComponent implements OnInit, OnDestroy {
   readonly DollarSign = DollarSign;
   readonly CreditCard = CreditCard;
   readonly Banknote = Banknote;
+  readonly User = User;
+  readonly X = X;
 
   constructor(private ordersService: OrdersService) {}
 
@@ -352,5 +360,91 @@ export class OrdersListComponent implements OnInit, OnDestroy {
     // TODO: Implement filtering by payment method
     this.currentPage = 1;
     this.loadOrders();
+  }
+
+  // Order details modal methods
+  openOrderDetailsModal(order: Order) {
+    this.selectedOrder = order;
+    this.showOrderDetailsModal = true;
+  }
+
+  closeOrderDetailsModal() {
+    this.showOrderDetailsModal = false;
+    this.selectedOrder = null;
+  }
+
+  // Utility methods for modal
+  formatDate(dateString: string): string {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  getStatusColor(status: string): string {
+    switch (status.toLowerCase()) {
+      case "pending":
+        return "status-pending";
+      case "on-the-way":
+        return "status-on-the-way";
+      case "shipped":
+        return "status-shipped";
+      case "delivered":
+        return "status-delivered";
+      case "canceled":
+        return "status-canceled";
+      default:
+        return "status-default";
+    }
+  }
+
+  getPaymentStatusColor(paymentStatus: string): string {
+    switch (paymentStatus.toLowerCase()) {
+      case "pending":
+        return "payment-pending";
+      case "paid":
+        return "payment-paid";
+      default:
+        return "payment-default";
+    }
+  }
+
+  getStatusDisplayName(status: string): string {
+    switch (status.toLowerCase()) {
+      case "pending":
+        return "Pending";
+      case "on-the-way":
+        return "On The Way";
+      case "shipped":
+        return "Shipped";
+      case "delivered":
+        return "Delivered";
+      case "canceled":
+        return "Canceled";
+      default:
+        return status;
+    }
+  }
+
+  getPaymentStatusDisplayName(paymentStatus: string): string {
+    switch (paymentStatus.toLowerCase()) {
+      case "pending":
+        return "Pending";
+      case "paid":
+        return "Paid";
+      default:
+        return paymentStatus;
+    }
+  }
+
+  getTotalItems(items: OrderItem[]): number {
+    return items.reduce((total, item) => total + item.quantity, 0);
+  }
+
+  getSubtotal(items: OrderItem[]): number {
+    return items.reduce((total, item) => total + item.price * item.quantity, 0);
   }
 }

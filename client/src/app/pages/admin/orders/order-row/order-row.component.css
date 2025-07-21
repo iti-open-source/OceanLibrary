@@ -240,6 +240,11 @@
   border-color: #ef4444;
 }
 
+.details-button:hover:not(:disabled) {
+  background-color: #eef2ff;
+  border-color: #6366f1;
+}
+
 .action-icon {
   width: 18px;
   height: 18px;
@@ -253,6 +258,10 @@
 
 .delete-button .action-icon {
   color: #ef4444;
+}
+
+.details-button .action-icon {
+  color: #6366f1;
 }
 
 .action-icon.loading {

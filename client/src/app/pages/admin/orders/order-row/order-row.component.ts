@@ -12,6 +12,7 @@ import {
   Trash2,
   CreditCard,
   Banknote,
+  Eye,
 } from "lucide-angular";
 
 interface OrderItem {
@@ -63,12 +64,14 @@ export class OrderRowComponent {
     event: Event;
   }>();
   @Output() deleteOrder = new EventEmitter<string>();
+  @Output() viewDetails = new EventEmitter<Order>();
 
   // Lucide icons
   readonly Clock = Clock;
   readonly Trash2 = Trash2;
   readonly CreditCard = CreditCard;
   readonly Banknote = Banknote;
+  readonly Eye = Eye;
 
   // Event handlers
   onStatusChange(event: Event) {
@@ -81,6 +84,10 @@ export class OrderRowComponent {
 
   onDeleteOrder() {
     this.deleteOrder.emit(this.order._id);
+  }
+
+  onViewDetails() {
+    this.viewDetails.emit(this.order);
   }
 
   // Utility methods

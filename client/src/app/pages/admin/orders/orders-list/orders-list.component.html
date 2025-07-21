@@ -111,6 +111,7 @@
               onPaymentStatusChange($event.orderId, $event.event)
             "
             (deleteOrder)="deleteOrder($event)"
+            (viewDetails)="openOrderDetailsModal($event)"
           ></tr>
         </tbody>
       </table>
@@ -174,3 +175,163 @@
   (close)="closeErrorModal()"
 >
 </app-error-modal>
+
+<!-- Order Details Modal -->
+<div
+  *ngIf="showOrderDetailsModal"
+  class="modal-overlay"
+  (click)="closeOrderDetailsModal()"
+>
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Order Details</h2>
+      <button class="modal-close" (click)="closeOrderDetailsModal()">
+        <lucide-angular [img]="X" class="close-icon"></lucide-angular>
+      </button>
+    </div>
+
+    <div class="modal-content" *ngIf="selectedOrder">
+      <!-- Order Info Section -->
+      <div class="order-info-section">
+        <div class="section-header">
+          <lucide-angular
+            [img]="ShoppingCart"
+            class="section-icon"
+          ></lucide-angular>
+          <h3 class="section-title">Order Information</h3>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <label class="info-label">Order ID:</label>
+            <span class="info-value"
+              >#{{ selectedOrder._id.slice(-8).toUpperCase() }}</span
+            >
+          </div>
+
+          <div class="info-item">
+            <label class="info-label">Date Ordered:</label>
+            <span class="info-value">{{
+              formatDate(selectedOrder.createdAt)
+            }}</span>
+          </div>
+
+          <div class="info-item">
+            <label class="info-label">Order Status:</label>
+            <span
+              class="info-value status-badge"
+              [ngClass]="getStatusColor(selectedOrder.status)"
+            >
+              {{ getStatusDisplayName(selectedOrder.status) }}
+            </span>
+          </div>
+
+          <div class="info-item">
+            <label class="info-label">Payment Method:</label>
+            <span class="info-value">
+              <lucide-angular
+                [img]="
+                  selectedOrder.paymentMethod === 'cash' ? Banknote : CreditCard
+                "
+                class="payment-icon"
+              ></lucide-angular>
+              {{
+                selectedOrder.paymentMethod === "cash"
+                  ? "Cash on Delivery"
+                  : "Online Payment"
+              }}
+            </span>
+          </div>
+
+          <div class="info-item">
+            <label class="info-label">Payment Status:</label>
+            <span
+              class="info-value status-badge"
+              [ngClass]="getPaymentStatusColor(selectedOrder.paymentStatus)"
+            >
+              {{ getPaymentStatusDisplayName(selectedOrder.paymentStatus) }}
+            </span>
+          </div>
+
+          <div class="info-item">
+            <label class="info-label">Total Amount:</label>
+            <span class="info-value total-amount"
+              >${{ selectedOrder.total.toFixed(2) }}</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Info Section -->
+      <div
+        class="customer-info-section"
+        *ngIf="selectedOrder.userId && typeof selectedOrder.userId === 'object'"
+      >
+        <div class="section-header">
+          <lucide-angular [img]="User" class="section-icon"></lucide-angular>
+          <h3 class="section-title">Customer Information</h3>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <label class="info-label">Name:</label>
+            <span class="info-value">{{ selectedOrder.userId.username }}</span>
+          </div>
+
+          <div class="info-item">
+            <label class="info-label">Email:</label>
+            <span class="info-value">{{ selectedOrder.userId.email }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Items Section -->
+      <div class="items-section">
+        <div class="section-header">
+          <lucide-angular [img]="Package" class="section-icon"></lucide-angular>
+          <h3 class="section-title">
+            Ordered Items ({{ getTotalItems(selectedOrder.items) }} items)
+          </h3>
+        </div>
+
+        <div class="items-list">
+          <div *ngFor="let item of selectedOrder.items" class="item-card">
+            <div class="item-image">
+              <img [src]="item.image" [alt]="item.title" class="book-image" />
+            </div>
+
+            <div class="item-details">
+              <h4 class="item-title">{{ item.title }}</h4>
+              <div class="item-meta">
+                <span class="item-quantity">Qty: {{ item.quantity }}</span>
+                <span class="item-price"
+                  >${{ item.price.toFixed(2) }} each</span
+                >
+                <span class="item-total"
+                  >${{ (item.price * item.quantity).toFixed(2) }} total</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="order-total-section">
+          <div class="total-breakdown">
+            <div class="total-line">
+              <span class="total-label">Subtotal:</span>
+              <span class="total-value"
+                >${{ getSubtotal(selectedOrder.items).toFixed(2) }}</span
+              >
+            </div>
+            <div class="total-line final-total">
+              <span class="total-label">Total:</span>
+              <span class="total-value"
+                >${{ selectedOrder.total.toFixed(2) }}</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
