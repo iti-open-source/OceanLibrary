@@ -6,13 +6,14 @@ import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
 import "dotenv/config";
+import aiChatRouter from "./routes/aiChatRoutes.js";
+import analyticsRouter from "./routes/analyticsRoutes.js";
+import authorRouter from "./routes/authorRoutes.js";
 import bookRouter from "./routes/bookRoutes.js";
 import cartRouter from "./routes/cartRoutes.js";
-import reviewRouter from "./routes/reviewRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
+import reviewRouter from "./routes/reviewRoutes.js";
 import userRouter from "./routes/userRoutes.js";
-import authorRouter from "./routes/authorRoutes.js";
-import analyticsRouter from "./routes/analyticsRoutes.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import logger from "./middlewares/logger.js";
 import { limiter } from "./middlewares/limiter.js";
@@ -61,6 +62,7 @@ app.use(
 );
 
 // Routes
+app.use("/api/v1/chat", aiChatRouter);
 app.use("/api/v1/analytics", analyticsRouter);
 app.use("/api/v1/authors", authorRouter);
 app.use("/api/v1/books", bookRouter);
