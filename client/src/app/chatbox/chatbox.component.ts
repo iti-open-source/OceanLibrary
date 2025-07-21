@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ChatbotService } from '../services/chatbot.service';
+import { firstValueFrom } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-chatbox',
@@ -26,7 +28,7 @@ export class ChatboxComponent {
     this.isExpanded = !this.isExpanded;
   }
 
-  constructor(private ai: ChatbotService) { }
+  constructor(private ai: ChatbotService, private auth: AuthService) { }
 
   async sendMessage(): Promise<void> {
     if (this.newMessage.trim() && !this.isWaitingForResponse) {
@@ -53,6 +55,11 @@ export class ChatboxComponent {
 
         // Get bot response (replace with your actual function)
         const botResponse = await this.getBotResponse(userMessage);
+        const objectIdRegex = /"([a-f\d]{24})"/g;
+
+        return botResponse.replace(objectIdRegex, (_: any, id: any) => {
+          return `<a href="/book-info/${id}/details">View book</a>`;
+        });
 
         // Remove typing indicator
         this.messages = this.messages.filter(m => !m.isTyping);
@@ -76,20 +83,21 @@ export class ChatboxComponent {
 
       // Scroll to bottom
       setTimeout(() => {
-        const container = document.querySelector('.messages-container');
+        const container = document.querySelector('.chatbox-content');
         if (container) container.scrollTop = container.scrollHeight;
       }, 0);
     }
   }
 
   private async getBotResponse(userMessage: string): Promise<any> {
-    this.ai.getAIResponse(userMessage).subscribe({
-      next: (response: any) => {
-        return response.message || 'No response from AI';
-      },
-      error: (error: any) => {
-        return 'Error getting response from AI';
-      } 
-    }); 
+    try {
+      if (!this.auth.isLoggedIn()) {
+        return 'Please log in to use the chat feature.';
+      }
+      const response: any = await firstValueFrom(this.ai.getAIResponse(userMessage));
+      return response.message  || 'No response from AI';
+    } catch (error) {
+      return 'Error getting response from AI';
+    }
   }
 }
