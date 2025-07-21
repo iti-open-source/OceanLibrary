@@ -12,7 +12,6 @@ import { ChatboxComponent } from "./chatbox/chatbox.component";
   imports: [
     CommonModule,
     RouterOutlet,
-    ModeSwitcherComponent,
     FooterComponent,
     NavbarComponent,
     ChatboxComponent
