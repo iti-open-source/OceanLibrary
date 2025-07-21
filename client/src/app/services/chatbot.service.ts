@@ -18,7 +18,7 @@ export class ChatbotService {
   getAIResponse(message: string): Observable<any> {
     const client: string[] = this.getClient();
     return this.http.post(
-      `http://104.244.74.223:3000/api/v1/chat`,
+      `https://bookstore.adel.dev/server/api/v1/chat`,
       { message },
       {
         headers: {

@@ -7,7 +7,7 @@ import { AuthService } from "./auth.service";
   providedIn: "root",
 })
 export class BooksService {
-  private readonly API_URL = "http://104.244.74.223:3000/api/v1/books";
+  private readonly API_URL = "https://bookstore.adel.dev/server/api/v1/books";
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 

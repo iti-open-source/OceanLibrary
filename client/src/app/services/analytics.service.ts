@@ -65,7 +65,8 @@ export interface DashboardStats {
   providedIn: "root",
 })
 export class AnalyticsService {
-  private readonly API_URL = "http://104.244.74.223:3000/api/v1/analytics";
+  private readonly API_URL =
+    "https://bookstore.adel.dev/server/api/v1/analytics";
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 

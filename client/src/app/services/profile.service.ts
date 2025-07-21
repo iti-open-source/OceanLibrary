@@ -36,7 +36,7 @@ export interface ApiResponse {
   providedIn: "root",
 })
 export class ProfileService {
-  private readonly API_URL = "http://104.244.74.223:3000/api/v1/users";
+  private readonly API_URL = "https://bookstore.adel.dev/server/api/v1/users";
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 

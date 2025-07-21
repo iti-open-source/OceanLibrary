@@ -8,7 +8,7 @@ import { Observable } from "rxjs";
 })
 export class OrdersService {
   //API
-  private endPoint: string = "http://104.244.74.223:3000/api/v1/orders";
+  private endPoint: string = "https://bookstore.adel.dev/server/api/v1/orders";
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 

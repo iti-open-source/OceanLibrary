@@ -11,7 +11,7 @@ export class CartService {
   constructor(private http: HttpClient, private auth: AuthService) {}
 
   //API
-  private endPoint: string = "http://104.244.74.223:3000/api/v1/cart";
+  private endPoint: string = "https://bookstore.adel.dev/server/api/v1/cart";
 
   // Can be used in (navbar) to display number of items in cart
   cartCount: number = 0;
