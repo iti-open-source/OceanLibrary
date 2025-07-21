@@ -2,7 +2,6 @@ import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterOutlet, NavigationEnd } from "@angular/router";
 import { filter } from "rxjs";
-import { ModeSwitcherComponent } from "./components/mode-switcher/mode-switcher.component";
 import { FooterComponent } from "./components/footer/footer.component";
 import { NavbarComponent } from "./components/navbar/navbar.component";
 import { ChatboxComponent } from "./chatbox/chatbox.component";
@@ -14,7 +13,7 @@ import { ChatboxComponent } from "./chatbox/chatbox.component";
     RouterOutlet,
     FooterComponent,
     NavbarComponent,
-    ChatboxComponent
+    ChatboxComponent,
   ],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",

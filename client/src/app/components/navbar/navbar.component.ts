@@ -14,6 +14,8 @@ import {
   X,
   LogIn,
   UserPlus,
+  Sun,
+  Moon,
 } from "lucide-angular";
 import { RouterLink, Router, NavigationEnd } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
@@ -44,6 +46,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   isAdmin = false;
   currentUser: UserInterface | null = null;
+  isDarkMode = false;
   private destroy$ = new Subject<void>();
 
   // Lucide icons
@@ -59,6 +62,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   readonly X = X;
   readonly LogIn = LogIn;
   readonly UserPlus = UserPlus;
+  readonly Sun = Sun;
+  readonly Moon = Moon;
 
   constructor(
     private authService: AuthService,
@@ -68,6 +73,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    // Initialize dark mode
+    this.initializeDarkMode();
+
     document.addEventListener("click", this.handleDocumentClick, true);
 
     // Subscribe to authentication state changes
@@ -217,6 +225,28 @@ export class NavbarComponent implements OnInit, OnDestroy {
             this.currentUser = null;
           },
         });
+    }
+  }
+
+  initializeDarkMode() {
+    const theme = localStorage.getItem("theme");
+    this.isDarkMode = theme === "dark";
+
+    if (this.isDarkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+  }
+
+  toggleDarkMode() {
+    this.isDarkMode = !this.isDarkMode;
+    if (this.isDarkMode) {
+      document.body.classList.add("dark-mode");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.body.classList.remove("dark-mode");
+      localStorage.setItem("theme", "light");
     }
   }
 }

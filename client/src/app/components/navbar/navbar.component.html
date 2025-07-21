@@ -98,6 +98,38 @@
             ></lucide-icon>
             <span class="nav-text text-xs hidden lg:block">Admin</span>
           </a>
+
+          <!-- Theme Toggle -->
+          <div
+            class="nav-link cursor-pointer flex flex-col items-center text-[var(--color-text-muted)] hover:text-[var(--color-brand-primary)] transition-all duration-200 px-2 py-1"
+          >
+            <button
+              (click)="toggleDarkMode()"
+              class="theme-toggle relative inline-flex items-center justify-center w-10 h-6 lg:w-12 lg:h-7 rounded-full transition-all duration-300 focus:outline-none"
+              [class.active]="isDarkMode"
+              [attr.aria-label]="
+                isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'
+              "
+              [title]="
+                isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'
+              "
+            >
+              <span
+                class="theme-toggle-slider absolute left-1 flex w-4 h-4 lg:w-5 lg:h-5 rounded-full transition-all duration-300 transform items-center justify-center"
+                [class]="
+                  isDarkMode
+                    ? 'translate-x-4 lg:translate-x-5'
+                    : 'translate-x-0'
+                "
+              >
+                <lucide-icon
+                  [img]="isDarkMode ? Moon : Sun"
+                  class="theme-icon w-2.5 h-2.5 lg:w-3 lg:h-3 text-[var(--color-background-dark)]"
+                ></lucide-icon>
+              </span>
+            </button>
+            <span class="nav-text text-xs hidden lg:block mt-1">Theme</span>
+          </div>
         </div>
 
         <!-- Auth Section -->
@@ -354,6 +386,50 @@
           <lucide-icon [img]="Settings" class="h-6 w-6 mr-3"></lucide-icon>
           <span class="text-lg font-medium">Admin Panel</span>
         </a>
+
+        <!-- Mobile Theme Toggle -->
+        <div
+          class="mobile-theme-toggle flex items-center justify-between px-4 py-3 transition-all duration-200"
+        >
+          <div class="flex items-center">
+            <div
+              class="w-10 h-10 rounded-lg bg-[var(--color-brand-primary)]/10 flex items-center justify-center mr-3"
+            >
+              <lucide-icon
+                [img]="isDarkMode ? Moon : Sun"
+                class="h-5 w-5 text-[var(--color-brand-primary)]"
+              ></lucide-icon>
+            </div>
+            <div>
+              <div class="text-lg font-medium text-[var(--color-text-default)]">
+                {{ isDarkMode ? "Dark" : "Light" }} Mode
+              </div>
+              <div class="text-sm text-[var(--color-text-muted)]">
+                {{
+                  isDarkMode ? "Switch to light theme" : "Switch to dark theme"
+                }}
+              </div>
+            </div>
+          </div>
+          <button
+            (click)="toggleDarkMode()"
+            class="theme-toggle relative inline-flex items-center justify-center w-14 h-8 rounded-full transition-all duration-300 focus:outline-none"
+            [class.active]="isDarkMode"
+            [attr.aria-label]="
+              isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'
+            "
+          >
+            <span
+              class="theme-toggle-slider absolute left-1 flex w-6 h-6 rounded-full transition-all duration-300 transform items-center justify-center"
+              [class]="isDarkMode ? 'translate-x-6' : 'translate-x-0'"
+            >
+              <lucide-icon
+                [img]="isDarkMode ? Moon : Sun"
+                class="theme-icon w-3 h-3 text-[var(--color-background-dark)]"
+              ></lucide-icon>
+            </span>
+          </button>
+        </div>
       </div>
 
       <!-- Mobile Auth Section or Profile -->
