@@ -32,6 +32,20 @@ export class OrdersComponent {
     });
   }
 
+  cancelOrder(orderId: string): void {
+    this.isLoading = true;
+    this.ordersService.cancelOrder(orderId).subscribe({ 
+      next: (response: OrdersResponse) => {
+        this.isLoading = false;
+        this.fetchOrders();
+      },
+      error: (error) => {
+        this.errorMessage = error?.error?.message || 'Error canceling order.';
+        this.isLoading = false;
+      }
+    });
+  } 
+
 
   checkOrder(orderId: string): void {
     this.isLoading = true;

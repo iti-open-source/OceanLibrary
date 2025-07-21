@@ -31,7 +31,7 @@
               'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200':
                 order.status === 'delivered',
               'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200':
-                order.status === 'cancelled'
+                order.status === 'canceled'
             }"
           >
             {{ order.status | titlecase }}
@@ -66,6 +66,9 @@
       </div>
 
       <!-- Order Footer -->
+
+      @if (order.status !== 'canceled'){
+
       <div
         class="flex flex-col md:flex-row md:justify-between md:items-center mt-4 pt-4 border-t border-border"
       >
@@ -102,9 +105,9 @@
           <span class="font-bold">Total: {{ order.total | currency }}</span>
         </div>
       </div>
-
-      @if( order.paymentStatus === "pending" && order.paymentMethod === "paymob"
-      && order.paymentLink && order.paymentOrderId) {
+      } @if( order.paymentStatus === "pending" && order.paymentMethod ===
+      "paymob" && order.paymentLink && order.paymentOrderId && order.status !==
+      'canceled') {
 
       <div class="flex justify-end mt-4">
         <button
@@ -116,11 +119,21 @@
         </button>
 
         <button
-          (click)="checkOrder(order.paymentOrderId)"
+          (click)="checkOrder(order._id)"
           class="pay-now-btn ms-2 cursor-pointer px-4 py-2 bg-brand-primary text-on-dark rounded font-medium hover:bg-brand-primary-dark transition-colors flex items-center gap-2"
         >
           <i class="fas fa-arrow-circle-left"></i>
           Reload
+        </button>
+      </div>
+      } @if( order.status === "pending"){
+      <div class="flex justify-end mt-4">
+        <button
+          (click)="cancelOrder(order._id)"
+          class="pay-now-btn ms-2 cursor-pointer px-4 py-2 bg-red-700 text-on-dark rounded font-medium hover:bg-brand-primary-dark transition-colors flex items-center gap-2"
+        >
+          <i class="fa-solid fa-xmark"></i>
+          Cancel Order
         </button>
       </div>
       }

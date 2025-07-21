@@ -45,10 +45,18 @@ export class OrdersService {
     });
   }
 
+  cancelOrder(orderId:string): Observable<OrdersResponse> {
+    const client: string[] = this.getClient();
+    return this.http.get<OrdersResponse>(`${this.endPoint}/cancel/${orderId}`, {
+      headers: {
+        [client[0]]: client[1],
+      },
+    });
+  }
 
   checkOrder(orderId:string): Observable<any> {
     const client: string[] = this.getClient();
-    return this.http.get<any>(`${this.endPoint}/paymobCheck/687d5eb31bfa6c6875a9766a`, {
+    return this.http.get<any>(`${this.endPoint}/paymobCheck/${orderId}`, {
       headers: {
         [client[0]]: client[1],
       },

@@ -243,6 +243,43 @@ export const viewOrderById = async (
   }
 };
 
+export const cancelOrderById = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId = req.userId;
+    const orderId = req.params.id;
+
+    // Find order belonging to the user
+    const order = await orderModel.findOne({ _id: orderId, userId });
+
+    if (!order) {
+      return next(new AppError("Order not found", 404));
+    }
+
+    // restore book stock
+    for (const item of order.items) {
+      const { bookId, quantity } = item;
+      await bookModel.findByIdAndUpdate(bookId, {
+        $inc: { stock: quantity },
+      });
+    }
+
+    // Cancel the order
+    order.status = "canceled";
+    await order.save();
+
+    redisClient.flushAll();
+
+    res.status(200).json({ message: "Order deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 /**
  * Admin endpoints
  * Get all orders placed by all users

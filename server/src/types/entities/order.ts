@@ -9,7 +9,7 @@ export interface OrderItem {
 }
 
 export type PaymentMethod = "cash" | "paymob";
-export type OrderStatus = "pending" | "shipped" | "delivered";
+export type OrderStatus = "pending" | "shipped" | "delivered" | "canceled" | "on-the-way";
 export type PaymentStatus = "pending" | "paid";
 
 export interface Order {
