@@ -103,7 +103,7 @@ prototype_2/
 
 6. **Visit:**
    - Frontend: [http://localhost:4200](http://localhost:4200)
-   - Backend API: [http://localhost:3000/api/v1](http://localhost:3000/api/v1)
+   - Backend API: [http://104.244.74.223:3000/api/v1](http://104.244.74.223:3000/api/v1)
 
 ---
 
@@ -127,7 +127,7 @@ prototype_2/
 ### Base URL
 
 ```
-http://localhost:3000/api/v1
+http://104.244.74.223:3000/api/v1
 ```
 
 ### Endpoints

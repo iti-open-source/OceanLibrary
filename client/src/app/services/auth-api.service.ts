@@ -8,7 +8,7 @@ import { registerationResponse } from "../types/registerationResponse";
   providedIn: "root",
 })
 export class AuthApiService {
-  private BASE_URL: string = "http://localhost:3000";
+  private BASE_URL: string = "http://104.244.74.223:3000";
   constructor(private http: HttpClient) {}
 
   login(

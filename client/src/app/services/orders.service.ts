@@ -8,7 +8,7 @@ import { Observable } from "rxjs";
 })
 export class OrdersService {
   //API
-  private endPoint: string = "http://localhost:3000/api/v1/orders";
+  private endPoint: string = "http://104.244.74.223:3000/api/v1/orders";
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 
@@ -45,7 +45,7 @@ export class OrdersService {
     });
   }
 
-  cancelOrder(orderId:string): Observable<OrdersResponse> {
+  cancelOrder(orderId: string): Observable<OrdersResponse> {
     const client: string[] = this.getClient();
     return this.http.get<OrdersResponse>(`${this.endPoint}/cancel/${orderId}`, {
       headers: {
@@ -54,7 +54,7 @@ export class OrdersService {
     });
   }
 
-  checkOrder(orderId:string): Observable<any> {
+  checkOrder(orderId: string): Observable<any> {
     const client: string[] = this.getClient();
     return this.http.get<any>(`${this.endPoint}/paymobCheck/${orderId}`, {
       headers: {
