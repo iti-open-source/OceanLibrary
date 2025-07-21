@@ -1,6 +1,6 @@
-import { Types } from "mongoose";
+import { HydratedDocument, Types } from "mongoose";
 
-export interface OrderItem {
+export interface IOrderItem {
   bookId: Types.ObjectId;
   title: string;
   image: string;
@@ -9,13 +9,18 @@ export interface OrderItem {
 }
 
 export type PaymentMethod = "cash" | "paymob";
-export type OrderStatus = "pending" | "shipped" | "delivered" | "canceled" | "on-the-way";
+export type OrderStatus =
+  | "pending"
+  | "shipped"
+  | "delivered"
+  | "canceled"
+  | "on-the-way";
 export type PaymentStatus = "pending" | "paid";
 
-export interface Order {
+export interface IOrder {
   _id?: Types.ObjectId;
   userId: Types.ObjectId;
-  items: OrderItem[];
+  items: IOrderItem[];
   total: number;
   status?: OrderStatus;
   paymentMethod: PaymentMethod;
@@ -25,3 +30,5 @@ export interface Order {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export type OrderDocument = HydratedDocument<IOrder>;

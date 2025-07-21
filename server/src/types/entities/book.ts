@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { HydratedDocument } from "mongoose";
 
 export interface IBook {
   title: string;
@@ -13,3 +13,5 @@ export interface IBook {
   ratingQuantity?: number;
   image: string;
 }
+
+export type BookDocument = HydratedDocument<IBook>;

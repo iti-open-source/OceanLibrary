@@ -1,3 +1,5 @@
+import { HydratedDocument } from "mongoose";
+
 export interface IAuthor {
   name: string;
   bio: string;
@@ -5,3 +7,5 @@ export interface IAuthor {
   photo: string;
   genres: string[];
 }
+
+export type AuthorDocument = HydratedDocument<IAuthor>;

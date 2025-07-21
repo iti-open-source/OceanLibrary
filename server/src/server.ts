@@ -42,12 +42,12 @@ app.use(
     credentials: true, // Allow cookies
   })
 );
-// app.use(limiter);
+app.use(limiter);
 
 // Serve static files from uploads directory with CORS headers
 app.use(
   "/uploads",
-  (req, res, next) => {
+  (req: Request, res: Response, next: NextFunction) => {
     res.header("Access-Control-Allow-Origin", "http://localhost:4200");
     res.header("Access-Control-Allow-Methods", "GET");
     res.header(
@@ -98,7 +98,7 @@ io.on("connection", (socket) => {
     console.log("client disconnected", socket.id);
   });
 });
- 
+
 // export io for controllers
 export { io };
 
@@ -146,10 +146,11 @@ process.on(
   }
 );
 
-
 function initCron() {
   cron.schedule("0 * * * *", async () => {
-    console.log(`[${new Date().toISOString()}] Running hourly Paymob order cleanup job...`);
+    console.log(
+      `[${new Date().toISOString()}] Running hourly Paymob order cleanup job...`
+    );
     await deletePendingPaymobOrders();
   });
 }

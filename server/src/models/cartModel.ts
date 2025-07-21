@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { ICart } from "../types/entities/cart.js";
 
 const itemSchema = new mongoose.Schema(
   {
@@ -31,6 +32,6 @@ const cartSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const cartModel = mongoose.model("Cart", cartSchema);
+const cartModel = mongoose.model<ICart>("Cart", cartSchema);
 
 export default cartModel;

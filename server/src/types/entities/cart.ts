@@ -1,3 +1,4 @@
+import { HydratedDocument } from "mongoose";
 import { IBook } from "./book.js";
 
 interface cIBook extends IBook {
@@ -23,3 +24,5 @@ export interface IRefBook {
   bookId: cIBook;
   quantity: number;
 }
+
+export type CartDocument = HydratedDocument<ICart>;
