@@ -2,6 +2,7 @@
   <div class="flex-1 flex flex-col">
     <app-navbar *ngIf="!isAdminRoute"></app-navbar>
     <router-outlet />
+    <app-chatbox></app-chatbox>
   </div>
   <app-mode-switcher *ngIf="!isAdminRoute" />
   <app-footer *ngIf="!isAdminRoute" />

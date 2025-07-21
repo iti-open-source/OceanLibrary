@@ -5,6 +5,7 @@ import { filter } from "rxjs";
 import { ModeSwitcherComponent } from "./components/mode-switcher/mode-switcher.component";
 import { FooterComponent } from "./components/footer/footer.component";
 import { NavbarComponent } from "./components/navbar/navbar.component";
+import { ChatboxComponent } from "./chatbox/chatbox.component";
 
 @Component({
   selector: "app-root",
@@ -14,6 +15,7 @@ import { NavbarComponent } from "./components/navbar/navbar.component";
     ModeSwitcherComponent,
     FooterComponent,
     NavbarComponent,
+    ChatboxComponent
   ],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
