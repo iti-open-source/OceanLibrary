@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ChatbotService } from '../services/chatbot.service';
 
 @Component({
   selector: 'app-chatbox',
@@ -24,6 +25,8 @@ export class ChatboxComponent {
   toggleChat(): void {
     this.isExpanded = !this.isExpanded;
   }
+
+  constructor(private ai: ChatbotService) { }
 
   async sendMessage(): Promise<void> {
     if (this.newMessage.trim() && !this.isWaitingForResponse) {
@@ -79,8 +82,14 @@ export class ChatboxComponent {
     }
   }
 
-  private async getBotResponse(userMessage: string): Promise<string> {
-  
-    return "ok";
+  private async getBotResponse(userMessage: string): Promise<any> {
+    this.ai.getAIResponse(userMessage).subscribe({
+      next: (response: any) => {
+        return response.message || 'No response from AI';
+      },
+      error: (error: any) => {
+        return 'Error getting response from AI';
+      } 
+    }); 
   }
 }
