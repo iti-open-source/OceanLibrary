@@ -15,34 +15,60 @@ export function sendVerificationMail(user: UserDocument, URL: string) {
   const options = {
     from: process.env.EMAIL_SERVICE_SENDER,
     to: user.email,
-    subject: "Account Verification",
+    subject: "Ocean Library - Account Verification",
     text: `Verify your account:\n${URL}`,
     html: `
-      <h4>Verify Your Email Address</h4>
-        <p>
-          Hello ${user.username}! Please click the button below to verify your email.
-        </p>
+      <div style="font-family: 'Roboto', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f6ea;">
+        <div style="background-color: #ffffff; border-radius: 12px; padding: 40px; border: 1px solid #d2c8b4;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="font-family: 'DM Serif Display', serif; color: #5a471d; font-size: 28px; margin-bottom: 10px;">Ocean Library</h1>
+            <h2 style="color: #5a471d; font-size: 24px; margin-bottom: 10px;">Verify your Account</h2>
+          </div>
+          
+          <p style="color: #5a471d; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+            Hello <strong>${user.username || "Reader"}</strong>!
+          </p>
+          
+          <p style="color: #5a471d; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+            Click the button below to verify your Ocean Library account.
+          </p>
 
-        <a
-          href="${URL}"
-          style="
-            display: inline-block;
-            padding: 10px 25px;
-            margin-top: 20px;
-            background-color: #007bff;
-            color: #ffffff;
-            text-decoration: none;"
-          >
-          Verify Email
-        </a>
+          <div style="text-align: center; margin: 30px 0;">
+            <a
+              href="${URL}"
+              style="
+                display: inline-block;
+                padding: 15px 30px;
+                background-color: #5a471d;
+                color: #ffffff;
+                text-decoration: none;
+                border-radius: 8px;
+                font-weight: 600;
+                font-size: 16px;
+              "
+            >
+              Verify Account
+            </a>
+          </div>
 
-        <p style="font-size: 14px; margin-top: 25px;">
-          If the button above doesn't work, copy and paste this link into your browser:
-        </p>
+          <p style="color: #827350; font-size: 14px; line-height: 1.6; margin-bottom: 10px;">
+            If the button above doesn't work, copy and paste this link into your browser:
+          </p>
 
-        <p style="font-size: 14px; word-break: break-all;">
-          <a href="${URL}">${URL}</a>
-        </p>
+          <p style="color: #827350; font-size: 14px; word-break: break-all; background-color: #f9f6ea; padding: 10px; border-radius: 4px;">
+            <a href="${URL}" style="color: #5a471d;">${URL}</a>
+          </p>
+          
+          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #d2c8b4;">
+            <p style="color: #827350; font-size: 12px; line-height: 1.6; margin-bottom: 5px;">
+              If you didn't request this verification, please ignore this email.
+            </p>
+            <p style="color: #827350; font-size: 12px; line-height: 1.6;">
+              This link will expire in 10 minutes for security reasons.
+            </p>
+          </div>
+        </div>
+      </div>
       `,
   };
 
@@ -73,7 +99,7 @@ export function sendResetPasswordEmail(user: UserDocument, URL: string) {
           </div>
           
           <p style="color: #5a471d; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
-            Hello <strong>${user.username}</strong>!
+            Hello <strong>${user.username || "Reader"}</strong>!
           </p>
           
           <p style="color: #5a471d; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">

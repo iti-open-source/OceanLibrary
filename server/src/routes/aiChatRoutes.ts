@@ -1,9 +1,9 @@
 import express from "express";
-import { chatWithAi } from "../controllers/aiChatController.js";
+import { chatWithAI } from "../controllers/aiChatController.js";
 import { verifyToken } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-router.post("/", verifyToken ,chatWithAi);
+router.post("/", verifyToken, chatWithAI);
 
 export default router;

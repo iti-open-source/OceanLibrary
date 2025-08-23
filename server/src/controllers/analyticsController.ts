@@ -4,7 +4,7 @@ import User from "../models/userModel.js";
 import Order from "../models/orderModel.js";
 import Author from "../models/authorModel.js";
 import AppError from "../utils/appError.js";
-import { DashboardStats } from "../types/analytics.js";
+import { DashboardStats } from "../types/entities/analytics.js";
 
 export const getDashboardStats = async (
   req: Request,

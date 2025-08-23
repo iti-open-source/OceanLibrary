@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import AppError from "../utils/appError.js";
-import userModel from "../models/userModel.js";
 
 // Extend Express Request interface to include userId
 export interface CustomRequest extends Request {
@@ -59,10 +58,7 @@ export const verifyAdmin = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const id = req.userId;
-    const user = await userModel.findById(id);
-    const role = user?.role;
-    if (role !== "admin" && role !== "super-admin") {
+    if (req.userRole !== "admin" && req.userRole !== "super-admin") {
       return next(new AppError("requires admin privileges", 401));
     }
     next();

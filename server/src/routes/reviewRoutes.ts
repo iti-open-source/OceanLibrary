@@ -16,12 +16,12 @@ import {
 
 const router = Router();
 
-router.get("/user-reviews", verifyToken, getUserReviews);
+router.get("/user", verifyToken, getUserReviews);
 router.post("/", zodValidator(submitReviewSchema), verifyToken, submitReview);
 router.patch("/:id", zodValidator(editReviewSchema), verifyToken, editReview);
 router.delete("/:id", verifyToken, deleteReview);
 // admin routes
-router.get("/book-reviews/:id", verifyToken, verifyAdmin, getBookReviews);
+router.get("/book/:id", verifyToken, verifyAdmin, getBookReviews);
 router.delete("/remove/:id", verifyToken, verifyAdmin, removeReview);
 
 export default router;

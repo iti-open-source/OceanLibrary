@@ -6,13 +6,13 @@ A full-stack e-commerce web application for books, featuring a modern Angular fr
 
 ## Features
 
-- 📚 Browse, search, and view book details
-- 🛒 Shopping cart and order management
-- 📝 User authentication and registration
-- ⭐ Book reviews and ratings
-- 🧑‍💼 Admin dashboard for managing books, users, and orders
-- 📱 Responsive, mobile-first UI
-- 🌗 Light/Dark mode support
+- Browse, search, and view book details
+- Shopping cart and order management
+- User authentication and registration
+- Book reviews and ratings
+- Admin dashboard for managing books, users, and orders
+- Responsive, mobile-first UI
+- Light/Dark mode support
 
 ---
 

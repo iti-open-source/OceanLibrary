@@ -1,5 +1,14 @@
 import { HydratedDocument, Types } from "mongoose";
 
+export type PaymentMethod = "cash" | "paymob";
+export type PaymentStatus = "pending" | "paid";
+export type OrderStatus =
+  | "pending"
+  | "shipped"
+  | "delivered"
+  | "canceled"
+  | "on-the-way";
+
 export interface IOrderItem {
   bookId: Types.ObjectId;
   title: string;
@@ -7,15 +16,6 @@ export interface IOrderItem {
   quantity: number;
   price: number;
 }
-
-export type PaymentMethod = "cash" | "paymob";
-export type OrderStatus =
-  | "pending"
-  | "shipped"
-  | "delivered"
-  | "canceled"
-  | "on-the-way";
-export type PaymentStatus = "pending" | "paid";
 
 export interface IOrder {
   _id?: Types.ObjectId;

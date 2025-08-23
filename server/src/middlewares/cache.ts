@@ -11,6 +11,7 @@ export const cacheMiddleware = (ttlSeconds: number) => {
       const key = `__cache__${req.originalUrl}`;
       const cached = await redisClient.get(key);
 
+      // if data is cached return its response
       if (cached) {
         console.log(`Cache hit: ${key}`);
         res.status(200).json(JSON.parse(cached));
